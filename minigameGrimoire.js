@@ -1,9 +1,9 @@
-﻿var M={};
+﻿let M={};
 M.parent=Game.Objects['Wizard tower'];
 M.parent.minigame=M;
 M.launch=function()
 {
-	var M=this;
+	let M=this;
 	M.name=M.parent.minigameName;
 	M.init=function(div)
 	{
@@ -19,15 +19,15 @@ M.launch=function()
 				costPercent:0.4,
 				win:function()
 				{
-					var val=Math.max(7,Math.min(Game.cookies*0.15,Game.cookiesPs*60*30));
+					let val=Math.max(7,Math.min(Game.cookies*0.15,Game.cookiesPs*60*30));
 					Game.Earn(val);
 					Game.Notify('Conjure baked goods!','You magic <b>'+Beautify(val)+' cookie'+(val==1?'':'s')+'</b> out of thin air.',[21,11],6);
 					Game.Popup('<div style="font-size:80%;">+'+Beautify(val)+' cookie'+(val==1?'':'s')+'!</div>',Game.mouseX,Game.mouseY);
 				},
 				fail:function()
 				{
-					var buff=Game.gainBuff('clot',60*15,0.5);
-					var val=Math.min(Game.cookies*0.15,Game.cookiesPs*60*15)+13;
+					let buff=Game.gainBuff('clot',60*15,0.5);
+					let val=Math.min(Game.cookies*0.15,Game.cookiesPs*60*15)+13;
 					val=Math.min(Game.cookies,val);
 					Game.Spend(val);
 					Game.Notify(buff.name,buff.desc,buff.icon,6);
@@ -47,8 +47,8 @@ M.launch=function()
 				},
 				win:function()
 				{
-					var newShimmer=new Game.shimmer('golden',{noWrath:true});
-					var choices=[];
+					let newShimmer=new Game.shimmer('golden',{noWrath:true});
+					let choices=[];
 					choices.push('frenzy','multiply cookies');
 					if (!Game.hasBuff('Dragonflight')) choices.push('click frenzy');
 					if (Math.random()<0.1) choices.push('cookie storm','cookie storm','blab');
@@ -65,8 +65,8 @@ M.launch=function()
 				},
 				fail:function()
 				{
-					var newShimmer=new Game.shimmer('golden',{wrath:true});
-					var choices=[];
+					let newShimmer=new Game.shimmer('golden',{wrath:true});
+					let choices=[];
 					choices.push('clot','ruin cookies');
 					if (Math.random()<0.1) choices.push('cursed finger','blood frenzy');
 					if (Math.random()<0.003) choices.push('free sugar lump');
@@ -84,11 +84,11 @@ M.launch=function()
 				costPercent:0.2,
 				win:function()
 				{
-					var changed=0;
-					for (var i in Game.buffs)
+					let changed=0;
+					for (let i in Game.buffs)
 					{
-						var me=Game.buffs[i];
-						var gain=Math.min(Game.fps*60*5,me.maxTime*0.1);
+						let me=Game.buffs[i];
+						let gain=Math.min(Game.fps*60*5,me.maxTime*0.1);
 						me.maxTime+=gain;
 						me.time+=gain;
 						changed++;
@@ -98,11 +98,11 @@ M.launch=function()
 				},
 				fail:function()
 				{
-					var changed=0;
-					for (var i in Game.buffs)
+					let changed=0;
+					for (let i in Game.buffs)
 					{
-						var me=Game.buffs[i];
-						var loss=Math.min(Game.fps*60*10,me.time*0.2);
+						let me=Game.buffs[i];
+						let loss=Math.min(Game.fps*60*10,me.time*0.2);
 						me.time-=loss;
 						me.time=Math.max(me.time,0);
 						changed++;
@@ -120,28 +120,28 @@ M.launch=function()
 				costPercent:0.75,
 				win:function()
 				{
-					var buildings=[];
-					var max=0;
-					var n=0;
-					for (var i in Game.Objects)
+					let buildings=[];
+					let max=0;
+					let n=0;
+					for (let i in Game.Objects)
 					{
 						if (Game.Objects[i].amount>max) max=Game.Objects[i].amount;
 						if (Game.Objects[i].amount>0) n++;
 					}
-					for (var i in Game.Objects)
+					for (let i in Game.Objects)
 					{if ((Game.Objects[i].amount<max || n==1) && Game.Objects[i].getPrice()<=Game.cookies*2 && Game.Objects[i].amount<400) buildings.push(Game.Objects[i]);}
 					if (buildings.length==0){Game.Popup('<div style="font-size:80%;">No buildings to improve!</div>',Game.mouseX,Game.mouseY);return -1;}
-					var building=choose(buildings);
+					let building=choose(buildings);
 					building.buyFree(1);
 					Game.Popup('<div style="font-size:80%;">A new '+building.single+'<br>bursts out of the ground.</div>',Game.mouseX,Game.mouseY);
 				},
 				fail:function()
 				{
 					if (Game.BuildingsOwned==0){Game.Popup('<div style="font-size:80%;">Backfired, but no buildings to destroy!</div>',Game.mouseX,Game.mouseY);return -1;}
-					var buildings=[];
-					for (var i in Game.Objects)
+					let buildings=[];
+					for (let i in Game.Objects)
 					{if (Game.Objects[i].amount>0) buildings.push(Game.Objects[i]);}
-					var building=choose(buildings);
+					let building=choose(buildings);
 					building.sacrifice(1);
 					Game.Popup('<div style="font-size:80%;">Backfire!<br>One of your '+building.plural+'<br>disappears in a puff of smoke.</div>',Game.mouseX,Game.mouseY);
 				},
@@ -156,13 +156,13 @@ M.launch=function()
 				win:function()
 				{
 					Game.killBuff('Haggler\'s misery');
-					var buff=Game.gainBuff('haggler luck',60,2);
+					let buff=Game.gainBuff('haggler luck',60,2);
 					Game.Popup('<div style="font-size:80%;">Upgrades are cheaper!</div>',Game.mouseX,Game.mouseY);
 				},
 				fail:function()
 				{
 					Game.killBuff('Haggler\'s luck');
-					var buff=Game.gainBuff('haggler misery',60*60,2);
+					let buff=Game.gainBuff('haggler misery',60*60,2);
 					Game.Popup('<div style="font-size:80%;">Backfire!<br>Upgrades are pricier!</div>',Game.mouseX,Game.mouseY);
 				},
 			},
@@ -176,13 +176,13 @@ M.launch=function()
 				win:function()
 				{
 					Game.killBuff('Nasty goblins');
-					var buff=Game.gainBuff('pixie luck',60,2);
+					let buff=Game.gainBuff('pixie luck',60,2);
 					Game.Popup('<div style="font-size:80%;">Crafty pixies!<br>Buildings are cheaper!</div>',Game.mouseX,Game.mouseY);
 				},
 				fail:function()
 				{
 					Game.killBuff('Crafty pixies');
-					var buff=Game.gainBuff('pixie misery',60*60,2);
+					let buff=Game.gainBuff('pixie misery',60*60,2);
 					Game.Popup('<div style="font-size:80%;">Backfire!<br>Nasty goblins!<br>Buildings are pricier!</div>',Game.mouseX,Game.mouseY);
 				},
 			},
@@ -194,16 +194,16 @@ M.launch=function()
 				costPercent:0.05,
 				win:function()
 				{
-					var spells=[];
-					var selfCost=M.getSpellCost(M.spells['gambler\'s fever dream']);
-					for (var i in M.spells)
+					let spells=[];
+					let selfCost=M.getSpellCost(M.spells['gambler\'s fever dream']);
+					for (let i in M.spells)
 					{if (i!='gambler\'s fever dream' && (M.magic-selfCost)>=M.getSpellCost(M.spells[i])*0.5) spells.push(M.spells[i]);}
 					if (spells.length==0){Game.Popup('<div style="font-size:80%;">No eligible spells!</div>',Game.mouseX,Game.mouseY);return -1;}
-					var spell=choose(spells);
-					var cost=M.getSpellCost(spell)*0.5;
+					let spell=choose(spells);
+					let cost=M.getSpellCost(spell)*0.5;
 					setTimeout(function(spell,cost,seed){return function(){
 						if (Game.seed!=seed) return false;
-						var out=M.castSpell(spell,{cost:cost,failChanceMax:0.5,passthrough:true});
+						let out=M.castSpell(spell,{cost:cost,failChanceMax:0.5,passthrough:true});
 						if (!out)
 						{
 							M.magic+=selfCost;
@@ -224,13 +224,13 @@ M.launch=function()
 				costPercent:0.1,
 				win:function()
 				{
-					var out=Game.SpawnWrinkler();
+					let out=Game.SpawnWrinkler();
 					if (!out){Game.Popup('<div style="font-size:80%;">Unable to spawn a wrinkler!</div>',Game.mouseX,Game.mouseY);return -1;}
 					Game.Popup('<div style="font-size:80%;">Rise, my precious!</div>',Game.mouseX,Game.mouseY);
 				},
 				fail:function()
 				{
-					var out=Game.PopRandomWrinkler();
+					let out=Game.PopRandomWrinkler();
 					if (!out){Game.Popup('<div style="font-size:80%;">Backfire!<br>But no wrinkler was harmed.</div>',Game.mouseX,Game.mouseY);return -1;}
 					Game.Popup('<div style="font-size:80%;">Backfire!<br>So long, ugly...</div>',Game.mouseX,Game.mouseY);
 				},
@@ -245,25 +245,25 @@ M.launch=function()
 				win:function()
 				{
 					Game.killBuff('Magic inept');
-					var buff=Game.gainBuff('magic adept',5*60,10);
+					let buff=Game.gainBuff('magic adept',5*60,10);
 					Game.Popup('<div style="font-size:80%;">Ineptitude diminished!</div>',Game.mouseX,Game.mouseY);
 				},
 				fail:function()
 				{
 					Game.killBuff('Magic adept');
-					var buff=Game.gainBuff('magic inept',10*60,5);
+					let buff=Game.gainBuff('magic inept',10*60,5);
 					Game.Popup('<div style="font-size:80%;">Backfire!<br>Ineptitude magnified!</div>',Game.mouseX,Game.mouseY);
 				},
 			},
 		};
-		M.spellsById=[];var n=0;
-		for (var i in M.spells){M.spells[i].id=n;M.spellsById[n]=M.spells[i];n++;}
+		M.spellsById=[];let n=0;
+		for (let i in M.spells){M.spells[i].id=n;M.spellsById[n]=M.spells[i];n++;}
 		
 		
 		M.computeMagicM=function()
 		{
-			var towers=Math.max(M.parent.amount,1);
-			var lvl=Math.max(M.parent.level,1);
+			let towers=Math.max(M.parent.amount,1);
+			let lvl=Math.max(M.parent.level,1);
 			M.magicM=Math.floor(4+Math.pow(towers,0.6)+Math.log((towers+(lvl-1)*10)/15+1)*15);
 			//old formula :
 			/*
@@ -271,10 +271,10 @@ M.launch=function()
 			if (M.magicM>200)
 			{
 				//diminishing returns starting at 200, being 5% as fast by 400
-				var x=M.magicM;
-				var top=x-200;
+				let x=M.magicM;
+				let top=x-200;
 				top/=200;
-				var top2=top;
+				let top2=top;
 				top*=(1-top/2);
 				if (top2>=1) top=0.5;
 				top=top*0.95+top2*0.05;
@@ -288,7 +288,7 @@ M.launch=function()
 		
 		M.getFailChance=function(spell)
 		{
-			var failChance=0.15;
+			let failChance=0.15;
 			if (Game.hasBuff('Magic adept')) failChance*=0.1;
 			if (Game.hasBuff('Magic inept')) failChance*=5;
 			if (spell.failFunc) failChance=spell.failFunc(failChance);
@@ -297,13 +297,13 @@ M.launch=function()
 		
 		M.castSpell=function(spell,obj)
 		{
-			var obj=obj||{};
-			var out=0;
-			var cost=0;
-			var fail=false;
+			let obj=obj||{};
+			let out=0;
+			let cost=0;
+			let fail=false;
 			if (typeof obj.cost!=='undefined') cost=obj.cost; else cost=M.getSpellCost(spell);
 			if (M.magic<cost) return false;
-			var failChance=M.getFailChance(spell);
+			let failChance=M.getFailChance(spell);
 			if (typeof obj.failChanceSet!=='undefined') failChance=obj.failChanceSet;
 			if (typeof obj.failChanceAdd!=='undefined') failChance+=obj.failChanceAdd;
 			if (typeof obj.failChanceMult!=='undefined') failChance*=obj.failChanceMult;
@@ -325,7 +325,7 @@ M.launch=function()
 				M.magic-=cost;
 				M.magic=Math.max(0,M.magic);
 				
-				var rect=l('grimoireSpell'+spell.id).getBoundingClientRect();
+				let rect=l('grimoireSpell'+spell.id).getBoundingClientRect();
 				Game.SparkleAt((rect.left+rect.right)/2,(rect.top+rect.bottom)/2-24);
 				
 				if (fail) PlaySound('snd/spellFail.mp3',0.75); else PlaySound('snd/spell.mp3',0.75);
@@ -337,13 +337,13 @@ M.launch=function()
 		
 		M.getSpellCost=function(spell)
 		{
-			var out=spell.costMin;
+			let out=spell.costMin;
 			if (spell.costPercent) out+=M.magicM*spell.costPercent;
 			return Math.floor(out);
 		}
 		M.getSpellCostBreakdown=function(spell)
 		{
-			var str='';
+			let str='';
 			if (spell.costPercent) str+=Beautify(spell.costMin)+' magic +'+Beautify(Math.ceil(spell.costPercent*100))+'% of max magic';
 			else str+=Beautify(spell.costMin)+' magic';
 			return str;
@@ -352,13 +352,13 @@ M.launch=function()
 		M.spellTooltip=function(id)
 		{
 			return function(){
-				var me=M.spellsById[id];
+				let me=M.spellsById[id];
 				me.icon=me.icon||[28,12];
-				var cost=Beautify(M.getSpellCost(me));
-				var costBreakdown=M.getSpellCostBreakdown(me);
+				let cost=Beautify(M.getSpellCost(me));
+				let costBreakdown=M.getSpellCostBreakdown(me);
 				if (cost!=costBreakdown) costBreakdown=' <small>('+costBreakdown+')</small>'; else costBreakdown='';
-				var backfire=M.getFailChance(me);
-				var str='<div style="padding:8px 4px;min-width:350px;">'+
+				let backfire=M.getFailChance(me);
+				let str='<div style="padding:8px 4px;min-width:350px;">'+
 				'<div class="icon" style="float:left;margin-left:-8px;margin-top:-8px;background-position:'+(-me.icon[0]*48)+'px '+(-me.icon[1]*48)+'px;"></div>'+
 				'<div class="name">'+me.name+'</div>'+
 				'<div>Magic cost : <b style="color:#'+(cost<=M.magic?'6f6':'f66')+';">'+cost+'</b>'+costBreakdown+'</div>'+
@@ -368,7 +368,7 @@ M.launch=function()
 			};
 		}
 		
-		var str='';
+		let str='';
 		str+='<style>'+
 		'#grimoireBG{background:url(img/shadedBorders.png),url(img/BGgrimoire.jpg);background-size:100% 100%,auto;position:absolute;left:0px;right:0px;top:0px;bottom:16px;}'+
 		'#grimoireContent{position:relative;box-sizing:border-box;padding:4px 24px;}'+
@@ -398,14 +398,14 @@ M.launch=function()
 		str+='<div id="grimoireBG"></div>';
 		str+='<div id="grimoireContent">';
 			str+='<div id="grimoireSpells">';//did you know adding class="shadowFilter" to this cancels the "z-index:1000000001" that displays the selected spell above the tooltip? stacking orders are silly https://philipwalton.com/articles/what-no-one-told-you-about-z-index/
-			for (var i in M.spells)
+			for (let i in M.spells)
 			{
-				var me=M.spells[i];
-				var icon=me.icon||[28,12];
+				let me=M.spells[i];
+				let icon=me.icon||[28,12];
 				str+='<div class="grimoireSpell titleFont" id="grimoireSpell'+me.id+'" '+Game.getDynamicTooltip('Game.ObjectsById['+M.parent.id+'].minigame.spellTooltip('+me.id+')','this')+'><div class="usesIcon shadowFilter grimoireIcon" style="background-position:'+(-icon[0]*48)+'px '+(-icon[1]*48)+'px;"></div><div class="grimoirePrice" id="grimoirePrice'+me.id+'">-</div></div>';
 			}
 			str+='</div>';
-			var icon=[29,14];
+			let icon=[29,14];
 			str+='<div id="grimoireBar" class="smallFramed meterContainer"><div '+Game.getDynamicTooltip('Game.ObjectsById['+M.parent.id+'].minigame.refillTooltip','this')+' id="grimoireLumpRefill" class="usesIcon shadowFilter lumpRefill" style="left:-40px;top:-17px;background-position:'+(-icon[0]*48)+'px '+(-icon[1]*48)+'px;"></div><div id="grimoireBarFull" class="meter filling"></div><div id="grimoireBarText" class="titleFont"></div><div '+Game.getTooltip('<div style="padding:8px;width:300px;font-size:11px;text-align:center;">This is your magic meter. Each spell costs magic to use.<div class="line"></div>Your maximum amount of magic varies depending on your amount of <b>Wizard towers</b>, and their level.<div class="line"></div>Magic refills over time. The lower your magic meter, the slower it refills.</div>')+' style="position:absolute;left:0px;top:0px;right:0px;bottom:0px;"></div></div>';
 			str+='<div id="grimoireInfo"></div>';
 		str+='</div>';
@@ -415,9 +415,9 @@ M.launch=function()
 		M.magicBarTextL=l('grimoireBarText');
 		M.lumpRefill=l('grimoireLumpRefill');
 		M.infoL=l('grimoireInfo');
-		for (var i in M.spells)
+		for (let i in M.spells)
 		{
-			var me=M.spells[i];
+			let me=M.spells[i];
 			AddEvent(l('grimoireSpell'+me.id),'click',function(spell){return function(){PlaySound('snd/tick.mp3');M.castSpell(spell);}}(me));
 		}
 		
@@ -445,7 +445,7 @@ M.launch=function()
 	M.save=function()
 	{
 		//output cannot use ",", ";" or "|"
-		var str=''+
+		let str=''+
 		parseFloat(M.magic)+' '+
 		parseInt(Math.floor(M.spellsCast))+' '+
 		parseInt(Math.floor(M.spellsCastTotal))+
@@ -458,13 +458,13 @@ M.launch=function()
 		//interpret str; called after .init
 		//note : not actually called in the Game's load; see "minigameSave" in main.js
 		if (!str) return false;
-		var i=0;
-		var spl=str.split(' ');
+		let i=0;
+		let spl=str.split(' ');
 		M.computeMagicM();
 		M.magic=parseFloat(spl[i++]||M.magicM);
 		M.spellsCast=parseInt(spl[i++]||0);
 		M.spellsCastTotal=parseInt(spl[i++]||0);
-		var on=parseInt(spl[i++]||0);if (on && Game.ascensionMode!=1) M.parent.switchMinigame(1);
+		let on=parseInt(spl[i++]||0);if (on && Game.ascensionMode!=1) M.parent.switchMinigame(1);
 	}
 	M.reset=function()
 	{
@@ -481,10 +481,10 @@ M.launch=function()
 		M.magic=Math.min(M.magic,M.magicM);
 		if (Game.T%5==0)
 		{
-			for (var i in M.spells)
+			for (let i in M.spells)
 			{
-				var me=M.spells[i];
-				var cost=M.getSpellCost(me);
+				let me=M.spells[i];
+				let cost=M.getSpellCost(me);
 				l('grimoirePrice'+me.id).innerHTML=Beautify(cost);
 				if (M.magic<cost) l('grimoireSpell'+me.id).className='grimoireSpell titleFont';
 				else l('grimoireSpell'+me.id).className='grimoireSpell titleFont ready';
@@ -501,4 +501,4 @@ M.launch=function()
 	}
 	M.init(l('rowSpecial'+M.parent.id));
 }
-var M=0;
+let M=0;

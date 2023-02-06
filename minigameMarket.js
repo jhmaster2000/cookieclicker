@@ -1,9 +1,9 @@
-﻿var M={};
+﻿let M={};
 M.parent=Game.Objects['Bank'];
 M.parent.minigame=M;
 M.launch=function()
 {
-	var M=this;
+	let M=this;
 	M.name=M.parent.minigameName;
 	M.init=function(div)
 	{
@@ -107,17 +107,17 @@ M.launch=function()
 				desc:'Avoid the uncouth nastiness of mass layoffs and hostile takeovers by delegating the purchase, management, and eventual dissolution of other companies to the boys at <b>Polyvalent Acquisitions</b>. Let \'em deal with it!',
 			},
 		};
-		M.goodsById=[];var n=0;
-		for (var i in M.goods){var it=M.goods[i];it.id=n;it.hidden=false;it.active=false;it.last=0;it.building=Game.Objects[i];it.stock=0;it.mode=0;it.dur=0;it.val=1;it.vals=[it.val];it.d=0;M.goodsById[n]=it;it.icon=[it.building.iconColumn,33];n++;}
+		M.goodsById=[];let n=0;
+		for (let i in M.goods){let it=M.goods[i];it.id=n;it.hidden=false;it.active=false;it.last=0;it.building=Game.Objects[i];it.stock=0;it.mode=0;it.dur=0;it.val=1;it.vals=[it.val];it.d=0;M.goodsById[n]=it;it.icon=[it.building.iconColumn,33];n++;}
 		
 		M.goodTooltip=function(id)
 		{
 			return function(){
-				var me=M.goodsById[id];
-				var delta=M.goodDelta(id);
-				var val=M.getGoodPrice(me)
+				let me=M.goodsById[id];
+				let delta=M.goodDelta(id);
+				let val=M.getGoodPrice(me)
 				icon=me.icon||[0,0];
-				var str='<div style="padding:8px 4px;min-width:350px;">'+
+				let str='<div style="padding:8px 4px;min-width:350px;">'+
 				'<div class="icon" style="float:left;margin-left:-8px;margin-top:-8px;background-position:'+(-icon[0]*48)+'px '+(-icon[1]*48)+'px;"></div>'+
 				'<div class="name">'+me.name+' <span style="font-size:12px;opacity:0.8;">(from <span style="font-variant:small-caps;">'+me.company+'</span>)</span> <span class="bankSymbol">'+me.symbol+' <span class="bankSymbolNum'+(delta>=0?' bankSymbolUp':delta<0?' bankSymbolDown':'')+'">'+(delta+''+(delta==Math.floor(delta)?'.00':(delta*10)==Math.floor(delta*10)?'0':'')+'%')+'</span></span></div>'+
 				'<div class="line"></div><div class="description">'+
@@ -131,14 +131,14 @@ M.launch=function()
 		M.tradeTooltip=function(id,n)
 		{
 			return function(){
-				var me=M.goodsById[id];
-				var icon=me.icon||[0,0];
-				var val=M.getGoodPrice(me)
-				var cost=Game.cookiesPsRawHighest*val;
-				var buyOrSell=n>0;
-				var overhead=1;
-				var stock=me.stock;
-				var maxStock=M.getGoodMaxStock(me);
+				let me=M.goodsById[id];
+				let icon=me.icon||[0,0];
+				let val=M.getGoodPrice(me)
+				let cost=Game.cookiesPsRawHighest*val;
+				let buyOrSell=n>0;
+				let overhead=1;
+				let stock=me.stock;
+				let maxStock=M.getGoodMaxStock(me);
 				if (buyOrSell) overhead*=1+0.01*(20*Math.pow(0.95,M.brokers));
 				cost*=overhead;
 				if (n==10000) n=Math.floor(Game.cookies/cost);
@@ -146,7 +146,7 @@ M.launch=function()
 				n=Math.abs(n);
 				if (buyOrSell) n=Math.min(n,maxStock-stock);
 				if (!buyOrSell) n=Math.min(n,stock);
-				var str='<div style="padding:8px 4px;min-width:128px;text-align:center;font-size:11px;">'+
+				let str='<div style="padding:8px 4px;min-width:128px;text-align:center;font-size:11px;">'+
 					'<div style="font-size:9px;opacity:0.6;">Stock: <b'+((!buyOrSell && stock==0)?' class="red"':'')+'>'+Beautify(stock)+'</b>/<b'+((buyOrSell && stock>=maxStock)?' class="red"':'')+'>'+Beautify(maxStock)+'</b></div>'+
 					'<div class="line"></div>'+
 					'<div>'+(buyOrSell?'Buy':'Sell')+' <b>'+Beautify(n)+'</b>x <div class="icon" style="pointer-events:none;display:inline-block;transform:scale(0.5);margin:-16px -18px -16px -14px;vertical-align:middle;background-position:'+(-me.icon[0]*48)+'px '+(-me.icon[1]*48)+'px;"></div> '+me.name+'</div>'+
@@ -165,9 +165,9 @@ M.launch=function()
 		
 		M.goodDelta=function(id,back)//if back is 0 we get the current step; else get current step -back
 		{
-			var back=back||0;
-			var me=M.goodsById[id];
-			var val=0;
+			let back=back||0;
+			let me=M.goodsById[id];
+			let val=0;
 			if (me.vals.length>=(2+back))
 			{
 				val=me.vals[0+back]/me.vals[1+back]-1;
@@ -178,7 +178,7 @@ M.launch=function()
 		
 		M.getGoodMaxStock=function(good)
 		{
-			var bonus=0;
+			let bonus=0;
 			if (M.officeLevel>0) bonus+=25;
 			if (M.officeLevel>1) bonus+=50;
 			if (M.officeLevel>2) bonus+=75;
@@ -191,10 +191,10 @@ M.launch=function()
 		}
 		M.buyGood=function(id,n)
 		{
-			var me=M.goodsById[id];
-			var costInS=M.getGoodPrice(me);
-			var cost=Game.cookiesPsRawHighest*costInS;
-			var overhead=1+0.01*(20*Math.pow(0.95,M.brokers));
+			let me=M.goodsById[id];
+			let costInS=M.getGoodPrice(me);
+			let cost=Game.cookiesPsRawHighest*costInS;
+			let overhead=1+0.01*(20*Math.pow(0.95,M.brokers));
 			cost*=overhead;
 			if (n==10000) n=Math.floor(Game.cookies/cost);
 			n=Math.min(n,M.getGoodMaxStock(me)-me.stock);
@@ -204,10 +204,10 @@ M.launch=function()
 				M.profit-=costInS*overhead*n;
 				Game.Spend(cost*n);
 				me.stock+=n;
-				var min=10000;
-				for (var i=0;i<M.goodsById.length;i++)
+				let min=10000;
+				for (let i=0;i<M.goodsById.length;i++)
 				{
-					var it=M.goodsById[i];
+					let it=M.goodsById[i];
 					min=Math.min(min,it.stock);
 					if (it.stock>=1000) Game.Win('Full warehouses');
 				}
@@ -221,12 +221,12 @@ M.launch=function()
 		}
 		M.sellGood=function(id,n)
 		{
-			var me=M.goodsById[id];
+			let me=M.goodsById[id];
 			if (n==10000) n=me.stock;
 			n=Math.min(n,me.stock);
 			if (n>0 && me.last!=1 && me.stock>0)
 			{
-				var costInS=M.getGoodPrice(me);
+				let costInS=M.getGoodPrice(me);
 				if (costInS*n>=86400) Game.Win('Make my day');
 				M.profit+=costInS*n;
 				if (M.profit>0) Game.Win('Initial public offering');
@@ -249,7 +249,7 @@ M.launch=function()
 		
 		M.updateGoodStyle=function(id)
 		{
-			var me=M.goodsById[id];
+			let me=M.goodsById[id];
 			if (me.active)
 			{
 				me.l.style.display='inline-block';
@@ -286,9 +286,9 @@ M.launch=function()
 		M.officeTooltip=function()
 		{
 			return function(){
-				var me=M.offices[M.officeLevel];
-				var icon=me.icon||[0,0];
-				var str='<div style="padding:8px 4px;min-width:350px;">'+
+				let me=M.offices[M.officeLevel];
+				let icon=me.icon||[0,0];
+				let str='<div style="padding:8px 4px;min-width:350px;">'+
 				'<div class="icon" style="float:left;margin-left:-8px;margin-top:-8px;background-position:'+(-icon[0]*48)+'px '+(-icon[1]*48)+'px;"></div>'+
 				'<div class="name">'+me.name+' <span style="font-size:11px;opacity:0.6;">[Level '+(M.officeLevel+1)+' offices]</span></div>'+
 				'<div class="line"></div><div class="description" style="font-size:11px;">'+
@@ -311,8 +311,8 @@ M.launch=function()
 		M.brokersTooltip=function()
 		{
 			return function(){
-				var icon=[1,33];
-				var str='<div style="padding:8px 4px;min-width:350px;">'+
+				let icon=[1,33];
+				let str='<div style="padding:8px 4px;min-width:350px;">'+
 				'<div class="icon" style="float:left;margin-left:-8px;margin-top:-8px;background-position:'+(-icon[0]*48)+'px '+(-icon[1]*48)+'px;"></div>'+
 				'<div class="name">Stockbrokers <span style="font-size:11px;opacity:0.6;">(you have '+Beautify(M.brokers)+')</span></div>'+
 				'<div class="line"></div><div class="description" style="font-size:11px;">'+
@@ -340,8 +340,8 @@ M.launch=function()
 		M.loanTooltip=function(id)
 		{
 			return function(){
-				var loan=M.loanTypes[id-1];
-				var str='<div style="padding:8px 4px;min-width:350px;">'+
+				let loan=M.loanTypes[id-1];
+				let str='<div style="padding:8px 4px;min-width:350px;">'+
 				'<div class="name">Take out '+loan[0]+'</div>'+
 				'<div class="line"></div><div class="description" style="font-size:11px;">'+
 					'By taking this loan, you will get <b class="green">+'+Math.round((loan[1]-1)*100)+'%</b> CpS for the next <b>'+Game.sayTime(60*loan[2]*Game.fps)+'</b>.<br>'+
@@ -354,7 +354,7 @@ M.launch=function()
 		}
 		M.takeLoan=function(id,interest)
 		{
-			var loan=M.loanTypes[id-1];
+			let loan=M.loanTypes[id-1];
 			if (!interest)
 			{
 				if (Game.hasBuff('Loan '+id) || Game.hasBuff('Loan '+id+' (interest)')) return false;
@@ -372,7 +372,7 @@ M.launch=function()
 		
 		M.getOppSlots=function()
 		{
-			var slots=0;
+			let slots=0;
 			if (M.officeLevel>0) slots++;
 			if (M.officeLevel>2) slots++;
 			if (M.officeLevel>4) slots++;
@@ -384,7 +384,7 @@ M.launch=function()
 		M.oppTooltip=function()
 		{
 			return function(){
-				var str='<div style="padding:8px 4px;min-width:350px;">'+
+				let str='<div style="padding:8px 4px;min-width:350px;">'+
 				'<div class="name">Generate opportunity</div>'+
 				'<div class="line"></div><div class="description" style="font-size:11px;">'+
 					'Pressing this button gives you up to 3 possible actions to choose from, depending on your office level.<br>These actions will let you manipulate the stock market to some degree, though some are riskier than others.<br>You may only generate an opportunity once an hour, though this can be refreshed with a sugar lump.'+
@@ -400,7 +400,7 @@ M.launch=function()
 		};
 		
 		
-		var str='';
+		let str='';
 		str+='<style>'+
 		'#bankBG{background:url(img/shadedBorders.png),url(img/BGmarket.jpg);background-size:100% 100%,auto;position:absolute;left:0px;right:0px;top:0px;bottom:16px;}'+
 		'#bankContent{position:relative;box-sizing:border-box;padding:4px;text-align:center;}'+
@@ -441,9 +441,9 @@ M.launch=function()
 					/*'<div style="display:inline-block;padding:0px 4px;"><div id="bankOpp" class="bankButton bankButtonBuy bankButtonOff" '+Game.getDynamicTooltip('Game.ObjectsById['+M.parent.id+'].minigame.oppTooltip()','this')+'>Generate opportunity</div> <div class="bankSymbol" style="position:relative;font-size:10px;color:rgba(255,255,255,0.6);padding-left:16px;"><div '+Game.getDynamicTooltip('Game.ObjectsById['+M.parent.id+'].minigame.refillTooltip','this')+' id="bankLumpRefill" class="usesIcon shadowFilter lumpRefill" style="left:-18px;top:-18px;background-position:'+(-29*48)+'px '+(-14*48)+'px;"></div>refresh</div></div>'+*/
 				'</div>';
 			
-			for (var i=0;i<M.goodsById.length;i++)
+			for (let i=0;i<M.goodsById.length;i++)
 			{
-				var me=M.goodsById[i];
+				let me=M.goodsById[i];
 				str+='<div class="bankGood" id="bankGood-'+me.id+'">'+
 					'<div '+Game.getDynamicTooltip('Game.ObjectsById['+M.parent.id+'].minigame.goodTooltip('+me.id+')','this')+'>'+
 						'<div class="icon" style="z-index:20;pointer-events:none;position:absolute;left:0px;top:0px;transform:scale(0.5);margin:-16px -16px;background-position:'+(-me.icon[0]*48)+'px '+(-me.icon[1]*48)+'px;"></div>'+
@@ -475,21 +475,21 @@ M.launch=function()
 		
 		
 		
-		var str='';
+		let str='';
 		str+='<div style="position:absolute;left:2px;top:2px;z-index:10;">'+
 			'<div id="bankGraphLines" class="bankSimpleButton" style="background:rgba(0,0,0,0.5);padding:2px;border-radius:4px;">Line style</div>'+
 			'<div id="bankGraphCols" class="bankSimpleButton" style="background:rgba(0,0,0,0.5);padding:2px;border-radius:4px;">Color mode</div>'+
 			(Game.sesame?'<div id="bankCheatSpeed" class="bankSimpleButton" style="background:rgba(0,0,0,0.5);padding:2px;border-radius:4px;">Toggle speed</div>':'')+
 		'</div>'+
 		'<div style="font-family:Arial Black;font-weight:40px;letter-spacing:2px;opacity:0.15;font-weight:bold;position:absolute;left:6px;bottom:6px;z-index:10;pointer-events:none;">DOUGH JONES INDEX</div>';
-		for (var i=0;i<M.goodsById.length;i++)
+		for (let i=0;i<M.goodsById.length;i++)
 		{
-			var me=M.goodsById[i];
+			let me=M.goodsById[i];
 			str+='<div id="bankGood-'+me.id+'-graphIcon" class="icon bankGraphIcon" style="pointer-events:none;transform:scale(0.5);background-position:'+(-me.icon[0]*48)+'px '+(-me.icon[1]*48)+'px;"></div>';
 		}
 		l('bankGraphBox').innerHTML=str;
 		
-		var div=document.createElement('canvas');
+		let div=document.createElement('canvas');
 		div.id='bankGraph';
 		div.style.marginLeft='-14px';
 		div.width=64;
@@ -522,7 +522,7 @@ M.launch=function()
 		}
 		
 		AddEvent(l('bankOfficeUpgrade'),'click',function(e){
-			var me=M.offices[M.officeLevel];
+			let me=M.offices[M.officeLevel];
 			if (me.cost && Game.Objects['Cursor'].amount>=me.cost[0] && Game.Objects['Cursor'].level>=me.cost[1])
 			{
 				Game.Objects['Cursor'].sacrifice(me.cost[0]);
@@ -552,9 +552,9 @@ M.launch=function()
 			if (M.takeLoan(3)) {PlaySound('snd/cashIn2.mp3',0.6);Game.SparkleOn(e.target);}
 		});
 		
-		for (var i=0;i<M.goodsById.length;i++)
+		for (let i=0;i<M.goodsById.length;i++)
 		{
-			var me=M.goodsById[i];
+			let me=M.goodsById[i];
 			me.l=l('bankGood-'+me.id);
 			me.symbolNumL=l('bankGood-'+me.id+'-sym');
 			me.valL=l('bankGood-'+me.id+'-val');
@@ -574,8 +574,8 @@ M.launch=function()
 			AddEvent(l('bankGood-'+i+'-viewHide'),'click',function(i){return function(e){
 				if (Game.keys[16])//solo with shift-click
 				{
-					var mode=M.goodsById[i].hidden;
-					for (var ii=0;ii<M.goodsById.length;ii++)
+					let mode=M.goodsById[i].hidden;
+					for (let ii=0;ii<M.goodsById.length;ii++)
 					{
 						if (ii==i) M.goodsById[ii].hidden=!mode;
 						else if (!mode) M.goodsById[ii].hidden=false;
@@ -624,25 +624,25 @@ M.launch=function()
 		
 		AddEvent(M.graph,'mousemove',function(e){
 			//get which graph line the mouse is over
-			var x=e.layerX;
-			var y=e.layerY;
-			var width=M.graph.width;
-			var height=M.graph.height;
-			var span=Math.max(4,Math.ceil(width/65));//6;
-			var isOnLine=-1;
-			var rows=Math.ceil(width/span);
+			let x=e.layerX;
+			let y=e.layerY;
+			let width=M.graph.width;
+			let height=M.graph.height;
+			let span=Math.max(4,Math.ceil(width/65));//6;
+			let isOnLine=-1;
+			let rows=Math.ceil(width/span);
 			bankGraphMouseDetect:
-			for (var i=M.goodsById.length-1;i>=0;i--)
+			for (let i=M.goodsById.length-1;i>=0;i--)
 			{
-				var id=i;
-				var me=M.goodsById[id];
+				let id=i;
+				let me=M.goodsById[id];
 				if (me.hidden || !me.active) continue;
-				for (var iR=0;iR<rows;iR++)
+				for (let iR=0;iR<rows;iR++)
 				{
 					if (me.vals.length>=(2+iR))
 					{
-						var min=Math.max(me.vals[0+iR],me.vals[1+iR]);
-						var max=Math.abs((me.vals[0+iR]-me.vals[1+iR]));
+						let min=Math.max(me.vals[0+iR],me.vals[1+iR]);
+						let max=Math.abs((me.vals[0+iR]-me.vals[1+iR]));
 						if (x>=width-span*iR-span-2 && x<=width-span*iR+2 && y>=height-min*M.graphScale-6 && y<=height-min*M.graphScale+Math.max(3,max*M.graphScale)+6)
 						{
 							isOnLine=i;
@@ -679,7 +679,7 @@ M.launch=function()
 	{
 		M.graph.width=l('bankContent').offsetWidth-22;
 		M.graph.height=300;//l('bankContent').offsetHeight;
-		var ctx=M.graphCtx;
+		let ctx=M.graphCtx;
 		ctx.fillStyle='#fff';
 		ctx.fillRect(0,0,M.graph.width,M.graph.height);
 		M.checkGraphScale();
@@ -688,16 +688,16 @@ M.launch=function()
 	M.save=function()
 	{
 		//output cannot use ",", ";" or "|"
-		var str=''+
+		let str=''+
 		parseInt(M.officeLevel)+':'+
 		parseInt(M.brokers)+':'+
 		parseInt(M.graphLines)+':'+
 		parseFloat(M.profit)+':'+
 		parseInt(M.graphCols)+':'+
 		' ';
-		for (var iG=0;iG<M.goodsById.length;iG++)
+		for (let iG=0;iG<M.goodsById.length;iG++)
 		{
-			var it=M.goodsById[iG];
+			let it=M.goodsById[iG];
 			str+=parseInt(it.val*100)+':'+parseInt(it.mode)+':'+parseInt(it.d*100)+':'+parseInt(it.dur)+':'+parseInt(it.stock)+':'+parseInt(it.hidden?1:0)+':'+parseInt(it.last)+'!';
 		}
 		str+=' '+parseInt(M.parent.onMinigame?'1':'0');
@@ -708,10 +708,10 @@ M.launch=function()
 		//interpret str; called after .init
 		//note : not actually called in the Game's load; see "minigameSave" in main.js
 		if (!str) return false;
-		var i=0;
-		var spl=str.split(' ');
-		var spl2=spl[i++].split(':');
-		var i2=0;
+		let i=0;
+		let spl=str.split(' ');
+		let spl2=spl[i++].split(':');
+		let i2=0;
 		M.officeLevel=parseInt(spl2[i2++]||M.officeLevel);
 		M.brokers=parseInt(spl2[i2++]||M.brokers);
 		M.graphLines=parseInt(spl2[i2++]||M.graphLines);
@@ -719,12 +719,12 @@ M.launch=function()
 		M.graphCols=parseInt(spl2[i2++]||M.graphCols);M.setCols();
 		M.tickT=0;
 		
-		var goods=spl[i++].split('!');
-		for (var iG=0;iG<M.goodsById.length;iG++)
+		let goods=spl[i++].split('!');
+		for (let iG=0;iG<M.goodsById.length;iG++)
 		{
 			if (!goods[iG]) continue;
-			var it=M.goodsById[iG];
-			var itData=goods[iG].split(':');
+			let it=M.goodsById[iG];
+			let itData=goods[iG].split(':');
 			it.val=parseInt(itData[0])/100;
 			it.mode=parseInt(itData[1]);
 			it.d=parseInt(itData[2])/100;
@@ -739,7 +739,7 @@ M.launch=function()
 		}
 		M.onResize();
 		
-		var on=parseInt(spl[i++]||0);if (on && Game.ascensionMode!=1) M.parent.switchMinigame(1);
+		let on=parseInt(spl[i++]||0);if (on && Game.ascensionMode!=1) M.parent.switchMinigame(1);
 	}
 	M.reset=function(hard)
 	{
@@ -754,9 +754,9 @@ M.launch=function()
 		M.lastTickDrawn=0;
 		M.profit=0;
 		
-		for (var i=0;i<M.goodsById.length;i++)
+		for (let i=0;i<M.goodsById.length;i++)
 		{
-			var it=M.goodsById[i];
+			let it=M.goodsById[i];
 			it.stock=0;
 			it.mode=choose([0,1,1,2,2,3,4,5]);
 			it.dur=Math.floor(10+Math.random()*990);
@@ -769,7 +769,7 @@ M.launch=function()
 			if (it.l) M.updateGoodStyle(it.id);
 		}
 		M.onResize();
-		for (var i=0;i<15;i++)
+		for (let i=0;i<15;i++)
 		{
 			M.tick();
 		}
@@ -782,9 +782,9 @@ M.launch=function()
 	M.secondsPerTick=60;//1 tick every minute
 	M.tick=function()
 	{
-		for (var i=0;i<M.goodsById.length;i++)
+		for (let i=0;i<M.goodsById.length;i++)
 		{
-			var me=M.goodsById[i];
+			let me=M.goodsById[i];
 			me.last=0;
 			
 			me.d*=0.97;
@@ -820,11 +820,11 @@ M.launch=function()
 			}
 			if (me.val<2) me.val+=(2-me.val)*0.1;
 			me.val=Math.max(me.val,0.01);*/
-			/*var cutoff=5;
-			var minvalue=1;
+			/*let cutoff=5;
+			let minvalue=1;
 			if (me.val<=cutoff)
 			{
-				var s=Math.max(0,me.val)/cutoff;
+				let s=Math.max(0,me.val)/cutoff;
 				me.val=((2*minvalue-cutoff)*s+(2*cutoff-3*minvalue))*s*s+minvalue;//low soft-cap between 1 and 5
 			}*/
 			if (me.val<5) me.val+=(5-me.val)*0.5;
@@ -862,10 +862,10 @@ M.launch=function()
 		
 		if (Game.T%10==0)
 		{
-			var doResize=false;
-			for (var i=0;i<M.goodsById.length;i++)
+			let doResize=false;
+			for (let i=0;i<M.goodsById.length;i++)
 			{
-				var me=M.goodsById[i];
+				let me=M.goodsById[i];
 				
 				if (!me.active && me.building.highest>0) {me.active=true;me.hidden=false;M.toRedraw=2;if (me.l){M.updateGoodStyle(me.id);doResize=true;}}
 			}
@@ -882,23 +882,23 @@ M.launch=function()
 		//if the scale is too narrow to accommodate all goods, zoom out
 		//if the scale is too wide, zoom back in (but with a higher margin)
 		//this is done in increments of 50
-		var currentSize=M.graph.height;
+		let currentSize=M.graph.height;
 		if (!currentSize) return false;
-		var maxVal=0;
-		for (var i=0;i<M.goodsById.length;i++)
+		let maxVal=0;
+		for (let i=0;i<M.goodsById.length;i++)
 		{
-			var me=M.goodsById[i];
+			let me=M.goodsById[i];
 			if (me.hidden) continue;
 			//if (me.id==0) me.vals[0]=50+50*Math.sin(Date.now()*0.0002+me.id);
-			for (var ii=0;ii<me.vals.length;ii++)
+			for (let ii=0;ii<me.vals.length;ii++)
 			{
 				maxVal=Math.max(maxVal,me.vals[ii]);
 			}
 		}
-		var neededSize=Math.max(maxVal,10)+10;
-		var newScale=(Math.max(1,currentSize/neededSize));
-		var dif=(currentSize/M.graphScale)/neededSize;
-		var dif=(currentSize/M.graphScale)-neededSize;
+		let neededSize=Math.max(maxVal,10)+10;
+		let newScale=(Math.max(1,currentSize/neededSize));
+		let dif=(currentSize/M.graphScale)/neededSize;
+		let dif=(currentSize/M.graphScale)-neededSize;
 		if (M.graphScale!=newScale && dif>5 || dif<-5)
 		{
 			M.graphScale=newScale;
@@ -929,10 +929,10 @@ M.launch=function()
 			draw more graph data to the right
 			if (full), do a full redraw instead
 		*/
-		var ctx=M.graphCtx;
-		var width=M.graph.width;
-		var span=Math.max(4,Math.ceil(width/65));//6;
-		var height=M.graph.height;
+		let ctx=M.graphCtx;
+		let width=M.graph.width;
+		let span=Math.max(4,Math.ceil(width/65));//6;
+		let height=M.graph.height;
 		ctx.globalAlpha=1;
 		if (!full) ctx.drawImage(M.graph,-span,0);
 		ctx.fillStyle=M.cols.bg;
@@ -941,40 +941,40 @@ M.launch=function()
 		ctx.lineWidth=2;
 		ctx.globalAlpha=1;
 		
-		var rows=(full?Math.ceil(width/span):1);
+		let rows=(full?Math.ceil(width/span):1);
 		
-		for (var i=0;i<height/M.graphScale;i+=2)//horizontal lines (1 every 2 units)
+		for (let i=0;i<height/M.graphScale;i+=2)//horizontal lines (1 every 2 units)
 		{
 			if (i%10!=0) ctx.fillStyle=M.cols.line1; else ctx.fillStyle=M.cols.line2;
 			ctx.fillRect(width-span*rows,height-Math.floor(i*M.graphScale),span*rows,1);
 		}
-		for (var iR=0;iR<rows;iR++)//vertical lines (1 every 10 ticks)
+		for (let iR=0;iR<rows;iR++)//vertical lines (1 every 10 ticks)
 		{
 			if ((iR-M.ticks)%10!=0) continue;
 			if ((iR-M.ticks)%60!=0) ctx.fillStyle=M.cols.line1; else ctx.fillStyle=M.cols.line2;
 			ctx.fillRect(width-span*iR-1,0,1,height);
 		}
-		for (var i=0;i<M.goodsById.length+1;i++)
+		for (let i=0;i<M.goodsById.length+1;i++)
 		{
 			//some trickery going on here to always display the M.hoverOnGood bars above the others
-			var id=i;
+			let id=i;
 			if (i==M.goodsById.length) id=M.hoverOnGood;
 			else if (i==M.hoverOnGood) continue;
 			if (id==-1) continue;
-			var me=M.goodsById[id];
+			let me=M.goodsById[id];
 			if (me.hidden || !me.active) continue;
-			for (var iR=0;iR<rows;iR++)
+			for (let iR=0;iR<rows;iR++)
 			{
 				if (me.vals.length>=(2+iR))
 				{
-					var delta=M.goodDelta(me.id,iR);
+					let delta=M.goodDelta(me.id,iR);
 					
 					if (M.graphLines==0)
 					{
-						var min=Math.max(me.vals[0+iR],me.vals[1+iR]);
-						var max=Math.abs((me.vals[0+iR]-me.vals[1+iR]));
-						var min2=Math.abs(Math.sin((M.ticks-iR)*11+id*137))*max*2;
-						var max2=min2+Math.abs(Math.sin((M.ticks-iR)*13+id*139))*max*2;
+						let min=Math.max(me.vals[0+iR],me.vals[1+iR]);
+						let max=Math.abs((me.vals[0+iR]-me.vals[1+iR]));
+						let min2=Math.abs(Math.sin((M.ticks-iR)*11+id*137))*max*2;
+						let max2=min2+Math.abs(Math.sin((M.ticks-iR)*13+id*139))*max*2;
 						if (M.hoverOnGood==id)
 						{
 							ctx.fillStyle=M.cols.highlight;
@@ -1016,10 +1016,10 @@ M.launch=function()
 			M.lastTickDrawn=M.ticks;
 			M.drawGraph(M.toRedraw==2?true:false);
 			
-			for (var i=0;i<M.goodsById.length;i++)
+			for (let i=0;i<M.goodsById.length;i++)
 			{
-				var me=M.goodsById[i];
-				var val=M.goodDelta(me.id);
+				let me=M.goodsById[i];
+				let val=M.goodDelta(me.id);
 				me.symbolNumL.innerHTML=val+''+(val==Math.floor(val)?'.00':(val*10)==Math.floor(val*10)?'0':'')+'%'/*+', '+['stable','slow rise','slow fall','fast rise','fast fall','chaotic'][me.mode]*/;
 				if (val>=0) {me.symbolNumL.classList.add('bankSymbolUp');me.symbolNumL.classList.remove('bankSymbolDown');}
 				else if (val<0) {me.symbolNumL.classList.remove('bankSymbolUp');me.symbolNumL.classList.add('bankSymbolDown');}
@@ -1039,7 +1039,7 @@ M.launch=function()
 		}
 		if (Game.drawT%10==0)
 		{
-			var office=M.offices[M.officeLevel];
+			let office=M.offices[M.officeLevel];
 			l('bankOfficeIcon').style.backgroundPosition=(-office.icon[0]*48)+'px '+(-office.icon[1]*48)+'px';
 			l('bankOfficeName').innerHTML=office.name;
 			l('bankOfficeUpgrade').innerHTML='Upgrade ('+office.cost[0]+' cursors)';
@@ -1061,13 +1061,13 @@ M.launch=function()
 			if (M.officeLevel<=4) l('bankLoan3').style.display='none';
 			else l('bankLoan3').style.removeProperty('display');
 			
-			for (var id=1;id<4;id++)
+			for (let id=1;id<4;id++)
 			{
 				if (Game.hasBuff('Loan '+id) || Game.hasBuff('Loan '+id+' (interest)')) l('bankLoan'+id).classList.add('bankButtonOff');
 				else l('bankLoan'+id).classList.remove('bankButtonOff');
 			}
 			
-			var it=l('bankBalance');
+			let it=l('bankBalance');
 			it.innerHTML=(M.profit<0?'-':'')+'$'+Beautify(Math.abs(M.profit),2);
 			if (M.profit>0) {it.classList.add('bankSymbolUp');it.classList.remove('bankSymbolDown');}
 			else if (M.profit<0) {it.classList.add('bankSymbolDown');it.classList.remove('bankSymbolUp');}
@@ -1077,4 +1077,4 @@ M.launch=function()
 	}
 	M.init(l('rowSpecial'+M.parent.id));
 }
-var M=0;
+let M=0;

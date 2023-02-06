@@ -1,9 +1,9 @@
-﻿var M={};
+﻿let M={};
 M.parent=Game.Objects['Farm'];
 M.parent.minigame=M;
 M.launch=function()
 {
-	var M=this;
+	let M=this;
 	M.name=M.parent.minigameName;
 	M.init=function(div)
 	{
@@ -142,7 +142,7 @@ M.launch=function()
 				{
 					if (age>=this.mature)
 					{
-						var moni=Math.min(Game.cookies*0.03,Game.cookiesPs*60*30);
+						let moni=Math.min(Game.cookies*0.03,Game.cookiesPs*60*30);
 						if (moni!=0)
 						{
 							Game.Earn(moni);
@@ -168,7 +168,7 @@ M.launch=function()
 				{
 					if (age>=this.mature)
 					{
-						var moni=Math.min(Game.cookies*0.03,Game.cookiesPs*60*3);
+						let moni=Math.min(Game.cookies*0.03,Game.cookiesPs*60*3);
 						if (moni!=0)
 						{
 							Game.Earn(moni);
@@ -193,7 +193,7 @@ M.launch=function()
 				{
 					if (age>=this.mature)
 					{
-						var moni=Math.min(Game.cookies*0.03,Game.cookiesPs*60*3);
+						let moni=Math.min(Game.cookies*0.03,Game.cookiesPs*60*3);
 						if (moni!=0)
 						{
 							Game.Earn(moni);
@@ -344,7 +344,7 @@ M.launch=function()
 				{
 					if (age>=this.mature)
 					{
-						var moni=Math.min(Game.cookies*0.04,Game.cookiesPs*60*60);
+						let moni=Math.min(Game.cookies*0.04,Game.cookiesPs*60*60);
 						if (moni!=0)
 						{
 							Game.Earn(moni);
@@ -391,7 +391,7 @@ M.launch=function()
 				{
 					if (age>=this.mature)
 					{
-						var moni=Math.min(Game.cookies*0.08,Game.cookiesPs*60*60*2);
+						let moni=Math.min(Game.cookies*0.08,Game.cookiesPs*60*60*2);
 						if (moni!=0)
 						{
 							Game.Earn(moni);
@@ -418,7 +418,7 @@ M.launch=function()
 				q:'An archaic mold that spreads its spores to the surrounding dirt through simple pod explosion.',
 				onDie:function(x,y)
 				{
-					var moni=Math.min(Game.cookies*0.01,Game.cookiesPs*60)*Math.random();
+					let moni=Math.min(Game.cookies*0.01,Game.cookiesPs*60)*Math.random();
 					if (moni!=0)
 					{
 						Game.Earn(moni);
@@ -443,7 +443,7 @@ M.launch=function()
 				q:'Jammed full of warm spores; some forest walkers often describe the smell as similar to passing by a bakery.',
 				onDie:function(x,y)
 				{
-					var moni=Math.min(Game.cookies*0.03,Game.cookiesPs*60*5)*Math.random();
+					let moni=Math.min(Game.cookies*0.03,Game.cookiesPs*60*5)*Math.random();
 					if (moni!=0)
 					{
 						Game.Earn(moni);
@@ -579,8 +579,8 @@ M.launch=function()
 				},
 			},
 		};
-		M.plantsById=[];var n=0;
-		for (var i in M.plants)
+		M.plantsById=[];let n=0;
+		for (let i in M.plants)
 		{
 			M.plants[i].unlocked=0;
 			M.plants[i].id=n;
@@ -595,7 +595,7 @@ M.launch=function()
 		M.getUnlockedN=function()
 		{
 			M.plantsUnlockedN=0;
-			for (var i in M.plants){if (M.plants[i].unlocked) M.plantsUnlockedN++;}
+			for (let i in M.plants){if (M.plants[i].unlocked) M.plantsUnlockedN++;}
 			if (M.plantsUnlockedN>=M.plantsN)
 			{
 				Game.Win('Keeper of the conservatory');
@@ -616,16 +616,16 @@ M.launch=function()
 		
 		M.computeMatures=function()
 		{
-			var mult=1;
+			let mult=1;
 			if (Game.HasAchiev('Seedless to nay')) mult=0.95;
-			for (var i in M.plants)
+			for (let i in M.plants)
 			{
 				M.plants[i].mature=M.plants[i].matureBase*mult;
 			}
 		}
 		
 		M.plantContam={};
-		for (var i in M.plants)
+		for (let i in M.plants)
 		{
 			if (M.plants[i].contam) M.plantContam[M.plants[i].key]=M.plants[i].contam;
 		}
@@ -634,7 +634,7 @@ M.launch=function()
 		{
 			//get possible mutations given a list of neighbors
 			//note : neighs stands for neighbors, not horsey noises
-			var muts=[];
+			let muts=[];
 			
 			if (neighsM['bakerWheat']>=2) muts.push(['bakerWheat',0.2],['thumbcorn',0.05],['bakeberry',0.001]);
 			if (neighsM['bakerWheat']>=1 && neighsM['thumbcorn']>=1) muts.push(['cronerice',0.01]);
@@ -694,25 +694,25 @@ M.launch=function()
 		{
 			//some plants apply effects to surrounding tiles
 			//this function computes those effects by creating a grid in which those effects stack
-			for (var y=0;y<6;y++)
+			for (let y=0;y<6;y++)
 			{
-				for (var x=0;x<6;x++)
+				for (let x=0;x<6;x++)
 				{
 					//age mult, power mult, weed mult
 					M.plotBoost[y][x]=[1,1,1];
 				}
 			}
 			
-			var effectOn=function(X,Y,s,mult)
+			let effectOn=function(X,Y,s,mult)
 			{
-				for (var y=Math.max(0,Y-s);y<Math.min(6,Y+s+1);y++)
+				for (let y=Math.max(0,Y-s);y<Math.min(6,Y+s+1);y++)
 				{
-					for (var x=Math.max(0,X-s);x<Math.min(6,X+s+1);x++)
+					for (let x=Math.max(0,X-s);x<Math.min(6,X+s+1);x++)
 					{
 						if (X==x && Y==y) {}
 						else
 						{
-							for (var i=0;i<mult.length;i++)
+							for (let i=0;i<mult.length;i++)
 							{
 								M.plotBoost[y][x][i]*=mult[i];
 							}
@@ -720,23 +720,23 @@ M.launch=function()
 					}
 				}
 			}
-			for (var y=0;y<6;y++)
+			for (let y=0;y<6;y++)
 			{
-				for (var x=0;x<6;x++)
+				for (let x=0;x<6;x++)
 				{
-					var tile=M.plot[y][x];
+					let tile=M.plot[y][x];
 					if (tile[0]>0)
 					{
-						var me=M.plantsById[tile[0]-1];
-						var name=me.key;
-						var stage=0;
+						let me=M.plantsById[tile[0]-1];
+						let name=me.key;
+						let stage=0;
 						if (tile[1]>=me.mature) stage=4;
 						else if (tile[1]>=me.mature*0.666) stage=3;
 						else if (tile[1]>=me.mature*0.333) stage=2;
 						else stage=1;
 						
-						var soilMult=M.soilsById[M.soil].effMult;
-						var mult=soilMult;
+						let soilMult=M.soilsById[M.soil].effMult;
+						let mult=soilMult;
 						
 						if (stage==1) mult*=0.1;
 						else if (stage==2) mult*=0.25;
@@ -752,10 +752,10 @@ M.launch=function()
 						else if (name=='everdaisy') effectOn(x,y,1,[1,1,0]);
 						else if (name=='ichorpuff') effectOn(x,y,1,[1-0.5*mult,1-0.5*mult,1]);*/
 						
-						var ageMult=1;
-						var powerMult=1;
-						var weedMult=1;
-						var range=0;
+						let ageMult=1;
+						let powerMult=1;
+						let weedMult=1;
+						let range=0;
 						
 						if (name=='elderwort') {ageMult=1.03;range=1;}
 						else if (name=='queenbeetLump') {powerMult=0.8;range=1;}
@@ -778,7 +778,7 @@ M.launch=function()
 		M.computeEffs=function()
 		{
 			M.toCompute=false;
-			var effs={
+			let effs={
 				cps:1,
 				click:1,
 				cursorCps:1,
@@ -804,24 +804,24 @@ M.launch=function()
 			
 			if (!M.freeze)
 			{
-				var soilMult=M.soilsById[M.soil].effMult;
+				let soilMult=M.soilsById[M.soil].effMult;
 				
-				for (var y=0;y<6;y++)
+				for (let y=0;y<6;y++)
 				{
-					for (var x=0;x<6;x++)
+					for (let x=0;x<6;x++)
 					{
-						var tile=M.plot[y][x];
+						let tile=M.plot[y][x];
 						if (tile[0]>0)
 						{
-							var me=M.plantsById[tile[0]-1];
-							var name=me.key;
-							var stage=0;
+							let me=M.plantsById[tile[0]-1];
+							let name=me.key;
+							let stage=0;
 							if (tile[1]>=me.mature) stage=4;
 							else if (tile[1]>=me.mature*0.666) stage=3;
 							else if (tile[1]>=me.mature*0.333) stage=2;
 							else stage=1;
 							
-							var mult=soilMult;
+							let mult=soilMult;
 							
 							if (stage==1) mult*=0.1;
 							else if (stage==2) mult*=0.25;
@@ -923,7 +923,7 @@ M.launch=function()
 				q:'Soil made of bits and pieces of bark and sawdust. Helpful for young sprouts to develop, not so much for mature plants.',
 			},
 		};
-		M.soilsById=[];var n=0;for (var i in M.soils){M.soils[i].id=n;M.soils[i].key=i;M.soilsById[n]=M.soils[i];n++;}
+		M.soilsById=[];let n=0;for (let i in M.soils){M.soils[i].id=n;M.soils[i].key=i;M.soilsById[n]=M.soils[i];n++;}
 		
 		
 		M.tools={
@@ -933,11 +933,11 @@ M.launch=function()
 				desc:'-',
 				descFunc:function()
 				{
-					var str='';
+					let str='';
 					if (M.freeze) str='Your garden is frozen, providing no effects.';
 					else
 					{
-						var effs={
+						let effs={
 							cps:{n:'CpS'},
 							click:{n:'cookies/click'},
 							cursorCps:{n:'cursor CpS'},
@@ -961,12 +961,12 @@ M.launch=function()
 							buildingCost:{n:'building costs',rev:true},
 						};
 						
-						var effStr='';
-						for (var i in M.effs)
+						let effStr='';
+						for (let i in M.effs)
 						{
 							if (M.effs[i]!=1 && effs[i])
 							{
-								var amount=(M.effs[i]-1)*100;
+								let amount=(M.effs[i]-1)*100;
 								effStr+='<div style="font-size:10px;margin-left:64px;"><b>&bull; '+effs[i].n+' :</b> <span class="'+((amount*(effs[i].rev?-1:1))>0?'green':'red')+'">'+(amount>0?'+':'-')+Beautify(Math.abs(M.effs[i]-1)*100,2)+'%</span></div>';
 							}
 						}
@@ -1009,15 +1009,15 @@ M.launch=function()
 						l('gardenContent').classList.add('gardenFrozen');
 						
 						
-						for (var y=0;y<6;y++)
+						for (let y=0;y<6;y++)
 						{
-							for (var x=0;x<6;x++)
+							for (let x=0;x<6;x++)
 							{
-								var tile=M.plot[y][x];
+								let tile=M.plot[y][x];
 								if (tile[0]>0)
 								{
-									var me=M.plantsById[tile[0]-1];
-									var age=tile[1];
+									let me=M.plantsById[tile[0]-1];
+									let age=tile[1];
 									if (me.key=='cheapcap' && Math.random()<0.15)
 									{
 										M.plot[y][x]=[0,0];
@@ -1046,23 +1046,23 @@ M.launch=function()
 				isDisplayed:function(){if (M.plantsUnlockedN>=M.plantsN) return true; else return false;},
 			},
 		};
-		M.toolsById=[];var n=0;for (var i in M.tools){M.tools[i].id=n;M.tools[i].key=i;M.toolsById[n]=M.tools[i];n++;}
+		M.toolsById=[];let n=0;for (let i in M.tools){M.tools[i].id=n;M.tools[i].key=i;M.toolsById[n]=M.tools[i];n++;}
 
 		
 		M.plot=[];
-		for (var y=0;y<6;y++)
+		for (let y=0;y<6;y++)
 		{
 			M.plot[y]=[];
-			for (var x=0;x<6;x++)
+			for (let x=0;x<6;x++)
 			{
 				M.plot[y][x]=[0,0];
 			}
 		}
 		M.plotBoost=[];
-		for (var y=0;y<6;y++)
+		for (let y=0;y<6;y++)
 		{
 			M.plotBoost[y]=[];
-			for (var x=0;x<6;x++)
+			for (let x=0;x<6;x++)
 			{
 				//age mult, power mult, weed mult
 				M.plotBoost[y][x]=[1,1,1];
@@ -1098,16 +1098,16 @@ M.launch=function()
 		
 		M.getPlantDesc=function(me)
 		{
-			var children='';
+			let children='';
 			if (me.children.length>0)
 			{
 				children+='<div class="shadowFilter" style="display:inline-block;">';
-				for (var i in me.children)
+				for (let i in me.children)
 				{
 					if (!M.plants[me.children[i]]) console.log('No plant named '+me.children[i]);
 					else
 					{
-						var it=M.plants[me.children[i]];
+						let it=M.plants[me.children[i]];
 						if (it.unlocked) children+='<div class="gardenSeedTiny" style="background-position:'+(-0*48)+'px '+(-it.icon*48)+'px;"></div>';
 						else children+='<div class="gardenSeedTiny" style="background-image:url(img/icons.png?v='+Game.version+');background-position:'+(-0*48)+'px '+(-7*48)+'px;opacity:0.35;"></div>';
 					}
@@ -1146,8 +1146,8 @@ M.launch=function()
 		M.soilTooltip=function(id)
 		{
 			return function(){
-				var me=M.soilsById[id];
-				var str='<div style="padding:8px 4px;min-width:350px;">'+
+				let me=M.soilsById[id];
+				let str='<div style="padding:8px 4px;min-width:350px;">'+
 					(M.parent.amount<me.req?(
 						'<div style="text-align:center;">Soil unlocked at '+me.req+' farms.</div>'
 					):('<div class="icon" style="background:url(img/gardenPlants.png?v='+Game.version+');float:left;margin-left:-8px;margin-top:-8px;background-position:'+(-me.icon*48)+'px '+(-34*48)+'px;"></div>'+
@@ -1165,8 +1165,8 @@ M.launch=function()
 		M.seedTooltip=function(id)
 		{
 			return function(){
-				var me=M.plantsById[id];
-				var str='<div style="padding:8px 4px;min-width:400px;">'+
+				let me=M.plantsById[id];
+				let str='<div style="padding:8px 4px;min-width:400px;">'+
 					'<div class="icon" style="background:url(img/gardenPlants.png?v='+Game.version+');float:left;margin-left:-24px;margin-top:-4px;background-position:'+(-0*48)+'px '+(-me.icon*48)+'px;"></div>'+
 					'<div class="icon" style="background:url(img/gardenPlants.png?v='+Game.version+');float:left;margin-left:-24px;margin-top:-28px;background-position:'+(-4*48)+'px '+(-me.icon*48)+'px;"></div>'+
 					'<div style="background:url(img/turnInto.png);width:20px;height:22px;position:absolute;left:28px;top:24px;z-index:1000;"></div>'+
@@ -1181,9 +1181,9 @@ M.launch=function()
 		M.toolTooltip=function(id)
 		{
 			return function(){
-				var me=M.toolsById[id];
-				var icon=[me.icon,35];
-				var str='<div style="padding:8px 4px;min-width:350px;">'+
+				let me=M.toolsById[id];
+				let icon=[me.icon,35];
+				let str='<div style="padding:8px 4px;min-width:350px;">'+
 					'<div class="icon" style="background:url(img/gardenPlants.png?v='+Game.version+');float:left;margin-left:-8px;margin-top:-8px;background-position:'+(-icon[0]*48)+'px '+(-icon[1]*48)+'px;"></div>'+
 					'<div><div class="name">'+me.name+'</div></div>'+
 					'<div class="line"></div>'+
@@ -1198,11 +1198,11 @@ M.launch=function()
 		{
 			return function(){
 				if (Game.keys[16]) return '';
-				var tile=M.plot[y][x];
+				let tile=M.plot[y][x];
 				if (tile[0]==0)
 				{
-					var me=(M.seedSelected>=0)?M.plantsById[M.seedSelected]:0;
-					var str='<div style="padding:8px 4px;min-width:350px;text-align:center;">'+
+					let me=(M.seedSelected>=0)?M.plantsById[M.seedSelected]:0;
+					let str='<div style="padding:8px 4px;min-width:350px;text-align:center;">'+
 						'<div class="name">Empty tile</div>'+'<div class="line"></div><div class="description">'+
 							'This tile of soil is empty.<br>Pick a seed and plant something!'+
 							(me?'<div class="line"></div>Click to plant <b>'+me.name+'</b> for <span class="price'+(M.canPlant(me)?'':' disabled')+'">'+Beautify(Math.round(M.getCost(me)))+'</span>.<br><small>(Shift-click to plant multiple.)</small><br><small>(Holding the shift key pressed will also hide tooltips.)</small>':'')+
@@ -1218,14 +1218,14 @@ M.launch=function()
 				}
 				else
 				{
-					var me=M.plantsById[tile[0]-1];
-					var stage=0;
+					let me=M.plantsById[tile[0]-1];
+					let stage=0;
 					if (tile[1]>=me.mature) stage=4;
 					else if (tile[1]>=me.mature*0.666) stage=3;
 					else if (tile[1]>=me.mature*0.333) stage=2;
 					else stage=1;
-					var icon=[stage,me.icon];
-					var str='<div style="padding:8px 4px;min-width:350px;">'+
+					let icon=[stage,me.icon];
+					let str='<div style="padding:8px 4px;min-width:350px;">'+
 						'<div class="icon" style="background:url(img/gardenPlants.png?v='+Game.version+');float:left;margin-left:-8px;margin-top:-8px;background-position:'+(-icon[0]*48)+'px '+(-icon[1]*48)+'px;"></div>'+
 						'<div class="name">'+me.name+'</div><div><small>This plant is growing here.</small></div>'+
 						'<div class="line"></div>'+
@@ -1277,20 +1277,20 @@ M.launch=function()
 		M.buildPanel=function()
 		{
 			if (!l('gardenSeeds')) return false;
-			var str='';
-			for (var i in M.plants)
+			let str='';
+			for (let i in M.plants)
 			{
-				var me=M.plants[i];
-				var icon=[0,me.icon];
+				let me=M.plants[i];
+				let icon=[0,me.icon];
 				str+='<div id="gardenSeed-'+me.id+'" class="gardenSeed'+(M.seedSelected==me.id?' on':'')+' locked" '+Game.getDynamicTooltip('Game.ObjectsById['+M.parent.id+'].minigame.seedTooltip('+me.id+')','this')+'>';
 					str+='<div id="gardenSeedIcon-'+me.id+'" class="gardenSeedIcon shadowFilter" style="background-position:'+(-icon[0]*48)+'px '+(-icon[1]*48)+'px;"></div>';
 				str+='</div>';
 			}
 			l('gardenSeeds').innerHTML=str;
 			
-			for (var i in M.plants)
+			for (let i in M.plants)
 			{
-				var me=M.plants[i];
+				let me=M.plants[i];
 				me.l=l('gardenSeed-'+me.id);
 				AddEvent(me.l,'click',function(me){return function()
 				{
@@ -1303,9 +1303,9 @@ M.launch=function()
 					if (!me.plantable && !Game.sesame) return false;
 					if (M.seedSelected==me.id){M.seedSelected=-1;}
 					else {M.seedSelected=me.id;PlaySound('snd/toneTick.mp3');}
-					for (var i in M.plants)
+					for (let i in M.plants)
 					{
-						var it=M.plants[i];
+						let it=M.plants[i];
 						if (it.id==M.seedSelected){it.l.classList.add('on');}
 						else {it.l.classList.remove('on');}
 					}
@@ -1315,45 +1315,45 @@ M.launch=function()
 				if (me.unlocked) me.l.classList.remove('locked');
 			}
 			
-			var str='';
-			for (var i in M.tools)
+			let str='';
+			for (let i in M.tools)
 			{
-				var me=M.tools[i];
-				var icon=[me.icon,35];
+				let me=M.tools[i];
+				let icon=[me.icon,35];
 				str+='<div id="gardenTool-'+me.id+'" style="margin:8px;" class="gardenSeed'+((me.isOn && me.isOn())?' on':'')+''+((!me.isDisplayed || me.isDisplayed())?'':' locked')+'" '+Game.getDynamicTooltip('Game.ObjectsById['+M.parent.id+'].minigame.toolTooltip('+me.id+')','this')+'>';
 					str+='<div id="gardenToolIcon-'+me.id+'" class="gardenSeedIcon shadowFilter" style="background-position:'+(-icon[0]*48)+'px '+(-icon[1]*48)+'px;"></div>';
 				str+='</div>';
 			}
 			l('gardenTools').innerHTML=str;
 			
-			for (var i in M.tools)
+			for (let i in M.tools)
 			{
-				var me=M.tools[i];
+				let me=M.tools[i];
 				AddEvent(l('gardenTool-'+me.id),'click',me.func);
 				AddEvent(l('gardenTool-'+me.id),'mouseover',M.hideCursor);
 				AddEvent(l('gardenTool-'+me.id),'mouseout',M.showCursor);
 			}
 
-			var str='';
-			for (var i in M.soils)
+			let str='';
+			for (let i in M.soils)
 			{
-				var me=M.soils[i];
-				var icon=[me.icon,34];
+				let me=M.soils[i];
+				let icon=[me.icon,34];
 				str+='<div id="gardenSoil-'+me.id+'" class="gardenSeed gardenSoil disabled'+(M.soil==me.id?' on':'')+'" '+Game.getDynamicTooltip('Game.ObjectsById['+M.parent.id+'].minigame.soilTooltip('+me.id+')','this')+'>';
 					str+='<div id="gardenSoilIcon-'+me.id+'" class="gardenSeedIcon shadowFilter" style="background-position:'+(-icon[0]*48)+'px '+(-icon[1]*48)+'px;"></div>';
 				str+='</div>';
 			}
 			l('gardenSoils').innerHTML=str;
 			
-			for (var i in M.soils)
+			for (let i in M.soils)
 			{
-				var me=M.soils[i];
+				let me=M.soils[i];
 				AddEvent(l('gardenSoil-'+me.id),'click',function(me){return function(){
 					if (M.freeze || M.soil==me.id || M.nextSoil>Date.now() || M.parent.amount<me.req){return false;}
 					PlaySound('snd/toneTick.mp3');
 					M.nextSoil=Date.now()+(Game.Has('Turbo-charged soil')?1:(1000*60*10));
 					M.toCompute=true;M.soil=me.id;M.computeStepT();
-					for (var i in M.soils){var it=M.soils[i];if (it.id==M.soil){l('gardenSoil-'+it.id).classList.add('on');}else{l('gardenSoil-'+it.id).classList.remove('on');}}
+					for (let i in M.soils){let it=M.soils[i];if (it.id==M.soil){l('gardenSoil-'+it.id).classList.add('on');}else{l('gardenSoil-'+it.id).classList.remove('on');}}
 				}}(me));
 				AddEvent(l('gardenSoil-'+me.id),'mouseover',M.hideCursor);
 				AddEvent(l('gardenSoil-'+me.id),'mouseout',M.showCursor);
@@ -1367,10 +1367,10 @@ M.launch=function()
 			if (!l('gardenPlot')) return false;
 			if (!l('gardenTile-0-0'))
 			{
-				var str='';
-				for (var y=0;y<6;y++)
+				let str='';
+				for (let y=0;y<6;y++)
 				{
-					for (var x=0;x<6;x++)
+					for (let x=0;x<6;x++)
 					{
 						str+='<div id="gardenTile-'+x+'-'+y+'" class="gardenTile" style="left:'+(x*M.tileSize)+'px;top:'+(y*M.tileSize)+'px;display:none;" '+Game.getDynamicTooltip('Game.ObjectsById['+M.parent.id+'].minigame.tileTooltip('+x+','+y+')','this')+'>';
 							str+='<div id="gardenTileIcon-'+x+'-'+y+'" class="gardenTileIcon" style="display:none;"></div>';
@@ -1379,9 +1379,9 @@ M.launch=function()
 				}
 				l('gardenPlot').innerHTML=str;
 				
-				for (var y=0;y<6;y++)
+				for (let y=0;y<6;y++)
 				{
-					for (var x=0;x<6;x++)
+					for (let x=0;x<6;x++)
 					{
 						AddEvent(l('gardenTile-'+x+'-'+y),'click',function(x,y){return function()
 						{
@@ -1390,26 +1390,26 @@ M.launch=function()
 					}
 				}
 			}
-			var plants=0;
-			for (var y=0;y<6;y++)
+			let plants=0;
+			for (let y=0;y<6;y++)
 			{
-				for (var x=0;x<6;x++)
+				for (let x=0;x<6;x++)
 				{
-					var tile=M.plot[y][x];
-					var tileL=l('gardenTile-'+x+'-'+y);
-					var iconL=l('gardenTileIcon-'+x+'-'+y);
-					var me=0;
+					let tile=M.plot[y][x];
+					let tileL=l('gardenTile-'+x+'-'+y);
+					let iconL=l('gardenTileIcon-'+x+'-'+y);
+					let me=0;
 					if (tile[0]>0)
 					{
 						plants++;
 						me=M.plantsById[tile[0]-1];
-						var stage=0;
+						let stage=0;
 						if (tile[1]>=me.mature) stage=4;
 						else if (tile[1]>=me.mature*0.666) stage=3;
 						else if (tile[1]>=me.mature*0.333) stage=2;
 						else stage=1;
-						var dying=((tile[1]+Math.ceil(me.ageTick+me.ageTickR))>=100?1:0);
-						var icon=[stage,me.icon];
+						let dying=((tile[1]+Math.ceil(me.ageTick+me.ageTickR))>=100?1:0);
+						let icon=[stage,me.icon];
 						iconL.style.opacity=(dying?0.5:1);
 						iconL.style.backgroundPosition=(-icon[0]*48)+'px '+(-icon[1]*48)+'px';
 						iconL.style.display='block';
@@ -1426,14 +1426,14 @@ M.launch=function()
 		M.clickTile=function(x,y)
 		{
 			//if (M.freeze) return false;
-			var outcome=M.useTool(M.seedSelected,x,y);
+			let outcome=M.useTool(M.seedSelected,x,y);
 			M.toCompute=true;
 			if (outcome && !Game.keys[16])//shift
 			{
 				M.seedSelected=-1;
-				for (var i in M.plants)
+				for (let i in M.plants)
 				{
-					var it=M.plants[i];
+					let it=M.plants[i];
 					if (it.id==M.seedSelected) {l('gardenSeed-'+it.id).classList.add('on');}
 					else {l('gardenSeed-'+it.id).classList.remove('on');}
 				}
@@ -1443,7 +1443,7 @@ M.launch=function()
 		
 		M.useTool=function(what,x,y)
 		{
-			var harvested=M.harvest(x,y,1);
+			let harvested=M.harvest(x,y,1);
 			if (harvested)
 			{
 				Game.SparkleAt(Game.mouseX,Game.mouseY);
@@ -1483,9 +1483,9 @@ M.launch=function()
 		];
 		M.isTileUnlocked=function(x,y)
 		{
-			var level=M.parent.level;
+			let level=M.parent.level;
 			level=Math.max(1,Math.min(M.plotLimits.length,level))-1;
-			var limits=M.plotLimits[level];
+			let limits=M.plotLimits[level];
 			if (x>=limits[0] && x<limits[2] && y>=limits[1] && y<limits[3]) return true; else return false;
 		}
 		
@@ -1505,7 +1505,7 @@ M.launch=function()
 		{
 			if (M.plantsUnlockedN<M.plantsN) return false;
 			M.harvestAll();
-			for (var i in M.plants){M.lockSeed(M.plants[i]);}
+			for (let i in M.plants){M.lockSeed(M.plants[i]);}
 			M.unlockSeed(M.plants['bakerWheat']);
 			
 			Game.gainLumps(10);
@@ -1520,18 +1520,18 @@ M.launch=function()
 		
 		M.harvestAll=function(type,mature,mortal)
 		{
-			var harvested=0;
-			for (var i=0;i<2;i++)//we do it twice to take care of whatever spawns on kill
+			let harvested=0;
+			for (let i=0;i<2;i++)//we do it twice to take care of whatever spawns on kill
 			{
-				for (var y=0;y<6;y++)
+				for (let y=0;y<6;y++)
 				{
-					for (var x=0;x<6;x++)
+					for (let x=0;x<6;x++)
 					{
 						if (M.plot[y][x][0]>=1)
 						{
-							var doIt=true;
-							var tile=M.plot[y][x];
-							var me=M.plantsById[tile[0]-1];
+							let doIt=true;
+							let tile=M.plot[y][x];
+							let me=M.plantsById[tile[0]-1];
 							if (type && me!=type) doIt=false;
 							if (mortal && me.immortal) doIt=false;
 							if (mature && tile[1]<me.mature) doIt=false;
@@ -1547,12 +1547,12 @@ M.launch=function()
 		}
 		M.harvest=function(x,y,manual)
 		{
-			var tile=M.plot[y][x];
+			let tile=M.plot[y][x];
 			if (tile[0]>=1)
 			{
 				M.toCompute=true;
-				var me=M.plantsById[tile[0]-1];
-				var age=tile[1];
+				let me=M.plantsById[tile[0]-1];
+				let age=tile[1];
 				if (me.onHarvest) me.onHarvest(x,y,age);
 				if (tile[1]>=me.mature)
 				{
@@ -1588,7 +1588,7 @@ M.launch=function()
 			return true;
 		}
 		
-		var str='';
+		let str='';
 		str+='<style>'+
 		'#gardenBG{background:url(img/shadedBorders.png),url(img/BGgarden.jpg);background-size:100% 100%,auto;position:absolute;left:0px;right:0px;top:0px;bottom:16px;}'+
 		'#gardenContent{position:relative;box-sizing:border-box;padding:4px 24px;height:'+(6*M.tileSize+16+48+48)+'px;}'+
@@ -1672,9 +1672,9 @@ M.launch=function()
 			{
 				if (Game.keys[16] && Game.keys[17])//ctrl & shift, fill garden with random plants
 				{
-					for (var y=0;y<6;y++)
+					for (let y=0;y<6;y++)
 					{
-						for (var x=0;x<6;x++)
+						for (let x=0;x<6;x++)
 						{
 							M.plot[y][x]=[choose(M.plantsById).id+1,Math.floor(Math.random()*100)];
 						}
@@ -1684,13 +1684,13 @@ M.launch=function()
 				}
 				else//unlock/lock all seeds
 				{
-					var locked=0;
-					for (var i in M.plants)
+					let locked=0;
+					for (let i in M.plants)
 					{
 						if (!M.plants[i].unlocked) locked++;
 					}
-					if (locked>0){for (var i in M.plants){M.unlockSeed(M.plants[i]);}}
-					else{for (var i in M.plants){M.lockSeed(M.plants[i]);}}
+					if (locked>0){for (let i in M.plants){M.unlockSeed(M.plants[i]);}}
+					else{for (let i in M.plants){M.lockSeed(M.plants[i]);}}
 					M.unlockSeed(M.plants['bakerWheat']);
 				}
 			}
@@ -1702,9 +1702,9 @@ M.launch=function()
 	}
 	M.onResize=function()
 	{
-		var width=l('gardenContent').offsetWidth;
-		var panelW=Math.min(Math.max(width*0.40,320),width-6*M.tileSize)-8;
-		var fieldW=Math.max(Math.min(width*0.60,width-panelW),6*M.tileSize)-8;
+		let width=l('gardenContent').offsetWidth;
+		let panelW=Math.min(Math.max(width*0.40,320),width-6*M.tileSize)-8;
+		let fieldW=Math.max(Math.min(width*0.60,width-panelW),6*M.tileSize)-8;
 		l('gardenField').style.width=fieldW+'px';
 		l('gardenPanel').style.width=panelW+'px';
 	}
@@ -1714,12 +1714,12 @@ M.launch=function()
 	}
 	M.onRuinTheFun=function()
 	{
-		for (var i in M.plants){M.unlockSeed(M.plants[i]);}
+		for (let i in M.plants){M.unlockSeed(M.plants[i]);}
 	}
 	M.save=function()
 	{
 		//output cannot use ",", ";" or "|"
-		var str=''+
+		let str=''+
 		parseFloat(M.nextStep)+':'+
 		parseInt(M.soil)+':'+
 		parseFloat(M.nextSoil)+':'+
@@ -1730,14 +1730,14 @@ M.launch=function()
 		parseFloat(M.convertTimes)+':'+
 		parseFloat(M.nextFreeze)+':'+
 		' ';
-		for (var i in M.plants)
+		for (let i in M.plants)
 		{
 			str+=''+(M.plants[i].unlocked?'1':'0');
 		}
 		str+=' ';
-		for (var y=0;y<6;y++)
+		for (let y=0;y<6;y++)
 		{
-			for (var x=0;x<6;x++)
+			for (let x=0;x<6;x++)
 			{
 				str+=parseInt(M.plot[y][x][0])+':'+parseInt(M.plot[y][x][1])+':';
 			}
@@ -1749,24 +1749,24 @@ M.launch=function()
 		//interpret str; called after .init
 		//note : not actually called in the Game's load; see "minigameSave" in main.js
 		if (!str) return false;
-		var i=0;
-		var spl=str.split(' ');
-		var spl2=spl[i++].split(':');
-		var i2=0;
+		let i=0;
+		let spl=str.split(' ');
+		let spl2=spl[i++].split(':');
+		let i2=0;
 		M.nextStep=parseFloat(spl2[i2++]||M.nextStep);
 		M.soil=parseInt(spl2[i2++]||M.soil);
 		M.nextSoil=parseFloat(spl2[i2++]||M.nextSoil);
 		M.freeze=parseInt(spl2[i2++]||M.freeze)?1:0;
 		M.harvests=parseInt(spl2[i2++]||0);
 		M.harvestsTotal=parseInt(spl2[i2++]||0);
-		var on=parseInt(spl2[i2++]||0);if (on && Game.ascensionMode!=1) M.parent.switchMinigame(1);
+		let on=parseInt(spl2[i2++]||0);if (on && Game.ascensionMode!=1) M.parent.switchMinigame(1);
 		M.convertTimes=parseFloat(spl2[i2++]||M.convertTimes);
 		M.nextFreeze=parseFloat(spl2[i2++]||M.nextFreeze);
-		var seeds=spl[i++]||'';
+		let seeds=spl[i++]||'';
 		if (seeds)
 		{
-			var n=0;
-			for (var ii in M.plants)
+			let n=0;
+			for (let ii in M.plants)
 			{
 				if (seeds.charAt(n)=='1') M.plants[ii].unlocked=1; else M.plants[ii].unlocked=0;
 				n++;
@@ -1774,14 +1774,14 @@ M.launch=function()
 		}
 		M.plants['bakerWheat'].unlocked=1;
 		
-		var plot=spl[i++]||0;
+		let plot=spl[i++]||0;
 		if (plot)
 		{
 			plot=plot.split(':');
-			var n=0;
-			for (var y=0;y<6;y++)
+			let n=0;
+			for (let y=0;y<6;y++)
 			{
-				for (var x=0;x<6;x++)
+				for (let x=0;x<6;x++)
 				{
 					M.plot[y][x]=[parseInt(plot[n]),parseInt(plot[n+1])];
 					n+=2;
@@ -1807,9 +1807,9 @@ M.launch=function()
 		M.nextStep=Date.now();
 		M.nextSoil=Date.now();
 		M.nextFreeze=Date.now();
-		for (var y=0;y<6;y++)
+		for (let y=0;y<6;y++)
 		{
-			for (var x=0;x<6;x++)
+			for (let x=0;x<6;x++)
 			{
 				M.plot[y][x]=[0,0];
 			}
@@ -1820,7 +1820,7 @@ M.launch=function()
 		{
 			M.convertTimes=0;
 			M.harvestsTotal=0;
-			for (var i in M.plants)
+			for (let i in M.plants)
 			{
 				M.plants[i].unlocked=0;
 			}
@@ -1845,7 +1845,7 @@ M.launch=function()
 	M.logic=function()
 	{
 		//run each frame
-		var now=Date.now();
+		let now=Date.now();
 		
 		if (!M.freeze)
 		{
@@ -1858,21 +1858,21 @@ M.launch=function()
 				M.computeBoostPlot();
 				M.computeMatures();
 				
-				var weedMult=M.soilsById[M.soil].weedMult;
+				let weedMult=M.soilsById[M.soil].weedMult;
 				
-				var loops=1;
+				let loops=1;
 				if (M.soilsById[M.soil].key=='woodchips') loops=3;
 				loops*=M.loopsMult;
 				M.loopsMult=1;
 			
-				for (var y=0;y<6;y++)
+				for (let y=0;y<6;y++)
 				{
-					for (var x=0;x<6;x++)
+					for (let x=0;x<6;x++)
 					{
 						if (M.isTileUnlocked(x,y))
 						{
-							var tile=M.plot[y][x];
-							var me=M.plantsById[tile[0]-1];
+							let tile=M.plot[y][x];
+							let me=M.plantsById[tile[0]-1];
 							if (tile[0]>0)
 							{
 								//age
@@ -1895,26 +1895,26 @@ M.launch=function()
 									//only occurs in cardinal directions
 									//immortal plants and plants with noContam are immune
 									
-									var list=[];
-									for (var i in M.plantContam)
+									let list=[];
+									for (let i in M.plantContam)
 									{
 										if (Math.random()<M.plantContam[i] && (!M.plants[i].weed || Math.random()<weedMult)) list.push(i);
 									}
-									var contam=choose(list);
+									let contam=choose(list);
 
 									if (contam && me.key!=contam)
 									{
 										if ((!M.plants[contam].weed && !M.plants[contam].fungus) || Math.random()<M.plotBoost[y][x][2])
 										{
-											var any=0;
-											var neighs={};//all surrounding plants
-											var neighsM={};//all surrounding mature plants
-											for (var i in M.plants){neighs[i]=0;}
-											for (var i in M.plants){neighsM[i]=0;}
-											var neigh=M.getTile(x,y-1);if (neigh[0]>0){var age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
-											var neigh=M.getTile(x,y+1);if (neigh[0]>0){var age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
-											var neigh=M.getTile(x-1,y);if (neigh[0]>0){var age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
-											var neigh=M.getTile(x+1,y);if (neigh[0]>0){var age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
+											let any=0;
+											let neighs={};//all surrounding plants
+											let neighsM={};//all surrounding mature plants
+											for (let i in M.plants){neighs[i]=0;}
+											for (let i in M.plants){neighsM[i]=0;}
+											let neigh=M.getTile(x,y-1);if (neigh[0]>0){let age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
+											let neigh=M.getTile(x,y+1);if (neigh[0]>0){let age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
+											let neigh=M.getTile(x-1,y);if (neigh[0]>0){let age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
+											let neigh=M.getTile(x+1,y);if (neigh[0]>0){let age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
 											
 											if (neighsM[contam]>=1) M.plot[y][x]=[M.plants[contam].id+1,0];
 										}
@@ -1925,27 +1925,27 @@ M.launch=function()
 							{
 								//plant spreading and mutation
 								//happens on all 8 tiles around this one
-								for (var loop=0;loop<loops;loop++)
+								for (let loop=0;loop<loops;loop++)
 								{
-									var any=0;
-									var neighs={};//all surrounding plants
-									var neighsM={};//all surrounding mature plants
-									for (var i in M.plants){neighs[i]=0;}
-									for (var i in M.plants){neighsM[i]=0;}
-									var neigh=M.getTile(x,y-1);if (neigh[0]>0){var age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
-									var neigh=M.getTile(x,y+1);if (neigh[0]>0){var age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
-									var neigh=M.getTile(x-1,y);if (neigh[0]>0){var age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
-									var neigh=M.getTile(x+1,y);if (neigh[0]>0){var age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
-									var neigh=M.getTile(x-1,y-1);if (neigh[0]>0){var age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
-									var neigh=M.getTile(x-1,y+1);if (neigh[0]>0){var age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
-									var neigh=M.getTile(x+1,y-1);if (neigh[0]>0){var age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
-									var neigh=M.getTile(x+1,y+1);if (neigh[0]>0){var age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
+									let any=0;
+									let neighs={};//all surrounding plants
+									let neighsM={};//all surrounding mature plants
+									for (let i in M.plants){neighs[i]=0;}
+									for (let i in M.plants){neighsM[i]=0;}
+									let neigh=M.getTile(x,y-1);if (neigh[0]>0){let age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
+									let neigh=M.getTile(x,y+1);if (neigh[0]>0){let age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
+									let neigh=M.getTile(x-1,y);if (neigh[0]>0){let age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
+									let neigh=M.getTile(x+1,y);if (neigh[0]>0){let age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
+									let neigh=M.getTile(x-1,y-1);if (neigh[0]>0){let age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
+									let neigh=M.getTile(x-1,y+1);if (neigh[0]>0){let age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
+									let neigh=M.getTile(x+1,y-1);if (neigh[0]>0){let age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
+									let neigh=M.getTile(x+1,y+1);if (neigh[0]>0){let age=neigh[1];neigh=M.plantsById[neigh[0]-1];any++;neighs[neigh.key]++;if (age>=neigh.mature){neighsM[neigh.key]++;}}
 									if (any>0)
 									{
-										var muts=M.getMuts(neighs,neighsM);
+										let muts=M.getMuts(neighs,neighsM);
 										
-										var list=[];
-										for (var ii=0;ii<muts.length;ii++)
+										let list=[];
+										for (let ii=0;ii<muts.length;ii++)
 										{
 											if (Math.random()<muts[ii][1] && (!M.plants[muts[ii][0]].weed || Math.random()<weedMult) && ((!M.plants[muts[ii][0]].weed && !M.plants[muts[ii][0]].fungus) || Math.random()<M.plotBoost[y][x][2])) list.push(muts[ii][0]);
 										}
@@ -1954,7 +1954,7 @@ M.launch=function()
 									else if (loop==0)
 									{
 										//weeds in empty tiles (no other plants must be nearby)
-										var chance=0.002*weedMult*M.plotBoost[y][x][2];
+										let chance=0.002*weedMult*M.plotBoost[y][x][2];
 										if (Math.random()<chance) M.plot[y][x]=[M.plants['meddleweed'].id+1,0];
 									}
 								}
@@ -1987,11 +1987,11 @@ M.launch=function()
 			}
 			else
 			{
-				var box=l('gardenDrag').getBoundingClientRect();
-				var x=Game.mouseX-box.left-24;
-				var y=Game.mouseY-box.top;
-				var seed=M.plantsById[M.seedSelected];
-				var icon=[0,seed.icon];
+				let box=l('gardenDrag').getBoundingClientRect();
+				let x=Game.mouseX-box.left-24;
+				let y=Game.mouseY-box.top;
+				let seed=M.plantsById[M.seedSelected];
+				let icon=[0,seed.icon];
 				M.cursorL.style.transform='translate('+(x)+'px,'+(y)+'px)';
 				M.cursorL.style.backgroundPosition=(-icon[0]*48)+'px '+(-icon[1]*48)+'px';
 				M.cursorL.style.display='block';
@@ -2006,9 +2006,9 @@ M.launch=function()
 			if (M.parent.level<M.plotLimits.length) l('gardenPlotSize').innerHTML='<small>Plot size : '+Math.max(1,Math.min(M.plotLimits.length,M.parent.level))+'/'+M.plotLimits.length+'<br>(Upgrades with farm level)</small>';
 			else l('gardenPlotSize').innerHTML='';
 			l('gardenSeedsUnlocked').innerHTML='Seeds<small> ('+M.plantsUnlockedN+'/'+M.plantsN+')</small>';
-			for (var i in M.soils)
+			for (let i in M.soils)
 			{
-				var me=M.soils[i];
+				let me=M.soils[i];
 				if (M.parent.amount<me.req) l('gardenSoil-'+me.id).classList.add('disabled');
 				else l('gardenSoil-'+me.id).classList.remove('disabled');
 			}
@@ -2016,4 +2016,4 @@ M.launch=function()
 	}
 	M.init(l('rowSpecial'+M.parent.id));
 }
-var M=0;
+let M=0;

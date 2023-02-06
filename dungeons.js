@@ -5,7 +5,7 @@ Optimizations to do (not mentioning the dozens of missing features) :
 -use canvas instead
 -only compute AI for mobs with 2 tiles of view
 */
-var LaunchDungeons=function()
+let LaunchDungeons=function()
 {
 	Game.GetWord=function(type)
 	{
@@ -33,28 +33,28 @@ var LaunchDungeons=function()
 	=======================================================================================*/
 	new Game.DungeonType('Factory').
 	nameGenerator=function(){
-		var str='';
+		let str='';
 		str+=Game.GetWord(choose(['secret','ruined','magical']))+' '+choose(['factory','factories','bakery','bakeries','confectionery','laboratory','research center','chocolate forge','chocolate foundry','manufactory','warehouse','machinery','works','bakeworks','workshop','assembly line']);
 		return str;
 	};
 	
 	new Game.DungeonType('Mine').
 	nameGenerator=function(){
-		var str='';
+		let str='';
 		str+=Game.GetWord(choose(['secret','ruined','magical']))+' '+choose(['chocolate','chocolate','chocolate','white chocolate','sugar','cacao'])+' '+choose(['mine','mines','pit','pits','quarry','excavation','tunnel','shaft','lode','trench','mountain','vein','cliff','peak','dome','crater','abyss','chasm','hole','burrow']);
 		return str;
 	};
 	
 	new Game.DungeonType('Portal').
 	nameGenerator=function(){
-		var str='';
+		let str='';
 		str+=Game.GetWord(choose(['secret','ruined','magical']))+' '+choose(['portal','gate','dimension','warpgate','door']);
 		return str;
 	};
 	
 	new Game.DungeonType('Secret zebra level').
 	nameGenerator=function(){
-		var str='';
+		let str='';
 		str+=Game.GetWord(choose(['secret']))+' '+choose(['zebra level']);
 		return str;
 	};
@@ -64,7 +64,7 @@ var LaunchDungeons=function()
 	CREATE TILE TYPES
 	=======================================================================================*/
 	
-	var D=new DungeonGen();
+	let D=new DungeonGen();
 	D.loadTiles([
 	['wall',[1,0],'join'],
 	['wall corner',[1,0]],
@@ -121,7 +121,7 @@ var LaunchDungeons=function()
 		this.icon=icon;
 		this.level=level;
 		this.stats={};
-		for (var i in stats)
+		for (let i in stats)
 		{this.stats[i]=stats[i];}
 		this.stats.hpm=this.stats.hp;
 		this.stats.rarity=stats.rarity||1;
@@ -130,11 +130,11 @@ var LaunchDungeons=function()
 		this.quotes={};
 		Game.Monsters[this.name]=this;
 	}
-	var basicLoot={cookies:{min:1,max:5,prob:0.5}};
-	var goodLoot={cookies:{min:3,max:8,prob:1},gear:{prob:0.05}};
-	var bossLoot={gear:{prob:1}};
-	var chestLoot={cookies:{min:2,max:20,prob:1},gear:{prob:0.1}};
-	var bossLoot={cookies:{min:10,max:50,prob:1},gear:{prob:0.2}};
+	let basicLoot={cookies:{min:1,max:5,prob:0.5}};
+	let goodLoot={cookies:{min:3,max:8,prob:1},gear:{prob:0.05}};
+	let bossLoot={gear:{prob:1}};
+	let chestLoot={cookies:{min:2,max:20,prob:1},gear:{prob:0.1}};
+	let bossLoot={cookies:{min:10,max:50,prob:1},gear:{prob:0.2}};
 	
 	//general monsters
 	new Game.Monster('Doughling','doughling',[0,0],1,{hp:5,might:2,guard:2,speed:6,dodge:6,rarity:0.7},basicLoot);
@@ -163,7 +163,7 @@ var LaunchDungeons=function()
 	
 	
 	Game.BossMonsters=[];
-	for (var i in Game.Monsters)
+	for (let i in Game.Monsters)
 	{
 		if (Game.Monsters[i].boss) Game.BossMonsters.push(Game.Monsters[i]);
 	}
@@ -179,7 +179,7 @@ var LaunchDungeons=function()
 		this.dungeon=dungeon;
 		this.pic=pic||[0,0];
 		this.stats={};
-		for (var i in stats)
+		for (let i in stats)
 		{this.stats[i]=stats[i];}
 		
 		this.x=-1;
@@ -197,7 +197,7 @@ var LaunchDungeons=function()
 			this.fighting=0;
 			this.AI=Game.Monsters[this.subtype].AI||'normal';
 			this.onKill=Game.Monsters[this.subtype].onKill||function(){};
-			for (var i in Game.Monsters[this.subtype].stats){this.stats[i]=Game.Monsters[this.subtype].stats[i];}
+			for (let i in Game.Monsters[this.subtype].stats){this.stats[i]=Game.Monsters[this.subtype].stats[i];}
 		}
 		else if (this.type=='hero')
 		{
@@ -207,10 +207,10 @@ var LaunchDungeons=function()
 			this.stuck=0;
 			this.zIndex=100;
 			this.fighting=0;
-			for (var i in Game.Heroes[this.subtype].stats){this.stats[i]=Game.Heroes[this.subtype].stats[i];}
+			for (let i in Game.Heroes[this.subtype].stats){this.stats[i]=Game.Heroes[this.subtype].stats[i];}
 			
 			//increase stats by amount of matching building (change that later to use gear instead)
-			var mult=Math.max(0,(Game.Objects[this.dungeon.type].amount/20-1));
+			let mult=Math.max(0,(Game.Objects[this.dungeon.type].amount/20-1));
 			this.stats.hpm+=Math.ceil(mult*2);
 			this.stats.hp=this.stats.hpm;
 			this.stats.might+=mult;
@@ -235,10 +235,10 @@ var LaunchDungeons=function()
 			{
 				if (this.subtype=='random')
 				{
-					var value=Math.round(Math.pow(Math.random(),6)*(10+this.dungeon.level));
+					let value=Math.round(Math.pow(Math.random(),6)*(10+this.dungeon.level));
 					if (value>0)
 					{
-						var entity=this.dungeon.AddEntity('item','cookies',this.x,this.y);
+						let entity=this.dungeon.AddEntity('item','cookies',this.x,this.y);
 						entity.value=value;
 					}
 				}
@@ -260,7 +260,7 @@ var LaunchDungeons=function()
 		}
 		this.Draw=function()//return the string to draw this
 		{
-			var name='?';
+			let name='?';
 			if (this.subtype=='random') name='clutter'; else name=this.subtype;
 			if (this.type=='item' && this.subtype=='cookies' && this.value>0)
 			{
@@ -321,20 +321,20 @@ var LaunchDungeons=function()
 		{
 			if (this.targets.length>0)
 			{
-				var goodTargets=[];
+				let goodTargets=[];
 				if (this.type=='hero') goodTargets=this.targets;
 				else
 				{
-					for (var i in this.targets)
+					for (let i in this.targets)
 					{
-						var thisTarget=this.targets[i];
+						let thisTarget=this.targets[i];
 						if (this.dungeon.CheckObstacle(this.x+thisTarget[0],this.y+thisTarget[1])!=-1) goodTargets.push([thisTarget[0],thisTarget[1]]);
 					}
 				}
 				if (goodTargets.length>0)
 				{
-					var target=choose(goodTargets);
-					var obstacle=this.dungeon.CheckObstacle(this.x+target[0],this.y+target[1]);
+					let target=choose(goodTargets);
+					let obstacle=this.dungeon.CheckObstacle(this.x+target[0],this.y+target[1]);
 					if (obstacle==this) obstacle=0;
 					if (obstacle==0 && this.AI!='static')
 					{
@@ -377,8 +377,8 @@ var LaunchDungeons=function()
 			{
 				by.stuck=0;
 				
-				var monster=(this.type=='hero'?by:this);
-				var hero=(this.type=='hero'?this:by);
+				let monster=(this.type=='hero'?by:this);
+				let hero=(this.type=='hero'?this:by);
 				this.dungeon.currentOpponent=monster;
 				
 				if (monster.fighting==0)//first meeting
@@ -392,9 +392,9 @@ var LaunchDungeons=function()
 					by.fighting=1;
 				}
 				
-				var attackStr='';
-				var attackerName='';
-				var defenderName='';
+				let attackStr='';
+				let attackerName='';
+				let defenderName='';
 				if (by.type=='hero') attackerName=Game.Heroes[by.subtype].name;
 				else if (by.type=='monster') attackerName=Game.Monsters[by.subtype].name;
 				if (this.type=='hero') defenderName=Game.Heroes[this.subtype].name;
@@ -402,8 +402,8 @@ var LaunchDungeons=function()
 				
 				//battle formulas (have fun with these)
 				attackStr+=attackerName+' swings at '+defenderName+'!';
-				var damage=Math.round(Math.max(1,Math.min(by.stats.might,Math.pow(((by.stats.might+2.5)/Math.max(1,this.stats.guard)),2)))*(0.8+Math.random()*0.4+Math.pow(Math.random()*0.8,6)));
-				var dodge=Math.random()>(by.stats.speed/Math.max(1,this.stats.dodge+2.5));
+				let damage=Math.round(Math.max(1,Math.min(by.stats.might,Math.pow(((by.stats.might+2.5)/Math.max(1,this.stats.guard)),2)))*(0.8+Math.random()*0.4+Math.pow(Math.random()*0.8,6)));
+				let dodge=Math.random()>(by.stats.speed/Math.max(1,this.stats.dodge+2.5));
 				if (dodge)
 				{
 					attackStr+=' '+defenderName+' dodged the attack.';
@@ -442,11 +442,11 @@ var LaunchDungeons=function()
 						this.Say('defeat');
 						if (Game.Monsters[this.subtype].loot)
 						{
-							var loot=Game.Monsters[this.subtype].loot;
+							let loot=Game.Monsters[this.subtype].loot;
 							if (loot.gear && (!loot.gear.prob || Math.random()<loot.gear.prob)) {}//drop gear
 							if (loot.cookies && (!loot.cookies.prob || Math.random()<loot.cookies.prob))
 							{
-								var entity=this.dungeon.AddEntity('item','cookies',this.x,this.y);//drop cookies
+								let entity=this.dungeon.AddEntity('item','cookies',this.x,this.y);//drop cookies
 								entity.value=Math.round(loot.cookies.min+Math.random()*(loot.cookies.max-loot.cookies.min));
 							}
 						}
@@ -460,8 +460,8 @@ var LaunchDungeons=function()
 		{
 			if (this.type=='monster')
 			{
-				var howManyTurns=this.GetInitiative();
-				for (var i=0;i<howManyTurns;i++)
+				let howManyTurns=this.GetInitiative();
+				for (let i=0;i<howManyTurns;i++)
 				{
 					if (1==1)//this.AI!='static')
 					{
@@ -483,13 +483,13 @@ var LaunchDungeons=function()
 			if ((this.type=='hero' || this.type=='monster') && this.fighting==0 && this.stats.hp<this.stats.hpm) this.stats.hp++;//heal up
 			if (this.type=='hero')//collect items and cookies
 			{
-				var entities=this.dungeon.GetEntities(this.x,this.y);
-				for (var i in entities)
+				let entities=this.dungeon.GetEntities(this.x,this.y);
+				for (let i in entities)
 				{
 					if (entities[i].type=='item' && entities[i].subtype=='cookies')
 					{
-						var entity=entities[i];
-						var value=Math.ceil(entity.value*Game.Objects[this.dungeon.type].amount*50*(1+Math.random()*((this.stats.luck)/20)));//temporary; scale with matching building CpS later
+						let entity=entities[i];
+						let value=Math.ceil(entity.value*Game.Objects[this.dungeon.type].amount*50*(1+Math.random()*((this.stats.luck)/20)));//temporary; scale with matching building CpS later
 						if (value>0)
 						{
 							this.dungeon.Log('<span style="color:#9f9;">Found <b>'+Beautify(value)+'</b> cookie'+(value==1?'':'s')+'!</span>');
@@ -541,15 +541,15 @@ var LaunchDungeons=function()
 				this.log.unshift(what);
 				this.logNew++;
 			}
-			else {for (var i in what) {this.Log(what[i],1);}}
+			else {for (let i in what) {this.Log(what[i],1);}}
 			//if (!nested) this.UpdateLog();
 		}
 		
 		this.UpdateLog=function()
 		{
 			this.log=this.log.slice(0,30);
-			var str='';
-			for (var i in this.log)
+			let str='';
+			for (let i in this.log)
 			{
 				if (i<this.logNew) str+='<div class="new">'+this.log[i]+'</div>';
 				else str+='<div>'+this.log[i]+'</div>';
@@ -561,14 +561,14 @@ var LaunchDungeons=function()
 		this.entities=[];
 		this.GetEntities=function(x,y)//returns the first entity found on tile x,y
 		{
-			var entities=[];
-			for (var i in this.entities) {if (this.entities[i].x==x && this.entities[i].y==y) entities.push(this.entities[i]);}
+			let entities=[];
+			for (let i in this.entities) {if (this.entities[i].x==x && this.entities[i].y==y) entities.push(this.entities[i]);}
 			return entities;
 		}
 		this.AddEntity=function(type,subtype,x,y)
 		{
 			//this.RemoveEntities(x,y);
-			var entity=new Game.Entity(type,subtype,this);
+			let entity=new Game.Entity(type,subtype,this);
 			entity.x=x;
 			entity.y=y;
 			entity.dungeon=this;
@@ -577,24 +577,24 @@ var LaunchDungeons=function()
 		}
 		this.RemoveEntities=function(x,y)
 		{
-			var entities=this.GetEntities(x,y);
-			for (var i in entities)
+			let entities=this.GetEntities(x,y);
+			for (let i in entities)
 			{
 				entities[i].Destroy();
 			}
 		}
 		this.DrawEntities=function()
 		{
-			var str='';
-			for (var i in this.entities) {str+=this.entities[i].Draw();}
+			let str='';
+			for (let i in this.entities) {str+=this.entities[i].Draw();}
 			return str;
 		}
 		
 		this.CheckObstacle=function(x,y)//returns 0 for no obstacle; -1 for a wall; an entity if there's at least one entity on this tile
 		{
 			if (x<0 || x>=this.map.w || y<0 || y>=this.map.h) return -1;
-			var entities=this.GetEntities(x,y);
-			for (var i in entities)
+			let entities=this.GetEntities(x,y);
+			for (let i in entities)
 			{
 				if (entities[i].obstacle) return entities[i];
 			}
@@ -607,7 +607,7 @@ var LaunchDungeons=function()
 		{
 			if (this.level==0) this.name=Game.DungeonTypes[this.type].nameGenerator();
 			this.entities=[];
-			var M=new D.Map(40,40,Math.random(),{
+			let M=new D.Map(40,40,Math.random(),{
 				roomSize:10,
 				corridorSize:5,
 				fillRatio:1/2,
@@ -626,15 +626,15 @@ var LaunchDungeons=function()
 			M.finish();
 			//spawn treasure
 			/*
-			for (var i in M.rooms)
+			for (let i in M.rooms)
 			{
 				if (M.rooms[i].freeTiles>1)
 				{
-					for (var ii=0;ii<Math.ceil(Math.sqrt(M.rooms[i].freeTiles*(M.rooms[i].gen*0.25+0.1))/2);ii++)
+					for (let ii=0;ii<Math.ceil(Math.sqrt(M.rooms[i].freeTiles*(M.rooms[i].gen*0.25+0.1))/2);ii++)
 					{
 						if (Math.random()<0.95 && M.rooms[i].freeTiles>1)
 						{
-							var spot=M.getBestSpotInRoom(M.rooms[i]);
+							let spot=M.getBestSpotInRoom(M.rooms[i]);
 							M.data[spot.x][spot.y][0]=0;
 							spot.score=0;
 							M.rooms[i].freeTiles--;
@@ -643,16 +643,16 @@ var LaunchDungeons=function()
 				}
 			}*/
 			
-			for (var i in M.doors)//place door entities on door positions
+			for (let i in M.doors)//place door entities on door positions
 			{
 				//M.data[M.doors[i][0]][M.doors[i][1]][0]=TILE_FLOOR_EDGE;
 				this.AddEntity('destructible','door',M.doors[i][0],M.doors[i][1]);
 			}
 			//set tile graphics
-			for (var i in M.rooms)
+			for (let i in M.rooms)
 			{
-				var altStr=choose(['alt ','','']);
-				var tiles={
+				let altStr=choose(['alt ','','']);
+				let tiles={
 				'void':altStr+'void',
 				'wall':altStr+'wall',
 				'wall corner':altStr+'wall corner',
@@ -672,11 +672,11 @@ var LaunchDungeons=function()
 			this.map.str=this.map.getStr();
 			
 			//place a boss
-			var tile=this.map.exit;
-			var monsters=[];
-			for (var ii in Game.BossMonsters)
+			let tile=this.map.exit;
+			let monsters=[];
+			for (let ii in Game.BossMonsters)
 			{
-				var me=Game.BossMonsters[ii];
+				let me=Game.BossMonsters[ii];
 				if (me.level<=(depth+this.level) && Math.random()<(me.stats.rarity||1)) monsters.push(me.name);
 			}
 			if (monsters.length==0) monsters=[choose(Game.BossMonsters).name];
@@ -688,36 +688,36 @@ var LaunchDungeons=function()
 			
 			//place relics
 			/*
-			var tile=this.map.getBestSpotInRoom(this.map.getRoom(this.map.exit[0],this.map.exit[1]));
-			var entity=this.AddEntity('special','upgrade',tile.x,tile.y);
+			let tile=this.map.getBestSpotInRoom(this.map.getRoom(this.map.exit[0],this.map.exit[1]));
+			let entity=this.AddEntity('special','upgrade',tile.x,tile.y);
 			entity.value='Dungeon cookie upgrade';
 			this.map.removeFreeTile(tile.x,tile.y);
-			for (var i=0;i<Math.floor(Math.pow(Math.random(),2)*3);i++)
+			for (let i=0;i<Math.floor(Math.pow(Math.random(),2)*3);i++)
 			{
-				var room=choose(this.map.rooms);
+				let room=choose(this.map.rooms);
 				if (room.freeTiles.length>10)
 				{
-					var tile=this.map.getBestSpotInRoom(room);
-					var entity=this.AddEntity('special','upgrade',tile.x,tile.y);
+					let tile=this.map.getBestSpotInRoom(room);
+					let entity=this.AddEntity('special','upgrade',tile.x,tile.y);
 					entity.value='Dungeon cookie upgrade';
 					this.map.removeFreeTile(tile.x,tile.y);
 				}
 			}*/
 			
 			//sprinkle monsters and treasure
-			for (var i=0;i<Math.ceil(this.map.freeTiles.length*0.7);i++)//let's fill this up with A LOT of stuff
+			for (let i=0;i<Math.ceil(this.map.freeTiles.length*0.7);i++)//let's fill this up with A LOT of stuff
 			{
-				var tile=choose(this.map.freeTiles);
+				let tile=choose(this.map.freeTiles);
 				if (tile!=-1)
 				{
-					var room=this.map.getRoom(tile[0],tile[1]);
-					var depth=room.gen+1;
+					let room=this.map.getRoom(tile[0],tile[1]);
+					let depth=room.gen+1;
 					if (Math.random()<0.2)//2 in 10 spawns are monsters
 					{
-						var monsters=[];
-						for (var ii in Game.Monsters)
+						let monsters=[];
+						for (let ii in Game.Monsters)
 						{
-							var me=Game.Monsters[ii];
+							let me=Game.Monsters[ii];
 							if (me.level!=0 && me.level<=(depth+this.level) && Math.random()<(me.stats.rarity||1)) monsters.push(me.name);//spawn type depending on monster level and rarity
 						}
 						if (monsters.length>0)
@@ -730,10 +730,10 @@ var LaunchDungeons=function()
 					{
 						if (Math.random()<0.6)
 						{
-							var value=Math.round(Math.pow(Math.random(),6)*(10+this.level));
+							let value=Math.round(Math.pow(Math.random(),6)*(10+this.level));
 							if (value>0)
 							{
-								var entity=this.AddEntity('item','cookies',tile[0],tile[1]);//random cookies
+								let entity=this.AddEntity('item','cookies',tile[0],tile[1]);//random cookies
 								entity.value=value;
 							}
 						}
@@ -748,9 +748,9 @@ var LaunchDungeons=function()
 		
 		this.Draw=function()
 		{
-			var str='';
-			var x=-this.hero.x;
-			var y=-this.hero.y;
+			let str='';
+			let x=-this.hero.x;
+			let y=-this.hero.y;
 			str+='<div id="map'+this.id+'" class="map" style="width:'+(9*16)+'px;height:'+(9*16)+'px;"><div class="mapContainer" id="mapcontainer'+this.id+'" style="position:absolute;left:'+(x*16)+'px;top:'+(y*16)+'px;"><div id="mapitems'+this.id+'"></div>'+this.map.str+'</div></div>';
 			str+='<div style="position:absolute;left:'+(9*16+16)+'px;">'+
 			'<a class="control west" onclick="Game.HeroesById['+this.hero.id+'].Move(-1,0);"></a><br>'+
@@ -773,8 +773,8 @@ var LaunchDungeons=function()
 		this.Refresh=function()
 		{
 			if (!l('mapcontainer'+this.id)) this.Draw();
-			var x=4-this.hero.x;
-			var y=4-this.hero.y;
+			let x=4-this.hero.x;
+			let y=4-this.hero.y;
 			l('mapcontainer'+this.id).style.left=(x*16)+'px';
 			l('mapcontainer'+this.id).style.top=(y*16)+'px';
 			l('mapitems'+this.id).innerHTML=this.DrawEntities();
@@ -786,7 +786,7 @@ var LaunchDungeons=function()
 		}
 		this.Turn=function()
 		{
-			for (var i in this.entities)
+			for (let i in this.entities)
 			{
 				if (this.entities[i] && this.entities[i].type) this.entities[i].Turn();
 			}
@@ -818,7 +818,7 @@ var LaunchDungeons=function()
 		
 		this.DrawButton=function()
 		{
-			var str='';
+			let str='';
 			//str+='<div style="text-align:center;margin:48px auto;color:#999;"><a onclick="Game.ObjectsById['+this.id+'].setSpecial(1);">Enter</a></div>';
 			str+='<div style="width:144px;height:144px;position:absolute;left:0px;bottom:0px;"><a class="specialButtonPic" style="background-image:url(img/'+this.portalPic+'.png);" onclick="Game.ObjectsById['+this.id+'].setSpecial(1);"><div class="specialButtonText">Enter dungeons</div></a></div>';
 			return str;
@@ -846,8 +846,8 @@ var LaunchDungeons=function()
 	
 	Game.DungeonLocationChain=function(map,x,y)//return an array of the rooms between the root room and this tile's room, inclusive
 	{//we shouldn't need all this if we used A*...
-		var room=map.getRoom(x,y);
-		var chain=[];
+		let room=map.getRoom(x,y);
+		let chain=[];
 		if (room!=-1)
 		{
 			while (room.parent)
@@ -871,7 +871,7 @@ var LaunchDungeons=function()
 		start.reverse();
 		end.reverse();
 		if (start[0].id==end[0].id) return start[start.length-1];//same room
-		for (var i in end)
+		for (let i in end)
 		{
 			if (start[0]==end[i].parent) return end[i];//inferior branch, go to the inferior room
 		}
@@ -902,11 +902,11 @@ var LaunchDungeons=function()
 					this.dungeon.timer=Game.fps*(Math.max(0.1,2-(this.dungeon.hero.stats.speed*0.2))+Math.max(this.dungeon.timerWarmup,0));
 					if (this.dungeon.timerWarmup>0) this.dungeon.timerWarmup--;
 					
-					var dungeon=this.dungeon;
-					var hero=dungeon.heroEntity;
+					let dungeon=this.dungeon;
+					let hero=dungeon.heroEntity;
 					
-					var targetRoom=Game.DungeonLinkLocationChains(Game.DungeonLocationChain(dungeon.map,hero.x,hero.y),Game.DungeonLocationChain(dungeon.map,dungeon.map.exit[0],dungeon.map.exit[1]));
-					var targetTile=(targetRoom.gen==0 || targetRoom.id==dungeon.map.getRoom(hero.x,hero.y).id)?[dungeon.map.exit[0],dungeon.map.exit[1]]:targetRoom.door;
+					let targetRoom=Game.DungeonLinkLocationChains(Game.DungeonLocationChain(dungeon.map,hero.x,hero.y),Game.DungeonLocationChain(dungeon.map,dungeon.map.exit[0],dungeon.map.exit[1]));
+					let targetTile=(targetRoom.gen==0 || targetRoom.id==dungeon.map.getRoom(hero.x,hero.y).id)?[dungeon.map.exit[0],dungeon.map.exit[1]]:targetRoom.door;
 					hero.GoTo(targetTile[0],targetTile[1]);
 					if (hero.stuck) hero.Wander();
 					dungeon.hero.x=hero.x;
@@ -921,8 +921,8 @@ var LaunchDungeons=function()
 			l('rowSpecial'+this.dungeon.id).removeEventListener('keydown',arguments.callee,false);
 			l('rowSpecial'+this.dungeon.id).addEventListener('keydown',function(event)
 			{
-				var dungeon=Game.Objects['Factory'].dungeon;
-				var control=0;
+				let dungeon=Game.Objects['Factory'].dungeon;
+				let control=0;
 				if (event.keyCode==37) {dungeon.hero.Move(-1,0);control=1;}
 				else if (event.keyCode==38) {dungeon.hero.Move(0,-1);control=1;}
 				else if (event.keyCode==39) {dungeon.hero.Move(1,0);control=1;}
@@ -954,7 +954,7 @@ var LaunchDungeons=function()
 			);
 		}
 		
-		var hero=choose(Game.HeroesById);
+		let hero=choose(Game.HeroesById);
 		hero.EnterDungeon(this.dungeon,this.dungeon.map.entrance[0],this.dungeon.map.entrance[1]);
 	}
 	
@@ -1001,7 +1001,7 @@ var LaunchDungeons=function()
 			this.x=x;
 			this.y=y;
 			dungeon.heroEntity=dungeon.AddEntity('hero',dungeon.hero.name,x,y);
-			var room=dungeon.map.getRoom(this.x,this.y);
+			let room=dungeon.map.getRoom(this.x,this.y);
 			if (room!=-1 && room.hidden) {room.hidden=0;dungeon.RedrawMap();}
 			Game.Dungeons[this.inDungeon].Refresh();
 			dungeon.Log('--------------------');
@@ -1011,7 +1011,7 @@ var LaunchDungeons=function()
 		}
 		this.Move=function(x,y)
 		{
-			var dungeon=Game.Dungeons[this.inDungeon];
+			let dungeon=Game.Dungeons[this.inDungeon];
 			dungeon.heroEntity.targets=[[x,y]];
 			if (dungeon.heroEntity.Move())
 			{
@@ -1028,7 +1028,7 @@ var LaunchDungeons=function()
 		
 		this.save=function()
 		{
-			var str='';
+			let str='';
 			str+=
 			this.inDungeon+','+
 			this.completedDungeons+','+
@@ -1039,7 +1039,7 @@ var LaunchDungeons=function()
 		}
 		this.load=function(data)
 		{
-			var str=data.split(',');
+			let str=data.split(',');
 			this.inDungeon=parseInt(str[0]);
 			this.completedDungeons=parseInt(str[1]);
 			this.gear.armor=parseInt(str[2]);
@@ -1053,7 +1053,7 @@ var LaunchDungeons=function()
 	/*=====================================================================================
 	CREATE HEROES
 	=======================================================================================*/
-	var hero=new Game.Hero('Chip','girlscoutChip','portraitChip',[1,0]);
+	let hero=new Game.Hero('Chip','girlscoutChip','portraitChip',[1,0]);
 	hero.dialogue={
 		'intro':'I\'m Chip! I just really like exploring stuff. Let\'s go have an adventure!',
 		'greeting':'Hello there!|I\'m ready!|Where are we going today?|Adventure!',
@@ -1073,7 +1073,7 @@ var LaunchDungeons=function()
 		dodge:5,
 		luck:5
 	};
-	var hero=new Game.Hero('Crumb','girlscoutCrumb','portraitCrumb',[2,0]);
+	let hero=new Game.Hero('Crumb','girlscoutCrumb','portraitCrumb',[2,0]);
 	hero.dialogue={
 		'intro':'I\'m Crumb. I look like this because of a baking accident when I was little. Big deal. At least now I don\'t get hurt as easily as others, I guess.',
 		'greeting':'Hi there.|Ready for adventure, I guess.|Reporting for duty.',
@@ -1093,7 +1093,7 @@ var LaunchDungeons=function()
 		dodge:4,
 		luck:5
 	};
-	var hero=new Game.Hero('Doe','girlscoutDoe','portraitDoe',[3,0]);
+	let hero=new Game.Hero('Doe','girlscoutDoe','portraitDoe',[3,0]);
 	hero.dialogue={
 		'intro':'H-hey. Name\'s Doe. I\'m pretty fast. I uh, I promise I\'ll do my best.',
 		'greeting':'H-hey.|Oh, uh, h-hi there.|C-can I join?',
@@ -1113,7 +1113,7 @@ var LaunchDungeons=function()
 		dodge:5,
 		luck:5
 	};
-	var hero=new Game.Hero('Lucky','girlscoutLucky','portraitLucky',[4,0]);
+	let hero=new Game.Hero('Lucky','girlscoutLucky','portraitLucky',[4,0]);
 	hero.dialogue={
 		'intro':'Oh joy! My name\'s Lucky. Guess what I\'m good at?',
 		'greeting':'I\'m feeling lucky!|It\'s a bright day today!|Let\'s do great things together.',
