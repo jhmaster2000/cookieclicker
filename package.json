@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "name": "cookieclicker",
+  "version": "2.0.4-8",
+  "description": "cookieclicker",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "SEE LICENSE IN LICENSE.md",
+  "types": "./main.d.ts",
+  "dependencies": {
+    "eslint": "^8.33.0"
+  }
+}
