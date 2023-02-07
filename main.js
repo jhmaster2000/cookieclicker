@@ -178,16 +178,6 @@ const localStorageSet = function (key, str) {
     return local;
 };
 
-const ccfetch = async function (/** @type {string} */ url, /** @type {(arg0: string) => void} */ callback) {
-    const urlObj = new URL(url, window.location.origin);
-    urlObj.searchParams.set('nocache', Date.now().toString());
-    const res = await fetch(urlObj, {
-        method: 'GET',
-        headers: { 'Content-Type': 'text/plain' }
-    });
-    if (res.ok) callback(await res.text());
-};
-
 /**
  * @param {number} x
  */
@@ -3035,35 +3025,10 @@ Game.Launch = function () {
         };
         Game.tooltip.wobble = function () { /*//!nullsub*/ };
 
-        /*=====================================================================================
-        UPDATE CHECKER
-        =======================================================================================*/
-        Game.CheckUpdates = function () {
-            ccfetch('server.php?q=checkupdate', Game.CheckUpdatesResponse);
-        };
-        Game.CheckUpdatesResponse = function (response) {
-            let r = response.split('|');
-            let str = '';
-            if (r[0] == 'alert') {
-                if (r[1]) str = r[1];
-            } else if (parseFloat(r[0]) > Game.version) {
-                str = '<b>' + loc('New version available: v. %1!', r[0]) + '</b>';
-                if (r[1]) str += '<br><small>' + loc('Update note: "%1"', r[1]) + '</small>';
-                str += '<br><b>' + loc('Refresh to get it!') + '</b>';
-            }
-            if (str != '') {
-                // @ts-expect-error
-                l('alert').innerHTML = str;
-                // @ts-expect-error
-                l('alert').style.display = 'block';
-            }
-        };
-
-        /*=====================================================================================
-        DATA GRABBER
-        =======================================================================================*/
-
         Game.externalDataLoaded = false;
+
+        let asdf = 4 + 'hello';
+        asdf + 25;
 
         Game.grandmaNames = [
             'Granny',
@@ -3113,34 +3078,6 @@ Game.Launch = function () {
         ];
         Game.customGrandmaNames = [];
         Game.heralds = 0;
-
-        Game.GrabData = function () {
-            //! nullsub
-        };
-        Game.GrabDataResponse = function (response) {
-            /*
-                response should be formatted as
-                {"herald":3,"grandma":"a|b|c|...}
-            */
-            let r = {};
-            try {
-                r = JSON.parse(response);
-                if (typeof r['herald'] !== 'undefined') {
-                    Game.heralds = parseInt(r['herald']);
-                    Game.heralds = Math.max(0, Math.min(100, Game.heralds));
-                }
-                if (typeof r['grandma'] !== 'undefined' && r['grandma'] != '') {
-                    Game.customGrandmaNames = r['grandma'].split('|');
-                    Game.customGrandmaNames = Game.customGrandmaNames.filter(function (el) {
-                        return el != '';
-                    });
-                }
-
-                // @ts-expect-error
-                l('heraldsAmount').textContent = Math.floor(Game.heralds);
-                Game.externalDataLoaded = true;
-            } catch (e) { /* empty */ }
-        };
 
         Game.attachTooltip(
             l('httpsSwitch'),
@@ -3275,8 +3212,6 @@ Game.Launch = function () {
         l('heraldsAmount').textContent = '?';
         // @ts-expect-error
         l('heralds').style.display = 'inline-block';
-
-        Game.GrabData();
 
         Game.useLocalStorage = 1;
         //window.localStorage.clear();//won't switch back to cookie-based if there is localStorage info
@@ -24837,12 +24772,6 @@ Game.Launch = function () {
                 Game.toQuit = false;
                 window.close();
             }
-        }
-
-        //every hour: get server data (ie. update notification, patreon, steam etc)
-        if (Game.T % (Game.fps * 60 * 60) == 0 && Game.T > Game.fps * 10 /* && Game.prefs.autoupdate*/) {
-            Game.CheckUpdates();
-            Game.GrabData();
         }
 
         Game.T++;
