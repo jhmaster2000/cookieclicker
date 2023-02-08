@@ -1330,7 +1330,7 @@ let Game = {};
             'check' - called every few seconds when we check for upgrade/achiev unlock conditions; you can also use this for other checks that you don't need happening every logic frame
         -function hooks are provided for convenience and more advanced mod functionality will probably involve manual code injection
         -please be mindful of the length of the data you save, as it does inflate the export-save-to-string feature
-    	
+
         NOTE: modding API is susceptible to change and may not always function super-well
     */
     Game.mods = {};
@@ -3164,22 +3164,22 @@ Game.Launch = function () {
             str += '|'; // just in case we need some more stuff here
             if (type == 3) str += '\n\nRun details';
             str += // save stats
-                (type == 3 ? '\n	run start date : ' : '') +
+                (type == 3 ? '\n\trun start date : ' : '') +
                 parseInt(Game.startDate) +
                 ';' +
-                (type == 3 ? '\n	legacy start date : ' : '') +
+                (type == 3 ? '\n\tlegacy start date : ' : '') +
                 parseInt(Game.fullDate) +
                 ';' +
-                (type == 3 ? '\n	date when we last opened the game : ' : '') +
+                (type == 3 ? '\n\tdate when we last opened the game : ' : '') +
                 parseInt(Game.lastDate) +
                 ';' +
-                (type == 3 ? '\n	bakery name : ' : '') +
+                (type == 3 ? '\n\tbakery name : ' : '') +
                 Game.bakeryName +
                 ';' +
-                (type == 3 ? '\n	seed : ' : '') +
+                (type == 3 ? '\n\tseed : ' : '') +
                 Game.seed +
                 '|';
-            if (type == 3) str += '\n\nPacked preferences bitfield\n	';
+            if (type == 3) str += '\n\nPacked preferences bitfield\n\t';
             let str2 = // prefs
                 (Game.prefs.particles ? '1' : '0') +
                 (Game.prefs.numbers ? '1' : '0') +
@@ -3213,99 +3213,99 @@ Game.Launch = function () {
             str += str2 + '|';
             if (type == 3) str += '\n\nMisc game data';
             str +=
-                (type == 3 ? '\n	cookies : ' : '') +
+                (type == 3 ? '\n\tcookies : ' : '') +
                 parseFloat(Game.cookies).toString() +
                 ';' +
-                (type == 3 ? '\n	total cookies earned : ' : '') +
+                (type == 3 ? '\n\ttotal cookies earned : ' : '') +
                 parseFloat(Game.cookiesEarned).toString() +
                 ';' +
-                (type == 3 ? '\n	cookie clicks : ' : '') +
+                (type == 3 ? '\n\tcookie clicks : ' : '') +
                 parseInt(Math.floor(Game.cookieClicks).toString()) +
                 ';' +
-                (type == 3 ? '\n	golden cookie clicks : ' : '') +
+                (type == 3 ? '\n\tgolden cookie clicks : ' : '') +
                 parseInt(Math.floor(Game.goldenClicks).toString()) +
                 ';' +
-                (type == 3 ? '\n	cookies made by clicking : ' : '') +
+                (type == 3 ? '\n\tcookies made by clicking : ' : '') +
                 parseFloat(Game.handmadeCookies).toString() +
                 ';' +
-                (type == 3 ? '\n	golden cookies missed : ' : '') +
+                (type == 3 ? '\n\tgolden cookies missed : ' : '') +
                 parseInt(Math.floor(Game.missedGoldenClicks).toString()) +
                 ';' +
-                (type == 3 ? '\n	background type : ' : '') +
+                (type == 3 ? '\n\tbackground type : ' : '') +
                 parseInt(Math.floor(Game.bgType).toString()) +
                 ';' +
-                (type == 3 ? '\n	milk type : ' : '') +
+                (type == 3 ? '\n\tmilk type : ' : '') +
                 parseInt(Math.floor(Game.milkType).toString()) +
                 ';' +
-                (type == 3 ? '\n	cookies from past runs : ' : '') +
+                (type == 3 ? '\n\tcookies from past runs : ' : '') +
                 parseFloat(Game.cookiesReset).toString() +
                 ';' +
-                (type == 3 ? '\n	elder wrath : ' : '') +
+                (type == 3 ? '\n\telder wrath : ' : '') +
                 parseInt(Math.floor(Game.elderWrath).toString()) +
                 ';' +
-                (type == 3 ? '\n	pledges : ' : '') +
+                (type == 3 ? '\n\tpledges : ' : '') +
                 parseInt(Math.floor(Game.pledges).toString()) +
                 ';' +
-                (type == 3 ? '\n	pledge time left : ' : '') +
+                (type == 3 ? '\n\tpledge time left : ' : '') +
                 parseInt(Math.floor(Game.pledgeT).toString()) +
                 ';' +
-                (type == 3 ? '\n	currently researching : ' : '') +
+                (type == 3 ? '\n\tcurrently researching : ' : '') +
                 parseInt(Math.floor(Game.nextResearch).toString()) +
                 ';' +
-                (type == 3 ? '\n	research time left : ' : '') +
+                (type == 3 ? '\n\tresearch time left : ' : '') +
                 parseInt(Math.floor(Game.researchT).toString()) +
                 ';' +
-                (type == 3 ? '\n	ascensions : ' : '') +
+                (type == 3 ? '\n\tascensions : ' : '') +
                 parseInt(Math.floor(Game.resets).toString()) +
                 ';' +
-                (type == 3 ? '\n	golden cookie clicks (this run) : ' : '') +
+                (type == 3 ? '\n\tgolden cookie clicks (this run) : ' : '') +
                 parseInt(Math.floor(Game.goldenClicksLocal).toString()) +
                 ';' +
-                (type == 3 ? '\n	cookies sucked by wrinklers : ' : '') +
+                (type == 3 ? '\n\tcookies sucked by wrinklers : ' : '') +
                 parseFloat(Game.cookiesSucked).toString() +
                 ';' +
-                (type == 3 ? '\n	wrinkles popped : ' : '') +
+                (type == 3 ? '\n\twrinkles popped : ' : '') +
                 parseInt(Math.floor(Game.wrinklersPopped).toString()) +
                 ';' +
-                (type == 3 ? '\n	santa level : ' : '') +
+                (type == 3 ? '\n\tsanta level : ' : '') +
                 parseInt(Math.floor(Game.santaLevel).toString()) +
                 ';' +
-                (type == 3 ? '\n	reindeer clicked : ' : '') +
+                (type == 3 ? '\n\treindeer clicked : ' : '') +
                 parseInt(Math.floor(Game.reindeerClicked).toString()) +
                 ';' +
-                (type == 3 ? '\n	season time left : ' : '') +
+                (type == 3 ? '\n\tseason time left : ' : '') +
                 parseInt(Math.floor(Game.seasonT).toString()) +
                 ';' +
-                (type == 3 ? '\n	season switcher uses : ' : '') +
+                (type == 3 ? '\n\tseason switcher uses : ' : '') +
                 parseInt(Math.floor(Game.seasonUses).toString()) +
                 ';' +
-                (type == 3 ? '\n	current season : ' : '') +
+                (type == 3 ? '\n\tcurrent season : ' : '') +
                 (Game.season ? Game.season : '') +
                 ';';
             let wrinklers = Game.SaveWrinklers();
             str +=
-                (type == 3 ? '\n	amount of cookies contained in wrinklers : ' : '') +
+                (type == 3 ? '\n\tamount of cookies contained in wrinklers : ' : '') +
                 parseFloat(Math.floor(wrinklers.amount).toString()) +
                 ';' +
-                (type == 3 ? '\n	number of wrinklers : ' : '') +
+                (type == 3 ? '\n\tnumber of wrinklers : ' : '') +
                 parseInt(Math.floor(wrinklers.number).toString()) +
                 ';' +
-                (type == 3 ? '\n	prestige level : ' : '') +
+                (type == 3 ? '\n\tprestige level : ' : '') +
                 parseFloat(Game.prestige).toString() +
                 ';' +
-                (type == 3 ? '\n	heavenly chips : ' : '') +
+                (type == 3 ? '\n\theavenly chips : ' : '') +
                 parseFloat(Game.heavenlyChips).toString() +
                 ';' +
-                (type == 3 ? '\n	heavenly chips spent : ' : '') +
+                (type == 3 ? '\n\theavenly chips spent : ' : '') +
                 parseFloat(Game.heavenlyChipsSpent).toString() +
                 ';' +
-                (type == 3 ? '\n	heavenly cookies : ' : '') +
+                (type == 3 ? '\n\theavenly cookies : ' : '') +
                 parseFloat(Game.heavenlyCookies).toString() +
                 ';' +
-                (type == 3 ? '\n	ascension mode : ' : '') +
+                (type == 3 ? '\n\tascension mode : ' : '') +
                 parseInt(Math.floor(Game.ascensionMode).toString()) +
                 ';' +
-                (type == 3 ? '\n	permanent upgrades : ' : '') +
+                (type == 3 ? '\n\tpermanent upgrades : ' : '') +
                 parseInt(Math.floor(Game.permanentUpgrades[0]).toString()) +
                 ';' +
                 parseInt(Math.floor(Game.permanentUpgrades[1]).toString()) +
@@ -3316,58 +3316,58 @@ Game.Launch = function () {
                 ';' +
                 parseInt(Math.floor(Game.permanentUpgrades[4]).toString()) +
                 ';' +
-                (type == 3 ? '\n	dragon level : ' : '') +
+                (type == 3 ? '\n\tdragon level : ' : '') +
                 parseInt(Math.floor(Game.dragonLevel).toString()) +
                 ';' +
-                (type == 3 ? '\n	dragon aura : ' : '') +
+                (type == 3 ? '\n\tdragon aura : ' : '') +
                 parseInt(Math.floor(Game.dragonAura).toString()) +
                 ';' +
-                (type == 3 ? '\n	dragon aura 2 : ' : '') +
+                (type == 3 ? '\n\tdragon aura 2 : ' : '') +
                 parseInt(Math.floor(Game.dragonAura2).toString()) +
                 ';' +
-                (type == 3 ? '\n	chime type : ' : '') +
+                (type == 3 ? '\n\tchime type : ' : '') +
                 parseInt(Math.floor(Game.chimeType).toString()) +
                 ';' +
-                (type == 3 ? '\n	volume : ' : '') +
+                (type == 3 ? '\n\tvolume : ' : '') +
                 parseInt(Math.floor(Game.volume).toString()) +
                 ';' +
-                (type == 3 ? '\n	number of shiny wrinklers : ' : '') +
+                (type == 3 ? '\n\tnumber of shiny wrinklers : ' : '') +
                 parseInt(Math.floor(wrinklers.shinies).toString()) +
                 ';' +
-                (type == 3 ? '\n	amount of cookies contained in shiny wrinklers : ' : '') +
+                (type == 3 ? '\n\tamount of cookies contained in shiny wrinklers : ' : '') +
                 parseFloat(Math.floor(wrinklers.amountShinies).toString()) +
                 ';' +
-                (type == 3 ? '\n	current amount of sugar lumps : ' : '') +
+                (type == 3 ? '\n\tcurrent amount of sugar lumps : ' : '') +
                 parseFloat(Math.floor(Game.lumps).toString()) +
                 ';' +
-                (type == 3 ? '\n	total amount of sugar lumps made : ' : '') +
+                (type == 3 ? '\n\ttotal amount of sugar lumps made : ' : '') +
                 parseFloat(Math.floor(Game.lumpsTotal).toString()) +
                 ';' +
-                (type == 3 ? '\n	time when current sugar lump started : ' : '') +
+                (type == 3 ? '\n\ttime when current sugar lump started : ' : '') +
                 parseFloat(Math.floor(Game.lumpT).toString()) +
                 ';' +
-                (type == 3 ? '\n	time when last refilled a minigame with a sugar lump : ' : '') +
+                (type == 3 ? '\n\ttime when last refilled a minigame with a sugar lump : ' : '') +
                 parseFloat(Math.floor(Game.lumpRefill).toString()) +
                 ';' +
-                (type == 3 ? '\n	sugar lump type : ' : '') +
+                (type == 3 ? '\n\tsugar lump type : ' : '') +
                 parseInt(Math.floor(Game.lumpCurrentType).toString()) +
                 ';' +
-                (type == 3 ? '\n	vault : ' : '') +
+                (type == 3 ? '\n\tvault : ' : '') +
                 Game.vault.join(',') +
                 ';' +
-                (type == 3 ? '\n	heralds : ' : '') +
+                (type == 3 ? '\n\theralds : ' : '') +
                 parseInt(Game.heralds) +
                 ';' +
-                (type == 3 ? '\n	golden cookie fortune : ' : '') +
+                (type == 3 ? '\n\tgolden cookie fortune : ' : '') +
                 parseInt(Game.fortuneGC) +
                 ';' +
-                (type == 3 ? '\n	CpS fortune : ' : '') +
+                (type == 3 ? '\n\tCpS fortune : ' : '') +
                 parseInt(Game.fortuneCPS) +
                 ';' +
-                (type == 3 ? '\n	highest raw CpS : ' : '') +
+                (type == 3 ? '\n\thighest raw CpS : ' : '') +
                 parseFloat(Game.cookiesPsRawHighest) +
                 ';' +
-                (type == 3 ? '\n	music volume : ' : '') +
+                (type == 3 ? '\n\tmusic volume : ' : '') +
                 parseInt(Math.floor(Game.volumeMusic).toString()) +
                 ';' +
                 '|'; // cookies and lots of other stuff
@@ -3376,7 +3376,7 @@ Game.Launch = function () {
             for (let i in Game.Objects) {
                 // buildings
                 let me = Game.Objects[i];
-                if (type == 3) str += '\n	' + me.name + ' : ';
+                if (type == 3) str += '\n\t' + me.name + ' : ';
                 if (me.vanilla) {
                     // @ts-expect-error
                     str += me.amount + ',' + me.bought + ',' + parseFloat(Math.floor(me.totalCookies)) + ',' + parseInt(me.level);
@@ -3388,7 +3388,7 @@ Game.Launch = function () {
                 }
             }
             str += '|';
-            if (type == 3) str += '\n\nPacked upgrades bitfield (unlocked and bought)\n	';
+            if (type == 3) str += '\n\nPacked upgrades bitfield (unlocked and bought)\n\t';
             let toCompress = [];
             for (let i in Game.UpgradesById) {
                 // upgrades
@@ -3400,7 +3400,7 @@ Game.Launch = function () {
 
             str += toCompress;
             str += '|';
-            if (type == 3) str += '\n\nPacked achievements bitfield (won)\n	';
+            if (type == 3) str += '\n\nPacked achievements bitfield (won)\n\t';
             toCompress = [];
             for (let i in Game.AchievementsById) {
                 // achievements
@@ -3415,7 +3415,7 @@ Game.Launch = function () {
             for (let i in Game.buffs) {
                 let me = Game.buffs[i];
                 if (me.type) {
-                    if (type == 3) str += '\n	' + me.type.name + ' : ';
+                    if (type == 3) str += '\n\t' + me.type.name + ' : ';
                     if (me.type.vanilla) {
                         str += me.type.id + ',' + me.maxTime + ',' + me.time;
                         if (typeof me.arg1 !== 'undefined') str += ',' + parseFloat(me.arg1);
