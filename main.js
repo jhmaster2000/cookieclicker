@@ -21,10 +21,25 @@ MISC HELPER FUNCTIONS
 =======================================================================================*/
 const STUB = (..._) => void 0;
 /**
- * @param {string} what
+ * @template T
+ * @param {T} v
+ * @returns {Exclude<T, null>}
  */
-function l(what) {
-    return document.getElementById(what);
+const ASSERT_NOT_NULL = (v) => {
+    if (v === null || v === undefined) throw new Error('Non-null assertion failed. Follow stacktrace for location.');
+    return /** @type Exclude<T, null> */(v);
+};
+/**
+ * @template {boolean} asserted
+ * @param {string} what
+ * @param {asserted=} assertNotNull
+ * @returns {asserted extends true ? HTMLElement : (HTMLElement | null)}
+ */
+function l(what, assertNotNull) {
+    const el = document.getElementById(what);
+    if (assertNotNull && !el) throw new Error(`l() Assertion failed: Requested element ${what} was null.`);
+    // @ts-expect-error --- Need proper TS to fix this one, but the external types work and that's what matters
+    return el;
 }
 /**
  * @template T
@@ -187,7 +202,7 @@ function toFixed(x) {
         const e = parseInt(x.toString().split('e-')[1]);
         if (e) {
             x *= Math.pow(10, e - 1);
-            // @ts-expect-error
+            // @ts-expect-error misery
             x = '0.' + new Array(e).join('0') + x.toString().substring(2);
         }
     } else {
@@ -195,7 +210,7 @@ function toFixed(x) {
         if (e > 20) {
             e -= 20;
             x /= Math.pow(10, e);
-            // @ts-expect-error
+            // @ts-expect-error misery 2.0
             x += new Array(e + 1).join('0');
         }
     }
@@ -261,14 +276,12 @@ for (const i in short_suffixes) {
 formatShort[10] = 'Dc';
 
 const numberFormatters = [formatEveryThirdPower(formatShort), formatEveryThirdPower(formatLong), rawFormatter];
-const Beautify = function (/** @type {number} */ val, /** @type {number=} */ floats) {
+const Beautify = function (/** @type {number} */ val, /** @type {number=} */ floats = 0) {
     let negative = val < 0;
     let decimal = '';
-    let fixed = val.toFixed(floats);
-    // @ts-expect-error
+    let fixed = Number(val.toFixed(floats));
     if (floats > 0 && Math.abs(val) < 1000 && Math.floor(fixed) != fixed) decimal = '.' + fixed.toString().split('.')[1];
     val = Math.floor(Math.abs(val));
-    // @ts-expect-error
     if (floats > 0 && fixed == val + 1) val++;
     let format = Game.prefs.format ? 2 : 1;
     let formatter = numberFormatters[format];
@@ -303,11 +316,10 @@ const shortenNumber = function (val) {
 const SimpleBeautify = function (/** @type {number} */ val) {
     let str = val.toString();
     let str2 = '';
-    // @ts-expect-error
+    // @ts-expect-error technically valid but sigh...
     for (let i in str) {
         // add commas
-        // @ts-expect-error
-        if ((str.length - i) % 3 == 0 && i > 0) str2 += ',';
+        if ((str.length - Number(i)) % 3 == 0 && Number(i) > 0) str2 += ',';
         str2 += str[i];
     }
     return str2;
@@ -506,13 +518,13 @@ let parseLoc = function (str, params) {
     if (str.constructor === Array) {
         if (typeof params[0] === 'object') {
             // an object containing a beautified number
-            // @ts-expect-error
+            // @ts-expect-error this will be pain
             let plurIndex = locPlur(params[0].n);
             plurIndex = Math.min(str.length - 1, plurIndex);
             str = str[plurIndex];
             str = replaceAll('%1', params[0].b, str);
         } else {
-            // @ts-expect-error
+            // @ts-expect-error this IS pain
             let plurIndex = locPlur(params[0]);
             plurIndex = Math.min(str.length - 1, plurIndex);
             str = str[plurIndex];
@@ -567,7 +579,7 @@ let AddLanguage = function (id, name, json, mod) {
             if (locStrings[i] == '/') locStrings[i] = i;
         }
 
-        // @ts-expect-error
+        // @ts-expect-error WHY SO MUCH VARIABLE REUSE
         locPlur = (function (plural_form) {
             // lifted and modified from gettext.js
             let pf_re = new RegExp('^\\s*nplurals\\s*=\\s*[0-9]+\\s*;\\s*plural\\s*=\\s*(?:\\s|[-\\?\\|&=!<>+*/%:;n0-9_()])+');
@@ -671,110 +683,6 @@ function b64_to_utf8(str) {
     } catch (err) {
         return '';
     }
-}
-
-function CompressBin(arr) {
-    // compress a sequence like [0,1,1,0,1,0]... into a number like 54.
-    let str = '';
-    let arr2 = arr.slice(0);
-    arr2.unshift(1);
-    arr2.push(1);
-    arr2.reverse();
-    for (let i in arr2) {
-        str += arr2[i];
-    }
-    // @ts-expect-error
-    str = parseInt(str, 2);
-    return str;
-}
-
-function UncompressBin(num) {
-    // uncompress a number like 54 to a sequence like [0,1,1,0,1,0].
-    let arr = num.toString(2);
-    arr = arr.split('');
-    arr.reverse();
-    arr.shift();
-    arr.pop();
-    return arr;
-}
-
-function CompressLargeBin(arr) {
-    // we have to compress in smaller chunks to avoid getting into scientific notation
-    let arr2 = arr.slice(0);
-    let thisBit = [];
-    let bits = [];
-    for (let i in arr2) {
-        thisBit.push(arr2[i]);
-        if (thisBit.length >= 50) {
-            bits.push(CompressBin(thisBit));
-            thisBit = [];
-        }
-    }
-    if (thisBit.length > 0) bits.push(CompressBin(thisBit));
-    arr2 = bits.join(';');
-    return arr2;
-}
-
-function UncompressLargeBin(arr) {
-    let arr2 = arr.split(';');
-    let bits = [];
-    for (let i in arr2) {
-        bits.push(UncompressBin(parseInt(arr2[i])));
-    }
-    arr2 = [];
-    for (let i in bits) {
-        for (let ii in bits[i]) arr2.push(bits[i][ii]);
-    }
-    return arr2;
-}
-
-function pack(bytes) {
-    let chars = [];
-    let len = bytes.length;
-    for (let i = 0, n = len; i < n;) {
-        chars.push(((bytes[i++] & 0xff) << 8) | (bytes[i++] & 0xff));
-    }
-    return String.fromCharCode.apply(null, chars);
-}
-
-function unpack(str) {
-    let bytes = [];
-    let len = str.length;
-    for (let i = 0, n = len; i < n; i++) {
-        let char = str.charCodeAt(i);
-        bytes.push(char >>> 8, char & 0xff);
-    }
-    return bytes;
-}
-
-// modified from http://www.smashingmagazine.com/2011/10/19/optimizing-long-lists-of-yesno-values-with-javascript/
-/**
- * @param {string} values
- */
-function pack2(values) {
-    let chunks = values.match(/.{1,14}/g),
-        packed = '';
-    if (!chunks) throw new Error('OOps chunks was null!!!');
-    for (let i = 0; i < chunks.length; i++) {
-        packed += String.fromCharCode(parseInt('1' + chunks[i], 2));
-    }
-    return packed;
-}
-
-/**
- * @param {string} packed
- */
-function unpack2(packed) {
-    let values = '';
-    for (let i = 0; i < packed.length; i++) {
-        values += packed.charCodeAt(i).toString(2).substring(1);
-    }
-    return values;
-}
-
-function pack3(values) {
-    // too many save corruptions, darn it to heck
-    return values;
 }
 
 // file save function from https://github.com/eligrey/FileSaver.js
@@ -990,16 +898,6 @@ let saveAs = (function (view) {
         onerror = null;
         onwriteend = null;
     }
-    // @ts-expect-error
-    if (typeof navigator !== 'undefined' && navigator.msSaveOrOpenBlob) {
-        return function (blob, name, no_auto_bom) {
-            if (!no_auto_bom) {
-                blob = auto_bom(blob);
-            }
-            // @ts-expect-error
-            return navigator.msSaveOrOpenBlob(blob, name || 'download');
-        };
-    }
     return saveAs;
 })((typeof self !== 'undefined' && self) || (typeof window !== 'undefined' && window) || this.content);
 
@@ -1019,7 +917,6 @@ let grabProps = function (arr, prop) {
     return arr2;
 };
 
-// @ts-expect-error
 CanvasRenderingContext2D.prototype.fillPattern = function (img, X, Y, W, H, iW, iH, offX, offY) {
     // for when built-in patterns aren't enough
     if (img.alt != 'blank') {
@@ -1119,7 +1016,6 @@ let Loader = function () // asset-loading system
     this.blank = document.createElement('canvas');
     this.blank.width = 8;
     this.blank.height = 8;
-    // @ts-expect-error
     this.blank.alt = 'blank';
 
     this.Load = function (assets) {
@@ -1146,7 +1042,6 @@ let Loader = function () // asset-loading system
         img.onload = bind(this, this.onLoad);
         this.assets[old] = img;
     };
-    this.onLoadReplace = STUB;
     this.onLoad = function (e) {
         // @ts-expect-error
         this.assetsLoaded.push(e.target.alt);
@@ -1232,16 +1127,6 @@ let PlaySound = function (url, vol, pitchVar) {
             sound.play();
         } catch (e) { /* empty */ }
     }
-};
-let PlayMusicSound = function (url, vol, pitchVar) {
-    // like PlaySound but, if music is enabled, play with music volume
-    PlaySound(url, (vol || 1) - (Music ? 10 : 0), pitchVar);
-};
-
-let Music = false;
-let PlayCue = function (cue, arg) {
-    // @ts-expect-error
-    if (Music && Game.jukebox.trackAuto) Music.cue(cue, arg);
 };
 
 let triggerAnim = function (element, anim) {
@@ -1528,13 +1413,11 @@ let Game = {};
                 Game.playerIntro =
                     text || choose(['oh snap, it\'s', 'watch out, it\'s', 'oh no! here comes', 'hide your cookies, for here comes', 'behold! it\'s']);
                 if (!l('bakerySubtitle'))
-                    // @ts-expect-error
-                    l('bakeryName').insertAdjacentHTML(
+                    l('bakeryName', true).insertAdjacentHTML(
                         'afterend',
                         '<div id="bakerySubtitle" class="title" style="text-align:center;position:absolute;left:0px;right:0px;bottom:32px;font-size:12px;pointer-events:none;text-shadow:0px 1px 1px #000,0px 0px 4px #f00;opacity:0.8;"></div>'
                     );
-                // @ts-expect-error
-                l('bakerySubtitle').textContent = '~' + Game.playerIntro + '~';
+                l('bakerySubtitle', true).textContent = '~' + Game.playerIntro + '~';
             }
         });
     }
@@ -1572,11 +1455,10 @@ Game.Launch = function () {
         'img/bunnies.png',
         'img/frostedReindeer.png'
     ];
-    let preloadImagesL = l('preloadImages');
+    let preloadImagesL = l('preloadImages', true);
     for (let i = 0; i < preloadImages.length; i++) {
         let img = document.createElement('img');
         img.src = preloadImages[i];
-        // @ts-expect-error
         preloadImagesL.appendChild(img);
     }
 
@@ -1614,8 +1496,7 @@ Game.Launch = function () {
     // automatic season detection (might not be 100% accurate)
     let year = new Date().getFullYear();
     let leap = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0 ? 1 : 0;
-    // @ts-expect-error
-    let day = Math.floor((new Date() - new Date(year, 0, 0)) / (1000 * 60 * 60 * 24));
+    let day = Math.floor((+new Date() - +new Date(year, 0, 0)) / (1000 * 60 * 60 * 24));
     if (day >= 41 && day <= 46) Game.baseSeason = 'valentines';
     else if (day + leap >= 90 && day <= 92 + leap) Game.baseSeason = 'fools';
     else if (day >= 304 - 7 + leap && day <= 304 + leap) Game.baseSeason = 'halloween';
@@ -1636,10 +1517,8 @@ Game.Launch = function () {
             let D = L + 28 - 31 * Math.floor(M / 4);
             return new Date(Y, M - 1, D);
         })(year);
-        // @ts-expect-error
-        easterDay = Math.floor((easterDay - new Date(easterDay.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-        // @ts-expect-error
-        if (day >= easterDay - 7 && day <= easterDay) Game.baseSeason = 'easter';
+        const easterDayNum = Math.floor((+easterDay - +new Date(easterDay.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+        if (day >= easterDayNum - 7 && day <= easterDayNum) Game.baseSeason = 'easter';
     }
 
     Game.updateLog = `<div class="selectable"><div class="section">${loc('Info')}</div><div class="subsection"><div class="title">${loc(
@@ -2177,8 +2056,7 @@ Game.Launch = function () {
         Game.Loader.Load(['filler.png']);
     };
     Game.ErrorFrame = function () {
-        // @ts-expect-error
-        l('offGameMessage').innerHTML =
+        l('offGameMessage', true).innerHTML =
             '<div class="title">Oops. Wrong address!</div>' +
             '<div>It looks like you\'re accessing Cookie Clicker from another URL than the official one.<br>' +
             'You can <a href="//orteil.dashnet.org/cookieclicker/" target="_blank">play Cookie Clicker over here</a>!<br>' +
@@ -2188,8 +2066,7 @@ Game.Launch = function () {
     Game.Timeout = function () {
         Game.WriteSave();
         Game.killShimmers();
-        // @ts-expect-error
-        l('offGameMessage').innerHTML =
+        l('offGameMessage', true).innerHTML =
             '<div class="title">' +
             (Game.Has('Twin Gates of Transcendence')
                 ? loc('Cookie Clicker is in sleep mode and generating offline cookies.')
@@ -2201,16 +2078,13 @@ Game.Launch = function () {
                 '(this happens when too many frames are skipped at once,<br>usually when the game has been running in the background for a while)<br>(you can turn this feature off in the settings menu)'
             ) +
             '</div>';
-        // @ts-expect-error
-        l('offGameMessageWrap').style.display = 'table';
+        l('offGameMessageWrap', true).style.display = 'table';
         Game.timedout = true;
         console.log('[=== Game timed out and has been put in sleep mode. Data was saved. ===]');
     };
     Game.Resume = function () {
-        // @ts-expect-error
-        l('offGameMessage').innerHTML = '';
-        // @ts-expect-error
-        l('offGameMessageWrap').style.display = 'none';
+        l('offGameMessage', true).innerHTML = '';
+        l('offGameMessageWrap', true).style.display = 'none';
         Game.timedout = false;
         Game.time = Date.now();
         Game.accumulatedDelay = 0;
@@ -2244,8 +2118,7 @@ Game.Launch = function () {
         if (Game.mobile === 1) Game.wrapper.className = 'mobile';
         Game.clickStr = Game.touchEvents ? 'ontouchend' : 'onclick';
 
-        // @ts-expect-error
-        l('versionNumber').innerHTML =
+        l('versionNumber', true).innerHTML =
             'v. ' +
             Game.version +
             `<div id="httpsSwitch" style="cursor:pointer;display:inline-block;background:url(img/${Game.https ? 'lockOn' : 'lockOff'
@@ -2253,13 +2126,11 @@ Game.Launch = function () {
             (Game.beta ? ' <span style="color:#ff0;">beta</span>' : '');
 
         if (Game.beta) {
-            let me = l('linkVersionBeta');
-            // @ts-expect-error
-            me.parentNode.removeChild(me);
+            let me = l('linkVersionBeta', true);
+            ASSERT_NOT_NULL(me.parentNode).removeChild(me);
         } else {
-            let me = l('linkVersionLive');
-            // @ts-expect-error
-            me.parentNode.removeChild(me);
+            let me = l('linkVersionLive', true);
+            ASSERT_NOT_NULL(me.parentNode).removeChild(me);
         }
 
         Game.lastActivity = Date.now(); // reset on mouse move, key press or click
@@ -2398,12 +2269,9 @@ Game.Launch = function () {
         };
         Game.resize();
 
-        // @ts-expect-error
-        Game.startDate = parseInt(Date.now()); // when we started playing
-        // @ts-expect-error
-        Game.fullDate = parseInt(Date.now()); // when we started playing (carries over with resets)
-        // @ts-expect-error
-        Game.lastDate = parseInt(Date.now()); // when we last saved the game (used to compute "cookies made since we closed the game" etc)
+        Game.startDate = Date.now(); // when we started playing
+        Game.fullDate = Date.now(); // when we started playing (carries over with resets)
+        Game.lastDate = Date.now(); // when we last saved the game (used to compute "cookies made since we closed the game" etc)
 
         Game.prefs = [];
         Game.DefaultPrefs = function () {
@@ -2659,14 +2527,11 @@ Game.Launch = function () {
                     loc('Cancel')
                 ]
             );
-            // @ts-expect-error
-            l('bakeryNameInput').focus();
-            // @ts-expect-error
-            l('bakeryNameInput').select();
+            l('bakeryNameInput', true).focus();
+            l('bakeryNameInput', true).select();
         };
         Game.bakeryNamePromptRandom = function () {
-            // @ts-expect-error
-            l('bakeryNameInput').value = Game.RandomBakeryName();
+            l('bakeryNameInput', true).value = Game.RandomBakeryName();
         };
         AddEvent(Game.bakeryNameL, 'click', Game.bakeryNamePrompt);
 
@@ -2817,7 +2682,7 @@ Game.Launch = function () {
             }
         };
         Game.tooltip.hide = function () {
-            // @ts-expect-error
+            // @ts-expect-error aaaaaaaaaaaaa
             if (this.tta) this.tta.style.display = 'none';
             this.dynamic = 0;
             this.on = 0;
@@ -2830,7 +2695,7 @@ Game.Launch = function () {
                     escape(text) +
                     '\',\'' +
                     origin +
-                    '\');Game.tooltip.wobble();}"'
+                    '\');}"'
                 );
             else
                 return (
@@ -2838,7 +2703,7 @@ Game.Launch = function () {
                     escape(text) +
                     '\',\'' +
                     origin +
-                    '\');Game.tooltip.wobble();"'
+                    '\');"'
                 );
         };
         Game.getDynamicTooltip = function (func, origin, isCrate) {
@@ -2851,7 +2716,7 @@ Game.Launch = function () {
                     '();}' +
                     ',\'' +
                     origin +
-                    '\');Game.tooltip.wobble();}"'
+                    '\');}"'
                 );
             return (
                 'onMouseOut="Game.tooltip.shouldHide=1;" onMouseOver="Game.tooltip.dynamic=1;Game.tooltip.draw(this,' +
@@ -2860,7 +2725,7 @@ Game.Launch = function () {
                 '();}' +
                 ',\'' +
                 origin +
-                '\');Game.tooltip.wobble();"'
+                '\');"'
             );
         };
         Game.attachTooltip = function (el, func, origin) {
@@ -2893,7 +2758,6 @@ Game.Launch = function () {
                 })()
             );
         };
-        Game.tooltip.wobble = STUB;
 
         Game.externalDataLoaded = false;
 
@@ -3021,10 +2885,8 @@ Game.Launch = function () {
             '<div style="padding:8px;width:250px;text-align:center;">A thing we made that lets you create your own idle games using a simple scripting language.</div>',
             'this'
         );
-        // @ts-expect-error
-        l('changeLanguage').innerHTML = loc('Change language');
-        // @ts-expect-error
-        l('links').childNodes[0].nodeValue = loc('Other versions');
+        l('changeLanguage', true).innerHTML = loc('Change language');
+        l('links', true).childNodes[0].nodeValue = loc('Other versions');
 
         Game.attachTooltip(
             l('heralds'),
@@ -3077,10 +2939,8 @@ Game.Launch = function () {
             },
             'this'
         );
-        // @ts-expect-error
-        l('heraldsAmount').textContent = '?';
-        // @ts-expect-error
-        l('heralds').style.display = 'inline-block';
+        l('heraldsAmount', true).textContent = '?';
+        l('heralds', true).style.display = 'inline-block';
 
         Game.useLocalStorage = 1;
 
@@ -3099,10 +2959,8 @@ Game.Launch = function () {
                 '</textarea></div>',
                 [loc('All done!')]
             );
-            // @ts-expect-error
-            l('textareaPrompt').focus();
-            // @ts-expect-error
-            l('textareaPrompt').select();
+            l('textareaPrompt', true).focus();
+            l('textareaPrompt', true).select();
         };
         Game.ImportSave = function (def) {
             Game.Prompt(
@@ -3121,8 +2979,7 @@ Game.Launch = function () {
                     loc('Nevermind')
                 ]
             );
-            // @ts-expect-error
-            l('textareaPrompt').focus();
+            l('textareaPrompt', true).focus();
         };
         Game.ImportSaveCode = function (save) {
             let out = false;
@@ -3135,16 +2992,14 @@ Game.Launch = function () {
             let filename = Game.bakeryName.replace(/[^a-zA-Z0-9]+/g, '') + 'Bakery';
             let text = Game.WriteSave(1);
             let blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-            // @ts-expect-error
-            saveAs(blob, filename + '.txt');
+            saveAs(blob, `${filename}.txt`);
         };
         Game.FileLoad = function (e) {
             if (e.target.files.length == 0) return false;
             let file = e.target.files[0];
             let reader = new FileReader();
             reader.onload = function (e) {
-                // @ts-expect-error
-                Game.ImportSaveCode(e.target.result);
+                Game.ImportSaveCode(ASSERT_NOT_NULL(e.target).result);
             };
             reader.readAsText(file);
         };
@@ -3209,7 +3064,6 @@ Game.Launch = function () {
                 (Game.prefs.screenreader ? '1' : '0') +
                 (Game.prefs.discordPresence ? '1' : '0') +
                 '';
-            str2 = pack3(str2);
             str += str2 + '|';
             if (type == 3) str += '\n\nMisc game data';
             str +=
@@ -3378,8 +3232,7 @@ Game.Launch = function () {
                 let me = Game.Objects[i];
                 if (type == 3) str += '\n\t' + me.name + ' : ';
                 if (me.vanilla) {
-                    // @ts-expect-error
-                    str += me.amount + ',' + me.bought + ',' + parseFloat(Math.floor(me.totalCookies)) + ',' + parseInt(me.level);
+                    str += me.amount + ',' + me.bought + ',' + Math.floor(me.totalCookies) + ',' + parseInt(me.level);
                     if (Game.isMinigameReady(me)) str += ',' + me.minigame.save();
                     else str += ',' + (me.minigameSave || '');
                     str += ',' + (me.muted ? '1' : '0');
@@ -3396,7 +3249,8 @@ Game.Launch = function () {
                 if (me.vanilla) toCompress.push(Math.min(me.unlocked, 1), Math.min(me.bought, 1));
             }
 
-            toCompress = pack3(toCompress.join(''));
+            // @ts-expect-error sigh
+            toCompress = toCompress.join('');
 
             str += toCompress;
             str += '|';
@@ -3407,7 +3261,8 @@ Game.Launch = function () {
                 let me = Game.AchievementsById[i];
                 if (me.vanilla) toCompress.push(Math.min(me.won));
             }
-            toCompress = pack3(toCompress.join(''));
+            // @ts-expect-error sigh
+            toCompress = toCompress.join('');
             str += toCompress;
 
             str += '|';
@@ -3500,8 +3355,7 @@ Game.Launch = function () {
                             document.cookie = Game.SaveTo + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                         } else return false;
                     } else {
-                        // @ts-expect-error
-                        str = unescape(local);
+                        str = unescape(String(local));
                     }
                 } // legacy system
                 else {
@@ -3521,7 +3375,7 @@ Game.Launch = function () {
                 if (str == '') return false;
                 else {
                     let spl = '';
-                    // @ts-expect-error
+                    // @ts-expect-error //! Need to refactor this variable
                     str = str.split('|');
                     version = parseFloat(str[0]);
                     Game.loadedFromVersion = version;
@@ -3547,7 +3401,7 @@ Game.Launch = function () {
                     if (version >= 1) {
                         Game.T = 0;
 
-                        // @ts-expect-error
+                        // @ts-expect-error //! refactor needed
                         spl = str[2].split(';'); // save stats
                         Game.startDate = parseInt(spl[0]);
                         Game.fullDate = parseInt(spl[1]);
@@ -3555,7 +3409,7 @@ Game.Launch = function () {
                         let bakeryName = spl[3] ? spl[3] : Game.GetBakeryName();
                         Game.seed = spl[4] ? spl[4] : Game.makeSeed();
                         // prefs
-                        // @ts-expect-error
+                        // @ts-expect-error //! refactor needed
                         spl = str[3].split('');
                         Game.prefs.particles = parseInt(spl[0]);
                         Game.prefs.numbers = parseInt(spl[1]);
@@ -3591,7 +3445,7 @@ Game.Launch = function () {
                         Game.prefs.screenreader = spl[25] ? parseInt(spl[25]) : 0;
                         Game.prefs.discordPresence = spl[26] ? parseInt(spl[26]) : 1;
                         BeautifyAll();
-                        // @ts-expect-error
+                        // @ts-expect-error //! refactor needed
                         spl = str[4].split(';'); // cookies and lots of other stuff
                         Game.cookies = parseFloat(spl[0]);
                         Game.cookiesEarned = parseFloat(spl[1]);
@@ -3653,7 +3507,7 @@ Game.Launch = function () {
                         Game.cookiesPsRawHighest = spl[51] ? parseFloat(spl[51]) : 0;
                         Game.volumeMusic = spl[52] ? parseInt(spl[52]) : 50;
 
-                        // @ts-expect-error
+                        // @ts-expect-error //! refactor needed
                         spl = str[5].split(';'); // buildings
                         Game.BuildingsOwned = 0;
                         for (let i in Game.ObjectsById) {
@@ -3688,16 +3542,16 @@ Game.Launch = function () {
                         Game.LoadMinigames();
 
                         if (str[6]) spl = str[6];
-                        // @ts-expect-error
+                        // @ts-expect-error //! refactor needed
                         else spl = []; // upgrades
-                        // @ts-expect-error
+                        // @ts-expect-error //! sigh...
                         spl = spl.split('');
                         Game.UpgradesOwned = 0;
                         for (let i in Game.UpgradesById) {
                             let me = Game.UpgradesById[i];
-                            // @ts-expect-error
+                            // @ts-expect-error //! sigh x2
                             if (spl[i * 2]) {
-                                // @ts-expect-error
+                                // @ts-expect-error //! i dont even know anymore
                                 let mestr = [spl[i * 2], spl[i * 2 + 1]];
                                 me.unlocked = parseInt(mestr[0]);
                                 me.bought = parseInt(mestr[1]);
@@ -3708,9 +3562,9 @@ Game.Launch = function () {
                             }
                         }
                         if (str[7]) spl = str[7];
-                        // @ts-expect-error
+                        // @ts-expect-error //! refactor...
                         else spl = []; // achievements
-                        // @ts-expect-error
+                        // @ts-expect-error //! ...
                         spl = spl.split('');
                         Game.AchievementsOwned = 0;
                         for (let i in Game.AchievementsById) {
@@ -3726,9 +3580,9 @@ Game.Launch = function () {
 
                         Game.killBuffs();
                         let buffsToLoad = [];
-                        // @ts-expect-error
+                        // @ts-expect-error //! refactor this
                         spl = (str[8] || '').split(';'); // buffs
-                        // @ts-expect-error
+                        // @ts-expect-error //! same
                         for (let i in spl) {
                             if (spl[i]) {
                                 let mestr = spl[i].toString().split(',');
@@ -3736,10 +3590,10 @@ Game.Launch = function () {
                             }
                         }
 
-                        // @ts-expect-error
+                        // @ts-expect-error //! this is pain
                         spl = (str[9] || '').split(';'); // mod data
 
-                        // @ts-expect-error
+                        // @ts-expect-error //! more pain
                         for (let i in spl) {
                             if (spl[i]) {
                                 let data = spl[i].split(':');
@@ -3917,8 +3771,7 @@ Game.Launch = function () {
                     }
                     if (prestigeUpgradesOwned >= 100) Game.Win('All the stars in heaven');
 
-                    // @ts-expect-error
-                    if (version < Game.version) l('logButton').classList.add('hasUpdate');
+                    if (version < Game.version) l('logButton', true).classList.add('hasUpdate');
 
                     if (Game.season != '' && Game.season == Game.baseSeason) {
                         if (Game.season == 'valentines')
@@ -4028,10 +3881,8 @@ Game.Launch = function () {
             Game.season = Game.baseSeason;
             Game.computeSeasonPrices();
 
-            // @ts-expect-error
-            Game.startDate = parseInt(Date.now());
-            // @ts-expect-error
-            Game.lastDate = parseInt(Date.now());
+            Game.startDate = Date.now();
+            Game.lastDate = Date.now();
 
             Game.cookiesSucked = 0;
             Game.wrinklersPopped = 0;
@@ -4130,16 +3981,13 @@ Game.Launch = function () {
                 } else if (!hard && me.minigame && me.minigame.reset) me.minigame.reset();
             }
 
-            // @ts-expect-error
-            l('toggleBox').style.display = 'none';
-            // @ts-expect-error
-            l('toggleBox').innerHTML = '';
+            l('toggleBox', true).style.display = 'none';
+            l('toggleBox', true).innerHTML = '';
             Game.choiceSelectorOn = -1;
             Game.ToggleSpecialMenu(0);
             Game.specialTab = '';
 
-            // @ts-expect-error
-            l('logButton').classList.remove('hasUpdate');
+            l('logButton', true).classList.remove('hasUpdate');
 
             Game.runModHook('reset', hard);
 
@@ -4155,8 +4003,6 @@ Game.Launch = function () {
             } else Game.clicksThisSession = Math.max(Game.clicksThisSession, 1);
 
             Game.jukebox.reset();
-            if (hard) PlayCue('launch');
-            else PlayCue('play');
         };
         Game.HardReset = function (bypass) {
             if (!bypass) {
@@ -4206,8 +4052,7 @@ Game.Launch = function () {
                 Game.missedGoldenClicks = 0;
                 Game.Reset(1);
                 Game.resets = 0;
-                // @ts-expect-error
-                Game.fullDate = parseInt(Date.now());
+                Game.fullDate = Date.now();
                 Game.bakeryName = Game.GetBakeryName();
                 Game.bakeryNameRefresh();
                 Game.cookiesReset = 0;
@@ -4635,8 +4480,7 @@ Game.Launch = function () {
         Game.UpdateAscensionModePrompt = function () {
             let icon = Game.ascensionModes[Game.nextAscensionMode].icon;
             let name = Game.ascensionModes[Game.nextAscensionMode].dname;
-            // @ts-expect-error
-            l('ascendModeButton').innerHTML =
+            l('ascendModeButton', true).innerHTML =
                 '<div class="crate noFrame enabled" ' +
                 Game.clickStr +
                 '="Game.PickAscensionMode();" ' +
@@ -4700,8 +4544,7 @@ Game.Launch = function () {
             );
         };
 
-        // @ts-expect-error
-        l('ascendOverlay').innerHTML =
+        l('ascendOverlay', true).innerHTML =
             '<div id="ascendBox">' +
             '<div id="ascendData1" class="ascendData smallFramed prompt" style="margin-top:8px;"><h3 id="ascendPrestige"></h3></div>' +
             '<div id="ascendData2" class="ascendData smallFramed prompt"><h3 id="ascendHCs"></h3></div>' +
@@ -4769,8 +4612,7 @@ Game.Launch = function () {
             Game.AscendTimer++;
             if (Game.AscendTimer > Game.AscendDuration) {
                 // end animation and launch ascend screen
-                PlayCue('ascend');
-                PlayMusicSound('snd/cymbalRev.mp3');
+                PlaySound('snd/cymbalRev.mp3');
                 PlaySound('snd/choir.mp3');
                 Game.EarnHeavenlyChips(Game.cookiesEarned);
                 Game.AscendTimer = 0;
@@ -4861,10 +4703,8 @@ Game.Launch = function () {
                 // trigger the ascend animation
                 Game.AscendTimer = 1;
                 Game.killShimmers();
-                // @ts-expect-error
-                l('toggleBox').style.display = 'none';
-                // @ts-expect-error
-                l('toggleBox').innerHTML = '';
+                l('toggleBox', true).style.display = 'none';
+                l('toggleBox', true).innerHTML = '';
                 Game.choiceSelectorOn = -1;
                 Game.ToggleSpecialMenu(0);
                 Game.AscendOffX = 0;
@@ -4875,7 +4715,6 @@ Game.Launch = function () {
                 Game.AscendZoom = 0.2;
 
                 Game.jukebox.reset();
-                PlayCue('preascend');
             }
         };
 
@@ -4922,10 +4761,8 @@ Game.Launch = function () {
                         me.posY += (Game.mouseY - Game.AscendDragY) * (1 / Game.AscendZoomT);
                         let posX = me.posX;
                         let posY = me.posY;
-                        // @ts-expect-error
-                        l('heavenlyUpgrade' + me.id).style.left = Math.floor(posX) + 'px';
-                        // @ts-expect-error
-                        l('heavenlyUpgrade' + me.id).style.top = Math.floor(posY) + 'px';
+                        l('heavenlyUpgrade' + me.id, true).style.left = Math.floor(posX) + 'px';
+                        l('heavenlyUpgrade' + me.id, true).style.top = Math.floor(posY) + 'px';
                         for (let ii in me.parents) {
                             let origX = 0;
                             let origY = 0;
@@ -4939,8 +4776,7 @@ Game.Launch = function () {
                             if (targX <= origX) rot += 180;
                             let dist = Math.floor(Math.sqrt((targX - origX) * (targX - origX) + (targY - origY) * (targY - origY)));
 
-                            // @ts-expect-error
-                            l('heavenlyLink' + me.id + '-' + ii).style =
+                            l('heavenlyLink' + me.id + '-' + ii, true).style.cssText =
                                 'width:' + dist + 'px;transform:rotate(' + rot + 'deg);left:' + origX + 'px;top:' + origY + 'px;';
                         }
                     }
@@ -4980,15 +4816,11 @@ Game.Launch = function () {
             }
 
             if (Game.T % 2 == 0) {
-                // @ts-expect-error
-                l('ascendPrestige').innerHTML = loc('Prestige level:') + '<br>' + SimpleBeautify(Game.prestige);
-                // @ts-expect-error
-                l('ascendHCs').innerHTML =
+                l('ascendPrestige', true).innerHTML = loc('Prestige level:') + '<br>' + SimpleBeautify(Game.prestige);
+                l('ascendHCs', true).innerHTML =
                     loc('Heavenly chips:') + '<br><span class="price heavenly">' + SimpleBeautify(Math.round(Game.heavenlyChipsDisplayed)) + '</span>';
-                // @ts-expect-error
-                if (Game.prestige > 0) l('ascendModeButton').style.display = 'block';
-                // @ts-expect-error
-                else l('ascendModeButton').style.display = 'none';
+                if (Game.prestige > 0) l('ascendModeButton', true).style.display = 'block';
+                else l('ascendModeButton', true).style.display = 'none';
             }
             Game.heavenlyChipsDisplayed += (Game.heavenlyChips - Game.heavenlyChipsDisplayed) * 0.4;
 
@@ -4999,8 +4831,7 @@ Game.Launch = function () {
                     if (me.placedByCode) continue;
                     str += me.id + ':[' + Math.floor(me.posX) + ',' + Math.floor(me.posY) + '],';
                 }
-                // @ts-expect-error
-                l('upgradePositions').value = 'Game.UpgradePositions={' + str + '};';
+                l('upgradePositions', true).value = 'Game.UpgradePositions={' + str + '};';
             }
         };
         Game.AscendRefocus = function () {
@@ -5013,8 +4844,7 @@ Game.Launch = function () {
         Game.PurchaseHeavenlyUpgrade = function (what) {
             if (Game.UpgradesById[what].buy()) {
                 if (l('heavenlyUpgrade' + what)) {
-                    // @ts-expect-error
-                    let rect = l('heavenlyUpgrade' + what).getBounds();
+                    let rect = l('heavenlyUpgrade' + what, true).getBounds();
                     Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24);
                 }
             }
@@ -5023,10 +4853,8 @@ Game.Launch = function () {
             let str = '';
             Game.heavenlyBounds = { left: 0, right: 0, top: 0, bottom: 0 };
 
-            // @ts-expect-error
-            if (Game.DebuggingPrestige) l('upgradePositions').style.display = 'block';
-            // @ts-expect-error
-            else l('upgradePositions').style.display = 'none';
+            if (Game.DebuggingPrestige) l('upgradePositions', true).style.display = 'block';
+            else l('upgradePositions', true).style.display = 'none';
 
             let toPop = [];
             for (let i in Game.PrestigeUpgrades) {
@@ -5215,10 +5043,8 @@ Game.Launch = function () {
         Game.lumpRipeAge = 1;
         Game.lumpOverripeAge = 1;
         Game.lumpCurrentType = 0;
-        // @ts-expect-error
-        l('comments').innerHTML =
-            // @ts-expect-error
-            l('comments').innerHTML +
+        l('comments', true).innerHTML =
+            l('comments', true).innerHTML +
             '<div id="lumps" onclick="Game.clickLump();" ' +
             Game.getDynamicTooltip('Game.lumpTooltip', 'bottom') +
             '><div id="lumpsIcon" class="usesIcon"></div><div id="lumpsIcon2" class="usesIcon"></div><div id="lumpsAmount">0</div></div>';
@@ -5377,8 +5203,7 @@ Game.Launch = function () {
             else if (Game.lumpCurrentType == 4) Game.Win('Maillard reaction');
 
             if (!silent) {
-                // @ts-expect-error
-                let rect = l('lumpsIcon2').getBounds();
+                let rect = l('lumpsIcon2', true).getBounds();
                 Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24 + 32 - TopBarOffset);
                 if (total > 0)
                     Game.Popup(
@@ -5522,14 +5347,10 @@ Game.Launch = function () {
             if (phase >= 6) {
                 opacity = 1;
             }
-            // @ts-expect-error
-            l('lumpsIcon').style.backgroundPosition = -icon[0] * 48 + 'px ' + -icon[1] * 48 + 'px';
-            // @ts-expect-error
-            l('lumpsIcon2').style.backgroundPosition = -icon2[0] * 48 + 'px ' + -icon2[1] * 48 + 'px';
-            // @ts-expect-error
-            l('lumpsIcon2').style.opacity = opacity;
-            // @ts-expect-error
-            l('lumpsAmount').textContent = Beautify(Game.lumps);
+            l('lumpsIcon', true).style.backgroundPosition = -icon[0] * 48 + 'px ' + -icon[1] * 48 + 'px';
+            l('lumpsIcon2', true).style.backgroundPosition = -icon2[0] * 48 + 'px ' + -icon2[1] * 48 + 'px';
+            l('lumpsIcon2', true).style.opacity = String(opacity);
+            l('lumpsAmount', true).textContent = Beautify(Game.lumps);
         };
 
         /* =====================================================================================
@@ -5673,7 +5494,6 @@ Game.Launch = function () {
                 Game.playCookieClickSound();
                 Game.cookieClicks++;
 
-                if (Game.clicksThisSession == 0) PlayCue('preplay');
                 Game.clicksThisSession++;
                 Game.lastClick = now;
             }
@@ -5705,16 +5525,13 @@ Game.Launch = function () {
             Game.mouseMoved = 1;
             Game.lastActivity = Game.time;
         };
-        let bigCookie = l('bigCookie');
+        let bigCookie = l('bigCookie', true);
         if (Game.prefs.screenreader) {
-            // @ts-expect-error
             bigCookie.ariaLabelledby = 'bigCookieLabel';
-            // @ts-expect-error
             bigCookie.insertAdjacentHTML(
                 'beforeend',
                 '<label id="bigCookieLabel" style="font-size:100px !important;" class="srOnly">' + loc('Big clickable cookie') + '</label>'
             );
-            // @ts-expect-error
             bigCookie.tabIndex = 1;
         }
         Game.Click = 0;
@@ -6095,7 +5912,7 @@ Game.Launch = function () {
                     'click',
                     (function (what) {
                         return function (event) {
-                            // @ts-expect-error
+                            // @ts-expect-error //! need to make this a class
                             what.pop(event);
                         };
                     })(this)
@@ -6106,7 +5923,7 @@ Game.Launch = function () {
                     'touchend',
                     (function (what) {
                         return function (event) {
-                            // @ts-expect-error
+                            // @ts-expect-error //! need to make this a class
                             what.pop(event);
                         };
                     })(this)
@@ -6533,7 +6350,7 @@ Game.Launch = function () {
                         popup = str;
                     }
 
-                    // @ts-expect-error
+                    // @ts-expect-error investigate gainBuff
                     if (popup == '' && buff && buff.name && buff.desc) popup = buff.dname + '<div style="font-size:65%;">' + buff.desc + '</div>';
                     if (popup != '') Game.Popup(popup, me.x + me.l.offsetWidth / 2, me.y);
 
@@ -6957,8 +6774,8 @@ Game.Launch = function () {
             Game.textParticles[i] = { x: 0, y: 0, life: -1, text: '' };
             str += '<div id="particle' + i + '" class="particle title"></div>';
         }
-        // @ts-expect-error
-        l('particles').innerHTML = str;
+
+        l('particles', true).innerHTML = str;
         Game.textParticlesUpdate = function () {
             for (let i in Game.textParticles) {
                 let me = Game.textParticles[i];
@@ -6976,17 +6793,15 @@ Game.Launch = function () {
         Game.textParticlesAdd = function (text, el, posX, posY) {
             // pick the first free (or the oldest) particle to replace it
             let highest = 0;
-            let highestI = 0;
+            let highestI = '0';
             for (let i in Game.textParticles) {
                 if (Game.textParticles[i].life == -1) {
-                    // @ts-expect-error
-                    highestI = i;
+                    highestI = (i);
                     break;
                 }
                 if (Game.textParticles[i].life > highest) {
                     highest = Game.textParticles[i].life;
-                    // @ts-expect-error
-                    highestI = i;
+                    highestI = (i);
                 }
             }
             let i = highestI;
@@ -7023,7 +6838,6 @@ Game.Launch = function () {
             me.l.style.left = Math.floor(Game.textParticles[i].x - 200) + 'px';
             me.l.style.bottom = Math.floor(-Game.textParticles[i].y) + 'px';
             for (let ii in Game.textParticles) {
-                // @ts-expect-error
                 if (ii != i) (Game.textParticles[ii].l || l('particle' + ii)).style.zIndex = 100000000;
             }
             me.l.style.zIndex = 100000001;
@@ -7099,8 +6913,7 @@ Game.Launch = function () {
             let remaining = Game.Notes.length;
             let me;
             for (let i in Game.Notes) {
-                // @ts-expect-error
-                if (i < 5) {
+                if (Number(i) < 5) {
                     me = Game.Notes[i];
                     let pic = '';
                     if (me.pic != '') pic = '<div class="icon" style="' + writeIcon(me.pic) + '"></div>';
@@ -7133,8 +6946,7 @@ Game.Launch = function () {
             Game.noteL.innerHTML = str;
             for (let i in Game.Notes) {
                 me.l = 0;
-                // @ts-expect-error
-                if (i < 5) {
+                if (Number(i) < 5) {
                     let me = Game.Notes[i];
                     me.l = l('note-' + me.id);
                 }
@@ -7252,10 +7064,8 @@ Game.Launch = function () {
             Game.promptOptionFocus = 0;
             Game.FocusPromptOption(0);
             Game.UpdatePrompt();
-            // @ts-expect-error
-            if (!Game.promptNoClose) l('promptClose').style.display = 'block';
-            // @ts-expect-error
-            else l('promptClose').style.display = 'none';
+            if (!Game.promptNoClose) l('promptClose', true).style.display = 'block';
+            else l('promptClose', true).style.display = 'none';
         };
         Game.ClosePrompt = function () {
             if (!Game.promptOn) return false;
@@ -7268,25 +7078,27 @@ Game.Launch = function () {
             Game.promptNoClose = false;
         };
         Game.ConfirmPrompt = function () {
-            // @ts-expect-error
-            if (Game.promptOn && l('promptOption' + Game.promptOptionFocus) && l('promptOption' + Game.promptOptionFocus).style.display != 'none')
+            if (
+                Game.promptOn &&
+                l('promptOption' + Game.promptOptionFocus) &&
+                l('promptOption' + Game.promptOptionFocus, true).style.display != 'none'
+            )
                 FireEvent(l('promptOption' + Game.promptOptionFocus), 'click');
         };
         Game.FocusPromptOption = function (dir, tryN) {
             let id = Game.promptOptionFocus + dir;
             if (id < 0) id = Game.promptOptionsN - 1;
             if (id >= Game.promptOptionsN) id = 0;
-            // @ts-expect-error
-            while (id >= 0 && id < Game.promptOptionsN && (!l('promptOption' + id) || l('promptOption' + id).style.display == 'none')) {
+            while (
+                id >= 0 && id < Game.promptOptionsN &&
+                (!l('promptOption' + id) || l('promptOption' + id, true).style.display === 'none')
+            ) {
                 id += dir || 1;
             }
-            // @ts-expect-error
-            if (l('promptOption' + id) && l('promptOption' + id).style.display != 'none') {
-                // @ts-expect-error
-                if (l('promptOption' + Game.promptOptionFocus)) l('promptOption' + Game.promptOptionFocus).classList.remove('focused');
+            if (l('promptOption' + id) && l('promptOption' + id, true).style.display !== 'none') {
+                if (l('promptOption' + Game.promptOptionFocus)) l('promptOption' + Game.promptOptionFocus, true).classList.remove('focused');
                 Game.promptOptionFocus = id;
-                // @ts-expect-error
-                if (l('promptOption' + Game.promptOptionFocus)) l('promptOption' + Game.promptOptionFocus).classList.add('focused');
+                if (l('promptOption' + Game.promptOptionFocus)) l('promptOption' + Game.promptOptionFocus, true).classList.add('focused');
             } else if (!tryN && dir != 0) {
                 Game.promptOptionFocus = id;
                 Game.FocusPromptOption(dir, 1);
@@ -7342,16 +7154,13 @@ Game.Launch = function () {
         };
         Game.Toggle = function (prefName, button, on, off, invert) {
             if (Game.prefs[prefName]) {
-                // @ts-expect-error
-                l(button).innerHTML = off;
+                l(button, true).innerHTML = off;
                 Game.prefs[prefName] = 0;
             } else {
-                // @ts-expect-error
-                l(button).innerHTML = on;
+                l(button, true).innerHTML = on;
                 Game.prefs[prefName] = 1;
             }
-            // @ts-expect-error
-            l(button).className = 'smallFancyButton prefButton option' + (Game.prefs[prefName] ^ invert ? '' : ' off');
+            l(button, true).className = 'smallFancyButton prefButton option' + (Game.prefs[prefName] ^ invert ? '' : ' off');
         };
         Game.ToggleFancy = function () {
             if (Game.prefs.fancy) Game.removeClass('noFancy');
@@ -7367,9 +7176,6 @@ Game.Launch = function () {
             for (let i in Game.Objects) {
                 Game.Objects[i].mute(0);
             }
-        };
-        Game.ToggleFullscreen = function () {
-            //! nullsub
         };
 
         Game.WriteSlider = function (slider, leftText, rightText, startValueFunction, callback) {
@@ -7415,12 +7221,9 @@ Game.Launch = function () {
             }
             Game.onMenu = what;
 
-            // @ts-expect-error
-            l('prefsButton').className = Game.onMenu == 'prefs' ? 'panelButton selected' : 'panelButton';
-            // @ts-expect-error
-            l('statsButton').className = Game.onMenu == 'stats' ? 'panelButton selected' : 'panelButton';
-            // @ts-expect-error
-            l('logButton').className = Game.onMenu == 'log' ? 'panelButton selected' : 'panelButton';
+            l('prefsButton', true).className = Game.onMenu == 'prefs' ? 'panelButton selected' : 'panelButton';
+            l('statsButton', true).className = Game.onMenu == 'stats' ? 'panelButton selected' : 'panelButton';
+            l('logButton', true).className = Game.onMenu == 'log' ? 'panelButton selected' : 'panelButton';
 
             if (Game.onMenu == '') PlaySound('snd/clickOff2.mp3');
             else PlaySound('snd/clickOn2.mp3');
@@ -7499,12 +7302,6 @@ Game.Launch = function () {
         };
         Game.setVolumeMusic = function (what) {
             Game.volumeMusic = what;
-            // @ts-expect-error
-            if (Music) Music.setVolume(what / 100);
-        };
-        Game.setWubMusic = function (what) {
-            // @ts-expect-error
-            if (Music) Music.setFilter(what / 100);
         };
 
         Game.showLangSelection = function (firstLaunch) {
@@ -7554,8 +7351,7 @@ Game.Launch = function () {
                     (function (lang) {
                         return function () {
                             PlaySound('snd/smallTick.mp3', 0.75);
-                            // @ts-expect-error
-                            l('languageSelectHeader').innerHTML = Langs[lang].changeLanguage;
+                            l('languageSelectHeader', true).innerHTML = Langs[lang].changeLanguage;
                         };
                     })(i)
                 );
@@ -8219,8 +8015,7 @@ Game.Launch = function () {
                     '</div>' +
                     '<div style="padding-bottom:128px;"></div>';
             }
-            // @ts-expect-error
-            l('menu').innerHTML = str;
+            l('menu', true).innerHTML = str;
         };
 
         AddEvent(l('prefsButton'), 'click', function () {
@@ -9836,12 +9631,11 @@ Game.Launch = function () {
                     }
                 }
                 if (success && Game.shimmerTypes['golden'].n <= 0 && Game.auraMult('Dragon Orbs') > 0) {
-                    let highestBuilding = 0;
+                    let highestBuilding;
                     for (let i in Game.Objects) {
                         if (Game.Objects[i].amount > 0) highestBuilding = Game.Objects[i];
                     }
-                    // @ts-expect-error
-                    if (highestBuilding == this && Math.random() < Game.auraMult('Dragon Orbs') * 0.1) {
+                    if (highestBuilding === this && Math.random() < Game.auraMult('Dragon Orbs') * 0.1) {
                         let buffsN = 0;
                         for (let ii in Game.buffs) {
                             buffsN++;
@@ -10136,8 +9930,7 @@ Game.Launch = function () {
                             Game.LoadMinigames();
                             me.refresh();
                             if (l('productLevel' + me.id)) {
-                                // @ts-expect-error
-                                let rect = l('productLevel' + me.id).getBounds();
+                                const rect = l('productLevel' + me.id, true).getBounds();
                                 Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24 + 32 - TopBarOffset);
                             }
                             // @ts-expect-error
@@ -10326,14 +10119,12 @@ Game.Launch = function () {
                 -12 * 48 +
                 'px;transform:scale(0.5);margin:-20px -16px;"></div></div>';
             str += '</div>';
-            // @ts-expect-error
-            if (this.id == 0) l('sectionLeftExtra').innerHTML = l('sectionLeftExtra').innerHTML + str;
+            if (this.id == 0) l('sectionLeftExtra', true).innerHTML = l('sectionLeftExtra', true).innerHTML + str;
             else {
                 str += '<canvas class="rowCanvas" id="rowCanvas' + this.id + '"></canvas>';
                 str += '<div class="rowSpecial" id="rowSpecial' + this.id + '"></div>';
                 str += '</div>';
-                // @ts-expect-error
-                l('rows').innerHTML = l('rows').innerHTML + str;
+                l('rows', true).innerHTML = l('rows', true).innerHTML + str;
 
                 // building canvas
                 this.pics = [];
@@ -10389,7 +10180,7 @@ Game.Launch = function () {
                     let frames = this.art.frames || 1;
 
                     // @ts-expect-error
-                    if (typeof bg == 'string') ctx.fillPattern(Pic(this.art.bg), 0, 0, this.canvas.width, this.canvas.height, 128, 128);
+                    if (typeof bg === 'string') ctx.fillPattern(Pic(this.art.bg), 0, 0, this.canvas.width, this.canvas.height, 128, 128);
                     else bg(this, ctx);
                     // @ts-expect-error
                     let maxI = Math.floor(this.canvas.width / (w / rows) + 1);
@@ -10451,7 +10242,7 @@ Game.Launch = function () {
                     // @ts-expect-error
                     if (this.mouseOn) {
                         // @ts-expect-error
-                        if (this.name == 'Grandma') {
+                        if (this.name === 'Grandma') {
                             // mouse detection only fits grandma sprites for now
                             let marginW = -18;
                             let marginH = -10;
@@ -10496,12 +10287,11 @@ Game.Launch = function () {
                         let pic = this.pics[i];
                         let sprite = Pic(pic.pic);
                         // @ts-expect-error
-                        if (selected == i && this.name == 'Grandma') {
+                        if (selected == i && this.name === 'Grandma') {
                             ctx.font = '14px Merriweather';
                             ctx.textAlign = 'center';
                             Math.seedrandom(Game.seed + ' ' + pic.id);
-                            // @ts-expect-error
-                            let years = (Date.now() - new Date(2013, 7, 8)) / (1000 * 60 * 60 * 24 * 365) + Math.random(); // the grandmas age with the game
+                            let years = (Date.now() - +new Date(2013, 7, 8)) / (1000 * 60 * 60 * 24 * 365) + Math.random(); // the grandmas age with the game
                             let name = choose(Game.grandmaNames);
                             let custom = false;
                             if (Game.prefs.customGrandmas && Game.customGrandmaNames.length > 0 && Math.random() < 0.2) {
@@ -10606,48 +10396,32 @@ Game.Launch = function () {
             else if (id == 4) Game.buyBulk = 100;
             else if (id == 5) Game.buyBulk = -1;
 
-            if (Game.buyMode == 1 && Game.buyBulk == -1) Game.buyBulk = 100;
+            if (Game.buyMode === 1 && Game.buyBulk === -1) Game.buyBulk = 100;
 
-            // @ts-expect-error
-            if (Game.buyMode == 1) l('storeBulkBuy').className = 'storePreButton storeBulkMode selected';
-            // @ts-expect-error
-            else l('storeBulkBuy').className = 'storePreButton storeBulkMode';
-            // @ts-expect-error
-            if (Game.buyMode == -1) l('storeBulkSell').className = 'storePreButton storeBulkMode selected';
-            // @ts-expect-error
-            else l('storeBulkSell').className = 'storePreButton storeBulkMode';
+            if (Game.buyMode === 1) l('storeBulkBuy', true).className = 'storePreButton storeBulkMode selected';
+            else l('storeBulkBuy', true).className = 'storePreButton storeBulkMode';
+            if (Game.buyMode === -1) l('storeBulkSell', true).className = 'storePreButton storeBulkMode selected';
+            else l('storeBulkSell', true).className = 'storePreButton storeBulkMode';
 
-            // @ts-expect-error
-            if (Game.buyBulk == 1) l('storeBulk1').className = 'storePreButton storeBulkAmount selected';
-            // @ts-expect-error
-            else l('storeBulk1').className = 'storePreButton storeBulkAmount';
-            // @ts-expect-error
-            if (Game.buyBulk == 10) l('storeBulk10').className = 'storePreButton storeBulkAmount selected';
-            // @ts-expect-error
-            else l('storeBulk10').className = 'storePreButton storeBulkAmount';
-            // @ts-expect-error
-            if (Game.buyBulk == 100) l('storeBulk100').className = 'storePreButton storeBulkAmount selected';
-            // @ts-expect-error
-            else l('storeBulk100').className = 'storePreButton storeBulkAmount';
-            // @ts-expect-error
-            if (Game.buyBulk == -1) l('storeBulkMax').className = 'storePreButton storeBulkAmount selected';
-            // @ts-expect-error
-            else l('storeBulkMax').className = 'storePreButton storeBulkAmount';
+            if (Game.buyBulk === 1) l('storeBulk1', true).className = 'storePreButton storeBulkAmount selected';
+            else l('storeBulk1', true).className = 'storePreButton storeBulkAmount';
+            if (Game.buyBulk === 10) l('storeBulk10', true).className = 'storePreButton storeBulkAmount selected';
+            else l('storeBulk10', true).className = 'storePreButton storeBulkAmount';
+            if (Game.buyBulk === 100) l('storeBulk100', true).className = 'storePreButton storeBulkAmount selected';
+            else l('storeBulk100', true).className = 'storePreButton storeBulkAmount';
+            if (Game.buyBulk === -1) l('storeBulkMax', true).className = 'storePreButton storeBulkAmount selected';
+            else l('storeBulkMax', true).className = 'storePreButton storeBulkAmount';
 
-            if (Game.buyMode == 1) {
-                // @ts-expect-error
-                l('storeBulkMax').style.visibility = 'hidden';
-                // @ts-expect-error
-                l('products').className = 'storeSection';
+            if (Game.buyMode === 1) {
+                l('storeBulkMax', true).style.visibility = 'hidden';
+                l('products', true).className = 'storeSection';
             } else {
-                // @ts-expect-error
-                l('storeBulkMax').style.visibility = 'visible';
-                // @ts-expect-error
-                l('products').className = 'storeSection selling';
+                l('storeBulkMax', true).style.visibility = 'visible';
+                l('products', true).className = 'storeSection selling';
             }
 
             Game.storeToRefresh = 1;
-            if (id != -1) PlaySound('snd/tick.mp3');
+            if (id !== -1) PlaySound('snd/tick.mp3');
         };
         Game.BuildStore = function () // create the DOM for the store's buildings
         {
@@ -10716,8 +10490,7 @@ Game.Launch = function () {
                     '</div>' +
                     (Game.prefs.screenreader ? '</button>' : '</div>');
             }
-            // @ts-expect-error
-            l('products').innerHTML = str;
+            l('products', true).innerHTML = str;
 
             Game.storeBulkButton(-1);
 
@@ -11526,8 +11299,7 @@ Game.Launch = function () {
         str = '';
         str += '<div id="buildingsMute" class="shadowFilter" style="position:relative;z-index:100;padding:4px 16px 0px 64px;"></div>';
         str += '<div class="separatorBottom" style="position:absolute;bottom:-8px;z-index:0;"></div>';
-        // @ts-expect-error
-        l('buildingsMaster').innerHTML = str;
+        l('buildingsMaster', true).innerHTML = str;
 
         // build object displays
         let muteStr = '<div style="position:absolute;left:8px;bottom:12px;opacity:0.5;">' + loc('Muted:') + '</div>';
@@ -11606,8 +11378,7 @@ Game.Launch = function () {
                 );
             };
         };
-        // @ts-expect-error
-        l('buildingsMute').innerHTML = muteStr;
+        l('buildingsMute', true).innerHTML = muteStr;
 
         /* =====================================================================================
         UPGRADES
@@ -11721,10 +11492,8 @@ Game.Launch = function () {
             if (!cancelPurchase) {
                 if (this.choicesFunction) {
                     if (Game.choiceSelectorOn == this.id) {
-                        // @ts-expect-error
-                        l('toggleBox').style.display = 'none';
-                        // @ts-expect-error
-                        l('toggleBox').innerHTML = '';
+                        l('toggleBox', true).style.display = 'none';
+                        l('toggleBox', true).innerHTML = '';
                         Game.choiceSelectorOn = -1;
                         PlaySound('snd/tickOff.mp3');
                     } else {
@@ -11736,9 +11505,8 @@ Game.Launch = function () {
                         if (typeof choices === 'string') {
                             str += choices;
                         } else if (choices.length > 0) {
-                            let selected = 0;
+                            let selected = '0';
                             for (let i in choices) {
-                                // @ts-expect-error
                                 if (choices[i].selected) selected = i;
                             }
                             Game.choiceSelectorChoices = choices; // this is a really dumb way of doing this i am so sorry
@@ -11781,12 +11549,9 @@ Game.Launch = function () {
                                     '></div>';
                             }
                         }
-                        // @ts-expect-error
-                        l('toggleBox').innerHTML = str;
-                        // @ts-expect-error
-                        l('toggleBox').style.display = 'block';
-                        // @ts-expect-error
-                        l('toggleBox').focus();
+                        l('toggleBox', true).innerHTML = str;
+                        l('toggleBox', true).style.display = 'block';
+                        l('toggleBox', true).focus();
                         Game.tooltip.hide();
                         PlaySound('snd/tick.mp3');
                         success = 1;
@@ -11982,11 +11747,9 @@ Game.Launch = function () {
                     loc('Buy all upgrades') +
                     '</div>' +
                     '</div>';
-                // @ts-expect-error
-                l('upgrades').classList.add('hasMenu');
+                l('upgrades', true).classList.add('hasMenu');
             }
-            // @ts-expect-error
-            else l('upgrades').classList.remove('hasMenu');
+            else l('upgrades', true).classList.remove('hasMenu');
 
             for (let i in Game.UpgradesInStore) {
                 let me = Game.UpgradesInStore[i];
@@ -12000,26 +11763,16 @@ Game.Launch = function () {
                 }
             }
 
-            // @ts-expect-error
-            l('upgrades').innerHTML = storeStr;
-            // @ts-expect-error
-            l('toggleUpgrades').innerHTML = toggleStr;
-            // @ts-expect-error
-            if (toggleStr == '') l('toggleUpgrades').style.display = 'none';
-            // @ts-expect-error
-            else l('toggleUpgrades').style.display = 'block';
-            // @ts-expect-error
-            l('techUpgrades').innerHTML = techStr;
-            // @ts-expect-error
-            if (techStr == '') l('techUpgrades').style.display = 'none';
-            // @ts-expect-error
-            else l('techUpgrades').style.display = 'block';
-            // @ts-expect-error
-            l('vaultUpgrades').innerHTML = vaultStr;
-            // @ts-expect-error
-            if (vaultStr == '') l('vaultUpgrades').style.display = 'none';
-            // @ts-expect-error
-            else l('vaultUpgrades').style.display = 'block';
+            l('upgrades', true).innerHTML = storeStr;
+            l('toggleUpgrades', true).innerHTML = toggleStr;
+            if (toggleStr == '') l('toggleUpgrades', true).style.display = 'none';
+            else l('toggleUpgrades', true).style.display = 'block';
+            l('techUpgrades', true).innerHTML = techStr;
+            if (techStr == '') l('techUpgrades', true).style.display = 'none';
+            else l('techUpgrades', true).style.display = 'block';
+            l('vaultUpgrades', true).innerHTML = vaultStr;
+            if (vaultStr == '') l('vaultUpgrades', true).style.display = 'none';
+            else l('vaultUpgrades', true).style.display = 'block';
         };
 
         Game.UnlockAt = []; // this contains an array of every upgrade with a cookie requirement in the form of {cookies:(amount of cookies earned required),name:(name of upgrade or achievement to unlock)} (and possibly require:(name of upgrade of achievement to own))
@@ -14368,14 +14121,10 @@ Game.Launch = function () {
         Game.SelectingPermanentUpgrade = -1;
         Game.PutUpgradeInPermanentSlot = function (upgrade, slot) {
             Game.SelectingPermanentUpgrade = upgrade;
-            // @ts-expect-error
-            l('upgradeToSlotWrap').innerHTML = '';
-            // @ts-expect-error
-            l('upgradeToSlotWrap').style.display = upgrade == -1 ? 'none' : 'block';
-            // @ts-expect-error
-            l('upgradeToSlotNone').style.display = upgrade != -1 ? 'none' : 'block';
-            // @ts-expect-error
-            l('upgradeToSlotWrap').innerHTML = Game.crate(Game.UpgradesById[upgrade == -1 ? 0 : upgrade], '', '', 'upgradeToSlot');
+            l('upgradeToSlotWrap', true).innerHTML = '';
+            l('upgradeToSlotWrap', true).style.display = upgrade == -1 ? 'none' : 'block';
+            l('upgradeToSlotNone', true).style.display = upgrade != -1 ? 'none' : 'block';
+            l('upgradeToSlotWrap', true).innerHTML = Game.crate(Game.UpgradesById[upgrade == -1 ? 0 : upgrade], '', '', 'upgradeToSlot');
         };
 
         new Game.Upgrade(
@@ -14899,23 +14648,25 @@ Game.Launch = function () {
                     name: it.name,
                     icon: it.icon,
                     milk: it,
-                    order: it.type
+                    order: it.type,
+                    div: i === -1 ? false : undefined,
+                    selected: i === -1 ? 0 : undefined
                 });
             }
 
-            // @ts-expect-error
             choices[11].div = true;
 
             let maxRank = Math.floor(Game.AchievementsOwned / 25);
             for (let i = 0; i < choices.length; i++) {
-                // @ts-expect-error
-                let it = choices[i].milk;
+                let it;
+                const choice = choices[i];
+                if (typeof choice !== 'number') it = choice.milk;
                 if (it.type == 1 && !Game.Has('Fanciful dairy selection')) choices[i] = 0;
                 if (it.rank && it.rank > maxRank) choices[i] = 0;
             }
 
-            // @ts-expect-error
-            choices[Game.milkType].selected = 1;
+            const choice = choices[Game.milkType];
+            if (typeof choice !== 'number') choice.selected = 1;
             return choices;
         };
         Game.last.choicesPick = function (id) {
@@ -15168,7 +14919,7 @@ Game.Launch = function () {
         Game.last.pool = 'toggle';
         Game.last.choicesFunction = function () {
             let choices = [];
-            choices[0] = { name: 'No sound', icon: [0, 7] };
+            choices[0] = { name: 'No sound', icon: [0, 7], selected: choices.length === -1 ? 0 : undefined };
             choices[1] = { name: 'Chime', icon: [22, 6] };
             choices[2] = { name: 'Fortune', icon: [27, 6] };
             choices[3] = { name: 'Cymbal', icon: [9, 10] };
@@ -15177,7 +14928,6 @@ Game.Launch = function () {
                 choices[i].name = loc(choices[i].name);
             }
 
-            // @ts-expect-error
             choices[Game.chimeType].selected = 1;
             return choices;
         };
@@ -15620,6 +15370,9 @@ Game.Launch = function () {
 
         Game.last.pool = 'toggle';
         Game.last.choicesFunction = function () {
+            /** 
+             * @type {{name: string, icon: string, order: number,div: boolean | undefined, selected: number | undefined }[]}
+             */
             let choices = [];
             for (let i in Game.BGsByChoice) {
                 choices[i] = {
@@ -15633,10 +15386,9 @@ Game.Launch = function () {
 
             for (let i = 0; i < choices.length; i++) {
                 let it = choices[i];
-                // @ts-expect-error
+                // @ts-expect-error pain, just pain
                 if (it.order >= 4.9 && !Game.Has('Distinguished wallpaper assortment')) choices[i] = 0;
             }
-            // @ts-expect-error
             choices[Game.bgType].selected = 1;
             return choices;
         };
@@ -15740,8 +15492,7 @@ Game.Launch = function () {
         Game.MakeTiered(Game.last, 9, 18);
 
         order = 99999;
-        // @ts-expect-error
-        let years = Math.floor((Date.now() - new Date(2013, 7, 8)) / (1000 * 60 * 60 * 24 * 365));
+        let years = Math.floor((Date.now() - +new Date(2013, 7, 8)) / (1000 * 60 * 60 * 24 * 365));
         // only updates on page load
         // may behave strangely on leap years
         Game.NewUpgradeCookie({
@@ -18738,133 +18489,13 @@ Game.Launch = function () {
                 Game.jukebox.onSound = id;
                 if (l('jukeboxOnSound')) {
                     triggerAnim(l('jukeboxPlayer'), 'pucker');
-                    // @ts-expect-error
-                    l('jukeboxOnSound').innerHTML = '&bull; ' + Game.jukebox.sounds[Game.jukebox.onSound] + ' &bull;';
-                    // @ts-expect-error
-                    l('jukeboxOnSoundN').innerHTML = Game.jukebox.onSound + 1 + '/' + Game.jukebox.sounds.length;
-                    // @ts-expect-error
-                    l('jukeboxSoundSelect').value = Game.jukebox.onSound;
+                    l('jukeboxOnSound', true).innerHTML = '&bull; ' + Game.jukebox.sounds[Game.jukebox.onSound] + ' &bull;';
+                    l('jukeboxOnSoundN', true).innerHTML = Game.jukebox.onSound + 1 + '/' + Game.jukebox.sounds.length;
+                    l('jukeboxSoundSelect', true).value = Game.jukebox.onSound;
                 }
                 PlaySound('snd/' + Game.jukebox.sounds[Game.jukebox.onSound] + '.mp3', 1);
-            },
-            setTrack: function (id, dontPlay) {
-                if (id >= Game.jukebox.tracks.length) id = 0;
-                else if (id < 0) id = Game.jukebox.tracks.length - 1;
-                Game.jukebox.onTrack = id;
-                // @ts-expect-error
-                let data = Music.tracks[Game.jukebox.tracks[Game.jukebox.onTrack]].audio;
-                if (l('jukeboxOnTrack')) {
-                    triggerAnim(l('jukeboxPlayer'), 'pucker');
-                    // @ts-expect-error
-                    l('jukeboxOnTrack').innerHTML = '&bull; ' + cap(Game.jukebox.tracks[Game.jukebox.onTrack]) + ' &bull;';
-                    // @ts-expect-error
-                    l('jukeboxOnTrackAuthor').innerHTML = Music.tracks[Game.jukebox.tracks[Game.jukebox.onTrack]].author;
-                    // @ts-expect-error
-                    l('jukeboxTrackSelect').value = Game.jukebox.onTrack;
-                    if (data) {
-                        let dur = data.duration + 1;
-                        // @ts-expect-error
-                        l('jukeboxMusicTotalTime').innerHTML = Math.floor(dur / 60) + ':' + (Math.floor(dur % 60) < 10 ? '0' : '') + Math.floor(dur % 60);
-                    }
-
-                    if (!dontPlay && Music) {
-                        Game.jukebox.trackAuto = false;
-                        // @ts-expect-error
-                        l('jukeboxMusicAuto').classList.add('off');
-                        // @ts-expect-error
-                        Music.playTrack(Game.jukebox.tracks[Game.jukebox.onTrack]);
-                        // @ts-expect-error
-                        Music.setFilter(1);
-                        // @ts-expect-error
-                        Music.loop(Game.jukebox.trackLooped);
-                    }
-                    // @ts-expect-error
-                    if (data.paused) l('jukeboxMusicPlay').innerHTML = loc('Play');
-                    // @ts-expect-error
-                    else l('jukeboxMusicPlay').innerHTML = loc('Stop');
-                    Game.jukebox.updateMusicCurrentTime();
-                }
-            },
-            pressPlayMusic: function () {
-                if (!Music) return false;
-                // @ts-expect-error
-                let data = Music.tracks[Game.jukebox.tracks[Game.jukebox.onTrack]].audio;
-                if (!data.paused) {
-                    // @ts-expect-error
-                    Music.pause();
-                    // @ts-expect-error
-                    l('jukeboxMusicPlay').innerHTML = loc('Play');
-                }
-                else {
-                    // @ts-expect-error
-                    Music.unpause();
-                    // @ts-expect-error
-                    l('jukeboxMusicPlay').innerHTML = loc('Stop');
-                }
-                Game.jukebox.updateMusicCurrentTime();
-            },
-            pressLoopMusic: function () {
-                Game.jukebox.trackLooped = !Game.jukebox.trackLooped;
-                if (!Music) return false;
-                if (Game.jukebox.trackLooped) {
-                    // @ts-expect-error
-                    Music.loop(true);
-                    // @ts-expect-error
-                    l('jukeboxMusicLoop').classList.remove('off');
-                }
-                else {
-                    // @ts-expect-error
-                    Music.loop(false);
-                    // @ts-expect-error
-                    l('jukeboxMusicLoop').classList.add('off');
-                }
-            },
-            pressMusicAuto: function () {
-                Game.jukebox.trackAuto = !Game.jukebox.trackAuto;
-                if (!Music) return false;
-                if (Game.jukebox.trackAuto) {
-                    // @ts-expect-error
-                    Music.cue('play');
-                    // @ts-expect-error
-                    l('jukeboxMusicAuto').classList.remove('off');
-                }
-                else {
-                    // @ts-expect-error
-                    l('jukeboxMusicAuto').classList.add('off');
-                }
-            },
-            pressMusicShuffle: function () {
-                Game.jukebox.trackShuffle = !Game.jukebox.trackShuffle;
-            },
-            updateMusicCurrentTime: function (noLoop) {
-                if (!l('jukeboxMusicTime')) return false;
-                // @ts-expect-error
-                let data = Music.tracks[Game.jukebox.tracks[Game.jukebox.onTrack]].audio;
-                // @ts-expect-error
-                l('jukeboxMusicPlay').innerHTML = data.paused ? loc('Play') : loc('Pause');
-                // @ts-expect-error
-                l('jukeboxMusicTime').innerHTML =
-                    Math.floor(data.currentTime / 60) + ':' + (Math.floor(data.currentTime % 60) < 10 ? '0' : '') + Math.floor(data.currentTime % 60);
-                // @ts-expect-error
-                l('jukeboxMusicScrub').value = (data.currentTime / data.duration) * 1000;
-                // @ts-expect-error
-                l('jukeboxMusicScrubElapsed').style.width = Math.max(0, (data.currentTime / data.duration) * 288 - 4) + 'px';
-                if (!noLoop) setTimeout(Game.jukebox.updateMusicCurrentTime, 1000 / 2);
-            },
-            musicScrub: function (time) {
-                // @ts-expect-error
-                let data = Music.tracks[Game.jukebox.tracks[Game.jukebox.onTrack]].audio;
-                data.currentTime = (time / 1000) * data.duration;
-                Game.jukebox.updateMusicCurrentTime();
             }
         };
-        if (Music) {
-            // @ts-expect-error
-            for (let i in Music.tracks) {
-                // @ts-expect-error
-                Game.jukebox.tracks.push(Music.tracks[i].name);
-            }
-        }
 
         Game.last.choicesFunction = function () {
             let str = '';
@@ -20997,12 +20628,12 @@ Game.Launch = function () {
 
                 if (buff.time >= 0) {
                     if (!l('buffPieTimer' + buff.id))
-                    // @ts-expect-error
-                        l('buff' + buff.id).innerHTML = l('buff' + buff.id).innerHTML + '<div class="pieTimer" id="buffPieTimer' + buff.id + '"></div>';
+                        l('buff' + buff.id, true).innerHTML = l('buff' + buff.id, true).innerHTML +
+                            '<div class="pieTimer" id="buffPieTimer' + buff.id + '"></div>';
                     let T = 1 - buff.time / buff.maxTime;
                     T = (T * 144) % 144;
-                    // @ts-expect-error
-                    l('buffPieTimer' + buff.id).style.backgroundPosition = -Math.floor(T % 18) * 48 + 'px ' + -Math.floor(T / 18) * 48 + 'px';
+                    l('buffPieTimer' + buff.id, true)
+                        .style.backgroundPosition = `${-Math.floor(T % 18) * 48}px ${-Math.floor(T / 18) * 48}px`;
                 }
                 buff.time--;
                 if (buff.time <= 0) {
@@ -21409,10 +21040,6 @@ Game.Launch = function () {
             Game.elderWrathD += (Game.elderWrath + 1 - Game.elderWrathD) * 0.001; // slowly fade to the target wrath state
 
             if (Game.elderWrath != Game.elderWrathOld) {
-                if (Game.clicksThisSession > 0) {
-                    if (Game.elderWrath >= 3) PlayCue('fadeTo', 'grandmapocalypse');
-                    else PlayCue('fadeTo', 'click');
-                }
                 Game.storeToRefresh = 1;
             }
 
@@ -21736,10 +21363,8 @@ Game.Launch = function () {
                     ctx.globalAlpha = me.close;
                     ctx.save();
                     ctx.translate(me.x, me.y);
-                    // @ts-expect-error
-                    let sw = 100 + 2 * Math.sin(Game.T * 0.2 + i * 3);
-                    // @ts-expect-error
-                    let sh = 200 + 5 * Math.sin(Game.T * 0.2 - 2 + i * 3);
+                    let sw = 100 + 2 * Math.sin(Game.T * 0.2 + Number(i) * 3);
+                    let sh = 200 + 5 * Math.sin(Game.T * 0.2 - 2 + Number(i) * 3);
                     if (Game.prefs.fancy) {
                         ctx.translate(0, 30);
                         ctx.rotate((-me.r * Math.PI) / 180);
@@ -21755,14 +21380,12 @@ Game.Launch = function () {
                     if (!Game.WINKLERS && Game.prefs.notScary)
                         ctx.drawImage(
                             Pic(
-                                // @ts-expect-error
-                                Math.sin(Game.T * 0.003 + i * 11 + 137 + Math.sin(Game.T * 0.017 + i * 13)) > 0.9997
+                                Math.sin(Game.T * 0.003 + Number(i) * 11 + 137 + Math.sin(Game.T * 0.017 + Number(i) * 13)) > 0.9997
                                     ? 'wrinklerBlink.png'
                                     : 'wrinklerGooglies.png'
                             ),
                             -sw / 2,
-                            // @ts-expect-error
-                            -10 + 1 * Math.sin(Game.T * 0.2 + i * 3 + 1.2),
+                            -10 + 1 * Math.sin(Game.T * 0.2 + Number(i) * 3 + 1.2),
                             sw,
                             sh
                         );
@@ -21788,23 +21411,23 @@ Game.Launch = function () {
                 ctx.font = '14px Merriweather';
                 ctx.textAlign = 'center';
                 let text = loc('Swallowed:');
-                // @ts-expect-error
+                // @ts-expect-error man
                 let width = Math.ceil(Math.max(ctx.measureText(text).width, ctx.measureText(Beautify(selected.sucked)).width));
                 ctx.fillStyle = '#000';
                 ctx.globalAlpha = 0.65;
 
                 let xO = x - width / 2 - 16;
                 let yO = y - 4;
-                // @ts-expect-error
+                // @ts-expect-error why
                 let dist = Math.floor(Math.sqrt((selected.x - xO) * (selected.x - xO) + (selected.y - yO) * (selected.y - yO)));
-                // @ts-expect-error
+                // @ts-expect-error is
                 let angle = -Math.atan2(yO - selected.y, xO - selected.x) + Math.PI / 2;
                 ctx.strokeStyle = '#fff';
                 ctx.lineWidth = 1;
                 for (let i = 0; i < Math.floor(dist / 12); i++) {
-                    // @ts-expect-error
+                    // @ts-expect-error this
                     let xC = selected.x + Math.sin(angle) * i * 12;
-                    // @ts-expect-error
+                    // @ts-expect-error so bad
                     let yC = selected.y + Math.cos(angle) * i * 12;
                     ctx.beginPath();
                     ctx.arc(xC, yC, 4 + (Game.prefs.fancy ? 2 * Math.pow(Math.sin(-Game.T * 0.2 + i * 0.3), 4) : 0), 0, 2 * Math.PI, false);
@@ -21818,7 +21441,7 @@ Game.Launch = function () {
                 ctx.globalAlpha = 1;
                 ctx.fillStyle = '#fff';
                 ctx.fillText(text, x + 14, y - 8);
-                // @ts-expect-error
+                // @ts-expect-error urgh
                 ctx.fillText(Beautify(selected.sucked), x + 10, y + 8);
                 let s = 54 + 2 * Math.sin(Game.T * 0.4);
                 ctx.drawImage(Pic('icons.png'), 27 * 48, 26 * 48, 48, 48, x - width / 2 - 16 - s / 2, y - 4 - s / 2, s, s);
@@ -21975,8 +21598,7 @@ Game.Launch = function () {
                 Game.ToggleSpecialMenu(1);
 
                 if (l('specialPic')) {
-                    // @ts-expect-error
-                    let rect = l('specialPic').getBounds();
+                    let rect = l('specialPic', true).getBounds();
                     Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2) + 32 - TopBarOffset;
                 }
 
@@ -22372,8 +21994,7 @@ Game.Launch = function () {
             for (let i in Game.dragonAuras) {
                 if (Game.dragonLevel >= parseInt(i) + 4) {
                     let icon = Game.dragonAuras[i].pic;
-                    // @ts-expect-error
-                    if (i == 0 || i != otherAura)
+                    if (Number(i) === 0 || Number(i) !== otherAura)
                         str +=
                             '<div class="crate enabled' +
                             (i == Game.SelectingDragonAura ? ' highlighted' : '') +
@@ -22414,7 +22035,7 @@ Game.Launch = function () {
                     ? loc('Switching your aura is <b>free</b> because you own no buildings.')
                     : loc(
                         'The cost of switching your aura is <b>%1</b>.<br>This will affect your CpS!',
-                        // @ts-expect-error
+                        // @ts-expect-error ugh x2
                         loc('%1 ' + highestBuilding.bsingle, LBeautify(1))
                     )) +
                 '</div>',
@@ -22425,7 +22046,7 @@ Game.Launch = function () {
                         '=Game.SelectingDragonAura;' +
                         (highestBuilding == 0 || currentAura == Game.SelectingDragonAura
                             ? ''
-                            // @ts-expect-error
+                            // @ts-expect-error ugh
                             : 'Game.ObjectsById[' + highestBuilding.id + '].sacrifice(1);') +
                         'Game.ToggleSpecialMenu(1);Game.ClosePrompt();'
                     ],
@@ -22442,8 +22063,7 @@ Game.Launch = function () {
             Game.SelectDragonAura(slot, 1);
         };
         Game.DescribeDragonAura = function (aura) {
-            // @ts-expect-error
-            l('dragonAuraInfo').innerHTML =
+            l('dragonAuraInfo', true).innerHTML =
                 '<div style="min-width:200px;text-align:center;"><h4>' +
                 Game.dragonAuras[aura].dname +
                 '</h4>' +
@@ -22461,8 +22081,7 @@ Game.Launch = function () {
                 if (Game.dragonLevel >= Game.dragonLevels.length - 1) Game.Win('Here be dragon');
                 Game.ToggleSpecialMenu(1);
                 if (l('specialPic')) {
-                    // @ts-expect-error
-                    let rect = l('specialPic').getBounds();
+                    let rect = l('specialPic', true).getBounds();
                     Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2) + 32 - TopBarOffset;
                 }
                 Game.recalculateGains = 1;
@@ -22611,20 +22230,16 @@ Game.Launch = function () {
                     }
                 }
 
-                // @ts-expect-error
-                l('specialPopup').innerHTML = str;
+                l('specialPopup', true).innerHTML = str;
 
-                // @ts-expect-error
-                l('specialPopup').className = 'framed prompt onScreen';
+                l('specialPopup', true).className = 'framed prompt onScreen';
             } else {
                 if (Game.specialTab != '') {
                     Game.specialTab = '';
-                    // @ts-expect-error
-                    l('specialPopup').className = 'framed prompt offScreen';
+                    l('specialPopup', true).className = 'framed prompt offScreen';
                     setTimeout(function () {
                         if (Game.specialTab == '') {
-                            // @ts-expect-error
-                            l('specialPopup').innerHTML = '';
+                            l('specialPopup', true).innerHTML = '';
                         }
                     }, 1000 * 0.2);
                 }
@@ -22812,12 +22427,12 @@ Game.Launch = function () {
             // background
             if (!Game.Background) {
                 // init some stuff
-                // @ts-expect-error
-                Game.Background = l('backgroundCanvas').getContext('2d');
+                const bgCanvasEl = /** @type {HTMLCanvasElement} */ (l('backgroundCanvas', true));
+                const bgLeftCanvasEl = /** @type {HTMLCanvasElement} */ (l('backgroundLeftCanvas', true));
+                Game.Background = bgCanvasEl.getContext('2d');
                 Game.Background.canvas.width = Game.Background.canvas.parentNode.offsetWidth;
                 Game.Background.canvas.height = Game.Background.canvas.parentNode.offsetHeight;
-                // @ts-expect-error
-                Game.LeftBackground = l('backgroundLeftCanvas').getContext('2d');
+                Game.LeftBackground = bgLeftCanvasEl.getContext('2d');
                 Game.LeftBackground.canvas.width = Game.LeftBackground.canvas.parentNode.offsetWidth;
                 Game.LeftBackground.canvas.height = Game.LeftBackground.canvas.parentNode.offsetHeight;
                 // preload ascend animation bits so they show up instantly
@@ -22890,8 +22505,7 @@ Game.Launch = function () {
                 }
 
                 if (Game.drawT % 5 == 0) {
-                    // @ts-expect-error
-                    l('backgroundCanvas').style.background = 'transparent';
+                    l('backgroundCanvas', true).style.background = 'transparent';
                     Game.defaultBg = 'bgBlue';
                     Game.bgR = 0;
 
@@ -23290,8 +22904,7 @@ Game.Launch = function () {
                                     'px;height:' +
                                     this.s +
                                     'px;background:#999;position:absolute;left:0px;top:0px;z-index:10000000;transform:translate(-1000px,-1000px);';
-                                // @ts-expect-error
-                                l('sectionLeft').appendChild(this.l);
+                                l('sectionLeft', true).appendChild(this.l);
                                 AddEvent(
                                     this.l,
                                     'mousedown',
@@ -23591,21 +23204,19 @@ Game.Launch = function () {
             }
             str += '</div>';
 
-            // @ts-expect-error
-            l('devConsole').innerHTML = str;
+            l('devConsole', true).innerHTML = str;
 
             if (!l('fpsGraph')) {
                 let div = document.createElement('canvas');
                 div.id = 'fpsGraph';
                 div.width = 128;
                 div.height = 64;
-                // @ts-expect-error
-                div.style.opacity = 0.5;
+                div.style.opacity = '0.5';
                 div.style.pointerEvents = 'none';
                 div.style.transformOrigin = '0% 0%';
                 div.style.transform = 'scale(0.75)';
-                // @ts-expect-error
-                l('devConsole').parentNode.insertBefore(div, l('devConsole').nextSibling);
+                const devConsoleParentNode = l('devConsole', true).parentNode;
+                if (devConsoleParentNode) devConsoleParentNode.insertBefore(div, l('devConsole', true).nextSibling);
                 Game.fpsGraph = div;
                 Game.fpsGraphCtx = Game.fpsGraph.getContext('2d', {
                     alpha: false
@@ -23615,8 +23226,7 @@ Game.Launch = function () {
                 ctx.fillRect(0, 0, 128, 64);
             }
 
-            // @ts-expect-error
-            l('debug').style.display = 'block';
+            l('debug', true).style.display = 'block';
             Game.sesame = 1;
             Game.Achievements['Cheated cookies taste awful'].won = 1;
         };
@@ -23682,14 +23292,10 @@ Game.Launch = function () {
             const detectAds = l('detectAds');
             if (!detectAds || detectAds.clientHeight < 1) Game.addClass('noAds');
         }, 500);
-        // @ts-expect-error
-        l('offGameMessage').innerHTML = '';
-        // @ts-expect-error
-        l('offGameMessageWrap').style.display = 'none';
+        l('offGameMessage', true).innerHTML = '';
+        l('offGameMessageWrap', true).style.display = 'none';
         Game.Loop();
         Game.Draw();
-
-        PlayCue('launch');
 
         if (!EN) {
             let adaptWidth = function (node) {
@@ -23704,24 +23310,17 @@ Game.Launch = function () {
                     el.style.transform = 'scale(1,' + width + ')';
                 }
             };
-            // @ts-expect-error
-            l('prefsButton').firstChild.innerHTML = loc('Options');
-            // @ts-expect-error
-            l('statsButton').firstChild.innerHTML = loc('Stats');
-            // @ts-expect-error
-            l('logButton').firstChild.innerHTML = loc('Info');
-            // @ts-expect-error
-            l('legacyButton').firstChild.innerHTML = loc('Legacy');
+            ASSERT_NOT_NULL(l('prefsButton', true).firstChild).innerHTML = loc('Options');
+            ASSERT_NOT_NULL(l('statsButton', true).firstChild).innerHTML = loc('Stats');
+            ASSERT_NOT_NULL(l('logButton', true).firstChild).innerHTML = loc('Info');
+            ASSERT_NOT_NULL(l('legacyButton', true).firstChild).innerHTML = loc('Legacy');
             adaptWidth(l('prefsButton'));
             adaptWidth(l('statsButton'));
             adaptWidth(l('logButton'));
             adaptWidth(l('legacyButton'));
-            // @ts-expect-error
-            l('checkForUpdate').childNodes[0].textContent = loc('New update!');
-            // @ts-expect-error
-            l('buildingsTitle').childNodes[0].textContent = loc('Buildings');
-            // @ts-expect-error
-            l('storeTitle').childNodes[0].textContent = loc('Store');
+            l('checkForUpdate', true).childNodes[0].textContent = loc('New update!');
+            l('buildingsTitle', true).childNodes[0].textContent = loc('Buildings');
+            l('storeTitle', true).childNodes[0].textContent = loc('Store');
         }
     };
     /* =====================================================================================
@@ -23753,10 +23352,8 @@ Game.Launch = function () {
             }
             Game.particlesUpdate();
 
-            // @ts-expect-error
-            if (Game.mousePointer) l('sectionLeft').style.cursor = 'pointer';
-            // @ts-expect-error
-            else l('sectionLeft').style.cursor = 'auto';
+            if (Game.mousePointer) l('sectionLeft', true).style.cursor = 'pointer';
+            else l('sectionLeft', true).style.cursor = 'auto';
             Game.mousePointer = 0;
 
             // handle milk and milk accessories
@@ -23878,12 +23475,9 @@ Game.Launch = function () {
 
                 if (Game.cookiesEarned >= 1000000 && (Game.ascensionMode == 1 || Game.resets == 0)) {
                     // challenge run or hasn't ascended yet
-                    // @ts-expect-error
-                    if (timePlayed <= 1000 * 60 * 35) Game.Win('Speed baking I');
-                    // @ts-expect-error
-                    if (timePlayed <= 1000 * 60 * 25) Game.Win('Speed baking II');
-                    // @ts-expect-error
-                    if (timePlayed <= 1000 * 60 * 15) Game.Win('Speed baking III');
+                    if (+timePlayed <= 1000 * 60 * 35) Game.Win('Speed baking I');
+                    if (+timePlayed <= 1000 * 60 * 25) Game.Win('Speed baking II');
+                    if (+timePlayed <= 1000 * 60 * 15) Game.Win('Speed baking III');
 
                     if (Game.cookieClicks <= 15) Game.Win('Neverclick');
                     if (Game.cookieClicks <= 0) Game.Win('True Neverclick');
@@ -24224,8 +23818,7 @@ Game.Launch = function () {
                 str += '<div class="line"></div>';
                 str += loc('You need <b>%1 more cookies</b> for the next level.', Beautify(cookiesToNext)) + '<br>';
             }
-            // @ts-expect-error
-            l('ascendTooltip').innerHTML = str;
+            l('ascendTooltip', true).innerHTML = str;
 
             if (ascendNowToGet > 0) {
                 // show number saying how many chips you'd get resetting now
@@ -24332,8 +23925,7 @@ Game.Launch = function () {
                 ' ' +
                 Beautify(Game.cookiesPs * (1 - Game.cpsSucked), 1) +
                 '</div>';
-            // @ts-expect-error
-            l('cookies').innerHTML = str;
+            l('cookies', true).innerHTML = str;
             Timer.track('cookie amount');
 
             for (let i in Game.Objects) {
@@ -24372,8 +23964,7 @@ Game.Launch = function () {
                     if (!me.bought) {
                         let price = me.getPrice();
                         let canBuy = me.canBuy();
-                        // @ts-expect-error
-                        let enabled = l('upgrade' + i).className.indexOf('enabled') > -1;
+                        let enabled = l('upgrade' + i, true).className.indexOf('enabled') > -1;
                         if ((canBuy && !enabled) || (!canBuy && enabled)) Game.upgradesToRebuild = 1;
                         if (price < lastPrice) Game.storeToRefresh = 1; // is this upgrade less expensive than the previous one? trigger a refresh to sort it again
                         lastPrice = price;
@@ -24382,11 +23973,13 @@ Game.Launch = function () {
                         let T = me.timerDisplay();
                         if (T != -1) {
                             if (!l('upgradePieTimer' + i))
-                                // @ts-expect-error
-                                l('upgrade' + i).innerHTML = l('upgrade' + i).innerHTML + '<div class="pieTimer" id="upgradePieTimer' + i + '"></div>';
+                                l('upgrade' + i, true)
+                                    .innerHTML = `${
+                                        l('upgrade' + i, true).innerHTML
+                                    }<div class="pieTimer" id="upgradePieTimer${i}"></div>`;
                             T = (T * 144) % 144;
-                            // @ts-expect-error
-                            l('upgradePieTimer' + i).style.backgroundPosition = -Math.floor(T % 18) * 48 + 'px ' + -Math.floor(T / 18) * 48 + 'px';
+                            l('upgradePieTimer' + i, true)
+                                .style.backgroundPosition = `${-Math.floor(T % 18) * 48}px ${-Math.floor(T / 18) * 48}px`;
                         }
                     }
                 }
@@ -24476,18 +24069,14 @@ Game.Launch = function () {
             ctx.lineTo(128, (1 - Game.currentFps / Game.fps) * 64);
             ctx.stroke();
 
-            // @ts-expect-error
-            l('fpsCounter').textContent = Game.currentFps + ' fps';
+            l('fpsCounter', true).textContent = Game.currentFps + ' fps';
             let str = '';
             for (let i in Timer.labels) {
                 str += Timer.labels[i];
             }
-            // @ts-expect-error
-            if (Game.debugTimersOn) l('debugLog').style.display = 'block';
-            // @ts-expect-error
-            else l('debugLog').style.display = 'none';
-            // @ts-expect-error
-            l('debugLog').innerHTML = str;
+            if (Game.debugTimersOn) l('debugLog', true).style.display = 'block';
+            else l('debugLog', true).style.display = 'none';
+            l('debugLog', true).innerHTML = str;
         }
         Timer.reset();
 
@@ -24544,9 +24133,9 @@ window.onload = function () {
                 let lang = Langs[i];
                 str += '<div class="langSelectButton title" id="langSelect-' + i + '">' + lang.name + '</div>';
             }
-            // @ts-expect-error
-            l('offGameMessage').innerHTML =
-                '<div class="title" id="languageSelectHeader">Language</div>' + '<div class="line" style="max-width:300px;"></div>' + str;
+            l('offGameMessage', true).innerHTML =
+                '<div class="title" id="languageSelectHeader">Language</div>' +
+                '<div class="line" style="max-width:300px;"></div>' + str;
             for (let i in Langs) {
                 let lang = Langs[i];
                 AddEvent(
@@ -24564,8 +24153,7 @@ window.onload = function () {
                     (function (lang) {
                         return function () {
                             PlaySound('snd/smallTick.mp3', 0.75);
-                            // @ts-expect-error
-                            l('languageSelectHeader').innerHTML = Langs[lang].changeLanguage;
+                            l('languageSelectHeader', true).innerHTML = Langs[lang].changeLanguage;
                         };
                     })(i)
                 );
@@ -24573,8 +24161,7 @@ window.onload = function () {
         };
 
         let lang = localStorageGet('CookieClickerLang');
-        if (!lang) {
-            loadLangAndLaunch('EN', true);
-        } else loadLangAndLaunch(lang);
+        if (!lang) loadLangAndLaunch('EN', true);
+        else loadLangAndLaunch(lang);
     }
 };
