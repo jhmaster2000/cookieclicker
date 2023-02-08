@@ -23,7 +23,7 @@ const STUB = (..._) => void 0;
 /**
  * @param {string} what
  */
-function deepStringify(what) {
+function l(what) {
     return document.getElementById(what);
 }
 /**
@@ -1064,7 +1064,6 @@ if (!document.hasFocus)
     }; //for Opera
 
 function AddEvent(el, ev, func) {
-    //ie. myListener=AddEvent(l('element'),'click',function(){console.log('hi!');});
     if (el.addEventListener) {
         el.addEventListener(ev, func, false);
         return [el, ev, func];
@@ -1544,14 +1543,14 @@ let Game = {};
                 //note: this is not a mod hook, just a function that's part of the mod
                 Game.playerIntro =
                     text || choose(['oh snap, it\'s', 'watch out, it\'s', 'oh no! here comes', 'hide your cookies, for here comes', 'behold! it\'s']);
-                if (!deepStringify('bakerySubtitle'))
+                if (!l('bakerySubtitle'))
                     // @ts-expect-error
-                    deepStringify('bakeryName').insertAdjacentHTML(
+                    l('bakeryName').insertAdjacentHTML(
                         'afterend',
                         '<div id="bakerySubtitle" class="title" style="text-align:center;position:absolute;left:0px;right:0px;bottom:32px;font-size:12px;pointer-events:none;text-shadow:0px 1px 1px #000,0px 0px 4px #f00;opacity:0.8;"></div>'
                     );
                 // @ts-expect-error
-                deepStringify('bakerySubtitle').textContent = '~' + Game.playerIntro + '~';
+                l('bakerySubtitle').textContent = '~' + Game.playerIntro + '~';
             }
         });
     }
@@ -1592,7 +1591,7 @@ Game.Launch = function () {
         'img/bunnies.png',
         'img/frostedReindeer.png'
     ];
-    let preloadImagesL = deepStringify('preloadImages');
+    let preloadImagesL = l('preloadImages');
     for (let i = 0; i < preloadImages.length; i++) {
         let img = document.createElement('img');
         img.src = preloadImages[i];
@@ -2200,7 +2199,7 @@ Game.Launch = function () {
     };
     Game.ErrorFrame = function () {
         // @ts-expect-error
-        deepStringify('offGameMessage').innerHTML =
+        l('offGameMessage').innerHTML =
             '<div class="title">Oops. Wrong address!</div>' +
             '<div>It looks like you\'re accessing Cookie Clicker from another URL than the official one.<br>' +
             'You can <a href="//orteil.dashnet.org/cookieclicker/" target="_blank">play Cookie Clicker over here</a>!<br>' +
@@ -2211,7 +2210,7 @@ Game.Launch = function () {
         Game.WriteSave();
         Game.killShimmers();
         // @ts-expect-error
-        deepStringify('offGameMessage').innerHTML =
+        l('offGameMessage').innerHTML =
             '<div class="title">' +
             (Game.Has('Twin Gates of Transcendence')
                 ? loc('Cookie Clicker is in sleep mode and generating offline cookies.')
@@ -2224,15 +2223,15 @@ Game.Launch = function () {
             ) +
             '</div>';
         // @ts-expect-error
-        deepStringify('offGameMessageWrap').style.display = 'table';
+        l('offGameMessageWrap').style.display = 'table';
         Game.timedout = true;
         console.log('[=== Game timed out and has been put in sleep mode. Data was saved. ===]');
     };
     Game.Resume = function () {
         // @ts-expect-error
-        deepStringify('offGameMessage').innerHTML = '';
+        l('offGameMessage').innerHTML = '';
         // @ts-expect-error
-        deepStringify('offGameMessageWrap').style.display = 'none';
+        l('offGameMessageWrap').style.display = 'none';
         Game.timedout = false;
         Game.time = Date.now();
         Game.accumulatedDelay = 0;
@@ -2256,8 +2255,8 @@ Game.Launch = function () {
 
         Game.season = Game.baseSeason;
 
-        Game.l = deepStringify('game');
-        Game.wrapper = deepStringify('wrapper');
+        Game.l = l('game');
+        Game.wrapper = l('wrapper');
         Game.bounds = 0; //rectangle defining screen limits (right,left,bottom,top) updated every logic frame
 
         let TopBarOffset = 32;
@@ -2267,7 +2266,7 @@ Game.Launch = function () {
         Game.clickStr = Game.touchEvents ? 'ontouchend' : 'onclick';
 
         // @ts-expect-error
-        deepStringify('versionNumber').innerHTML =
+        l('versionNumber').innerHTML =
             'v. ' +
             Game.version +
             `<div id="httpsSwitch" style="cursor:pointer;display:inline-block;background:url(img/${Game.https ? 'lockOn' : 'lockOff'
@@ -2275,11 +2274,11 @@ Game.Launch = function () {
             (Game.beta ? ' <span style="color:#ff0;">beta</span>' : '');
 
         if (Game.beta) {
-            let me = deepStringify('linkVersionBeta');
+            let me = l('linkVersionBeta');
             // @ts-expect-error
             me.parentNode.removeChild(me);
         } else {
-            let me = deepStringify('linkVersionLive');
+            let me = l('linkVersionLive');
             // @ts-expect-error
             me.parentNode.removeChild(me);
         }
@@ -2637,7 +2636,7 @@ Game.Launch = function () {
         Game.GetBakeryName = function () {
             return Game.RandomBakeryName();
         };
-        Game.bakeryNameL = deepStringify('bakeryName');
+        Game.bakeryNameL = l('bakeryName');
         Game.bakeryNameSet = function (what) {
             try {
                 let exp = new RegExp('[^\'\\-_0-9 \\p{L}]', 'gu');
@@ -2684,13 +2683,13 @@ Game.Launch = function () {
                 ]
             );
             // @ts-expect-error
-            deepStringify('bakeryNameInput').focus();
+            l('bakeryNameInput').focus();
             // @ts-expect-error
-            deepStringify('bakeryNameInput').select();
+            l('bakeryNameInput').select();
         };
         Game.bakeryNamePromptRandom = function () {
             // @ts-expect-error
-            deepStringify('bakeryNameInput').value = Game.RandomBakeryName();
+            l('bakeryNameInput').value = Game.RandomBakeryName();
         };
         AddEvent(Game.bakeryNameL, 'click', Game.bakeryNamePrompt);
 
@@ -2705,8 +2704,8 @@ Game.Launch = function () {
             y: 0,
             origin: '',
             on: 0,
-            tt: deepStringify('tooltip'),
-            tta: deepStringify('tooltipAnchor'),
+            tt: l('tooltip'),
+            tta: l('tooltipAnchor'),
             shouldHide: 1,
             dynamic: 0,
             from: 0
@@ -2981,7 +2980,7 @@ Game.Launch = function () {
         Game.heralds = 0;
 
         Game.attachTooltip(
-            deepStringify('httpsSwitch'),
+            l('httpsSwitch'),
             '<div style="padding:8px;width:350px;text-align:center;font-size:11px;">' +
             loc(
                 'You are currently playing Cookie Clicker on the <b>%1</b> protocol.<br>The <b>%2</b> version uses a different save slot than this one.<br>Click this lock to reload the page and switch to the <b>%2</b> version!',
@@ -2990,76 +2989,75 @@ Game.Launch = function () {
             '</div>',
             'this'
         );
-        AddEvent(deepStringify('httpsSwitch'), 'click', function () {
+        AddEvent(l('httpsSwitch'), 'click', function () {
             PlaySound('snd/pop' + Math.floor(Math.random() * 3 + 1) + '.mp3', 0.75);
             if (location.protocol == 'https:') location.href = 'http:' + window.location.href.substring(window.location.protocol.length);
             else if (location.protocol == 'http:') location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
         });
 
-        AddEvent(deepStringify('changeLanguage'), 'click', function () {
+        AddEvent(l('changeLanguage'), 'click', function () {
             Game.showLangSelection();
         });
 
         Game.attachTooltip(
-            deepStringify('topbarOrteil'),
+            l('topbarOrteil'),
             '<div style="padding:8px;width:250px;text-align:center;">Back to Orteil\'s subdomain!<br>Lots of other games in there!</div>' +
             tinyIcon([17, 5], 'display:block;margin:-12px auto;'),
             'this'
         );
-        Game.attachTooltip(deepStringify('topbarDashnet'), '<div style="padding:8px;width:250px;text-align:center;">Back to our homepage!</div>', 'this');
+        Game.attachTooltip(l('topbarDashnet'), '<div style="padding:8px;width:250px;text-align:center;">Back to our homepage!</div>', 'this');
         Game.attachTooltip(
-            deepStringify('topbarTwitter'),
+            l('topbarTwitter'),
             '<div style="padding:8px;width:250px;text-align:center;">Orteil\'s twitter, which frequently features game updates.</div>',
             'this'
         );
         Game.attachTooltip(
-            deepStringify('topbarTumblr'),
+            l('topbarTumblr'),
             '<div style="padding:8px;width:250px;text-align:center;">Orteil\'s tumblr, which frequently features game updates.</div>',
             'this'
         );
         Game.attachTooltip(
-            deepStringify('topbarDiscord'),
+            l('topbarDiscord'),
             '<div style="padding:8px;width:250px;text-align:center;">Our official discord server.<br>You can share tips and questions about Cookie Clicker and all our other games!</div>',
             'this'
         );
         Game.attachTooltip(
-            deepStringify('topbarPatreon'),
+            l('topbarPatreon'),
             '<div style="padding:8px;width:250px;text-align:center;">Support us on Patreon and help us keep updating Cookie Clicker!<br>There\'s neat rewards for patrons too!</div>',
             'this'
         );
         Game.attachTooltip(
-            deepStringify('topbarMerch'),
+            l('topbarMerch'),
             '<div style="padding:8px;width:250px;text-align:center;">Cookie Clicker shirts, hoodies and stickers!</div>',
             'this'
         );
         Game.attachTooltip(
-            deepStringify('topbarMobileCC'),
+            l('topbarMobileCC'),
             '<div style="padding:8px;width:250px;text-align:center;">Play Cookie Clicker on your phone!<br>(Android only; iOS version will be released later)</div>',
             'this'
         );
         Game.attachTooltip(
-            deepStringify('topbarSteamCC'),
+            l('topbarSteamCC'),
             '<div style="padding:8px;width:250px;text-align:center;">Get Cookie Clicker on Steam!<br>Featuring music by C418.</div>',
             'this'
         );
         Game.attachTooltip(
-            deepStringify('topbarRandomgen'),
+            l('topbarRandomgen'),
             '<div style="padding:8px;width:250px;text-align:center;">A thing we made that lets you write random generators.</div>',
             'this'
         );
         Game.attachTooltip(
-            deepStringify('topbarIGM'),
+            l('topbarIGM'),
             '<div style="padding:8px;width:250px;text-align:center;">A thing we made that lets you create your own idle games using a simple scripting language.</div>',
             'this'
         );
         // @ts-expect-error
-        deepStringify('changeLanguage').innerHTML = loc('Change language');
+        l('changeLanguage').innerHTML = loc('Change language');
         // @ts-expect-error
-        deepStringify('links').childNodes[0].nodeValue = loc('Other versions');
-        //l('linkVersionBeta').innerHTML=loc("Beta");
+        l('links').childNodes[0].nodeValue = loc('Other versions');
 
         Game.attachTooltip(
-            deepStringify('heralds'),
+            l('heralds'),
             function () {
                 let str = '';
 
@@ -3110,9 +3108,9 @@ Game.Launch = function () {
             'this'
         );
         // @ts-expect-error
-        deepStringify('heraldsAmount').textContent = '?';
+        l('heraldsAmount').textContent = '?';
         // @ts-expect-error
-        deepStringify('heralds').style.display = 'inline-block';
+        l('heralds').style.display = 'inline-block';
 
         Game.useLocalStorage = 1;
         //window.localStorage.clear();//won't switch back to cookie-based if there is localStorage info
@@ -3133,9 +3131,9 @@ Game.Launch = function () {
                 [loc('All done!')]
             ); //prompt('Copy this text and keep it somewhere safe!',Game.WriteSave(1));
             // @ts-expect-error
-            deepStringify('textareaPrompt').focus();
+            l('textareaPrompt').focus();
             // @ts-expect-error
-            deepStringify('textareaPrompt').select();
+            l('textareaPrompt').select();
         };
         Game.ImportSave = function (def) {
             Game.Prompt(
@@ -3155,7 +3153,7 @@ Game.Launch = function () {
                 ]
             ); //prompt('Please paste in the text that was given to you on save export.','');
             // @ts-expect-error
-            deepStringify('textareaPrompt').focus();
+            l('textareaPrompt').focus();
         };
         Game.ImportSaveCode = function (save) {
             let out = false;
@@ -3953,7 +3951,7 @@ Game.Launch = function () {
                     if (prestigeUpgradesOwned >= 100) Game.Win('All the stars in heaven');
 
                     // @ts-expect-error
-                    if (version < Game.version) deepStringify('logButton').classList.add('hasUpdate');
+                    if (version < Game.version) l('logButton').classList.add('hasUpdate');
 
                     if (Game.season != '' && Game.season == Game.baseSeason) {
                         if (Game.season == 'valentines')
@@ -4172,15 +4170,15 @@ Game.Launch = function () {
             }
 
             // @ts-expect-error
-            deepStringify('toggleBox').style.display = 'none';
+            l('toggleBox').style.display = 'none';
             // @ts-expect-error
-            deepStringify('toggleBox').innerHTML = '';
+            l('toggleBox').innerHTML = '';
             Game.choiceSelectorOn = -1;
             Game.ToggleSpecialMenu(0);
             Game.specialTab = '';
 
             // @ts-expect-error
-            deepStringify('logButton').classList.remove('hasUpdate');
+            l('logButton').classList.remove('hasUpdate');
 
             Game.runModHook('reset', hard);
 
@@ -4554,7 +4552,7 @@ Game.Launch = function () {
             if (!mysterious) ariaText += 'Description: ' + desc + ' ';
 
             if (Game.prefs.screenreader) {
-                let ariaLabel = deepStringify('ariaReader-' + me.type + '-' + me.id);
+                let ariaLabel = l('ariaReader-' + me.type + '-' + me.id);
                 if (ariaLabel) ariaLabel.innerHTML = ariaText.replace(/(<([^>]+)>)/gi, ' ');
             }
 
@@ -4679,7 +4677,7 @@ Game.Launch = function () {
             let icon = Game.ascensionModes[Game.nextAscensionMode].icon;
             let name = Game.ascensionModes[Game.nextAscensionMode].dname;
             // @ts-expect-error
-            deepStringify('ascendModeButton').innerHTML =
+            l('ascendModeButton').innerHTML =
                 '<div class="crate noFrame enabled" ' +
                 Game.clickStr +
                 '="Game.PickAscensionMode();" ' +
@@ -4744,7 +4742,7 @@ Game.Launch = function () {
         };
 
         // @ts-expect-error
-        deepStringify('ascendOverlay').innerHTML =
+        l('ascendOverlay').innerHTML =
             '<div id="ascendBox">' +
             '<div id="ascendData1" class="ascendData smallFramed prompt" style="margin-top:8px;"><h3 id="ascendPrestige"></h3></div>' +
             '<div id="ascendData2" class="ascendData smallFramed prompt"><h3 id="ascendHCs"></h3></div>' +
@@ -4765,7 +4763,7 @@ Game.Launch = function () {
             '</div></div>';
 
         Game.attachTooltip(
-            deepStringify('ascendData1'),
+            l('ascendData1'),
             function () {
                 return (
                     '<div style="min-width:300px;text-align:center;font-size:11px;padding:8px;" id="tooltipAscendData1">(<b>' +
@@ -4778,7 +4776,7 @@ Game.Launch = function () {
             'bottom-right'
         );
         Game.attachTooltip(
-            deepStringify('ascendData2'),
+            l('ascendData2'),
             function () {
                 return (
                     '<div style="min-width:300px;text-align:center;font-size:11px;padding:8px;" id="tooltipAscendData2">(<b>' +
@@ -4793,15 +4791,15 @@ Game.Launch = function () {
 
         Game.UpdateAscensionModePrompt();
 
-        AddEvent(deepStringify('ascendButton'), 'click', function () {
+        AddEvent(l('ascendButton'), 'click', function () {
             PlaySound('snd/tick.mp3');
             Game.Reincarnate();
         });
 
-        Game.ascendl = deepStringify('ascend');
-        Game.ascendContentl = deepStringify('ascendContent');
-        Game.ascendZoomablel = deepStringify('ascendZoomable');
-        Game.ascendUpgradesl = deepStringify('ascendUpgrades');
+        Game.ascendl = l('ascend');
+        Game.ascendContentl = l('ascendContent');
+        Game.ascendZoomablel = l('ascendZoomable');
+        Game.ascendUpgradesl = l('ascendUpgrades');
         Game.OnAscend = 0;
         Game.AscendTimer = 0; //how far we are into the ascend animation
         Game.AscendDuration = Game.fps * 5; //how long the ascend animation is
@@ -4905,9 +4903,9 @@ Game.Launch = function () {
                 Game.AscendTimer = 1;
                 Game.killShimmers();
                 // @ts-expect-error
-                deepStringify('toggleBox').style.display = 'none';
+                l('toggleBox').style.display = 'none';
                 // @ts-expect-error
-                deepStringify('toggleBox').innerHTML = '';
+                l('toggleBox').innerHTML = '';
                 Game.choiceSelectorOn = -1;
                 Game.ToggleSpecialMenu(0);
                 Game.AscendOffX = 0;
@@ -4966,9 +4964,9 @@ Game.Launch = function () {
                         let posX = me.posX; //Math.round(me.posX/Game.AscendGridSnap)*Game.AscendGridSnap;
                         let posY = me.posY; //Math.round(me.posY/Game.AscendGridSnap)*Game.AscendGridSnap;
                         // @ts-expect-error
-                        deepStringify('heavenlyUpgrade' + me.id).style.left = Math.floor(posX) + 'px';
+                        l('heavenlyUpgrade' + me.id).style.left = Math.floor(posX) + 'px';
                         // @ts-expect-error
-                        deepStringify('heavenlyUpgrade' + me.id).style.top = Math.floor(posY) + 'px';
+                        l('heavenlyUpgrade' + me.id).style.top = Math.floor(posY) + 'px';
                         for (let ii in me.parents) {
                             let origX = 0;
                             let origY = 0;
@@ -4983,7 +4981,7 @@ Game.Launch = function () {
                             let dist = Math.floor(Math.sqrt((targX - origX) * (targX - origX) + (targY - origY) * (targY - origY)));
 
                             // @ts-expect-error
-                            deepStringify('heavenlyLink' + me.id + '-' + ii).style =
+                            l('heavenlyLink' + me.id + '-' + ii).style =
                                 'width:' + dist + 'px;transform:rotate(' + rot + 'deg);left:' + origX + 'px;top:' + origY + 'px;';
                         }
                     }
@@ -4995,14 +4993,6 @@ Game.Launch = function () {
                 Game.AscendDragX = Game.mouseX;
                 Game.AscendDragY = Game.mouseY;
             } else {
-                /*if (Game.SelectedHeavenlyUpgrade)
-                {
-                    let me=Game.SelectedHeavenlyUpgrade;
-                    me.posX=Math.round(me.posX/Game.AscendGridSnap)*Game.AscendGridSnap;
-                    me.posY=Math.round(me.posY/Game.AscendGridSnap)*Game.AscendGridSnap;
-                    l('heavenlyUpgrade'+me.id).style.left=me.posX+'px';
-                    l('heavenlyUpgrade'+me.id).style.top=me.posY+'px';
-                }*/
                 Game.AscendDragging = 0;
                 Game.SelectedHeavenlyUpgrade = 0;
             }
@@ -5010,10 +5000,6 @@ Game.Launch = function () {
                 Game.AscendDragging = 0;
             }
 
-            //Game.ascendl.style.backgroundPosition=Math.floor(Game.AscendOffX/2)+'px '+Math.floor(Game.AscendOffY/2)+'px';
-            //Game.ascendl.style.backgroundPosition=Math.floor(Game.AscendOffX/2)+'px '+Math.floor(Game.AscendOffY/2)+'px,'+Math.floor(Game.AscendOffX/4)+'px '+Math.floor(Game.AscendOffY/4)+'px';
-            //Game.ascendContentl.style.left=Math.floor(Game.AscendOffX)+'px';
-            //Game.ascendContentl.style.top=Math.floor(Game.AscendOffY)+'px';
             Game.ascendContentl.style.webkitTransform = 'translate(' + Math.floor(Game.AscendOffX) + 'px,' + Math.floor(Game.AscendOffY) + 'px)';
             Game.ascendContentl.style.msTransform = 'translate(' + Math.floor(Game.AscendOffX) + 'px,' + Math.floor(Game.AscendOffY) + 'px)';
             Game.ascendContentl.style.oTransform = 'translate(' + Math.floor(Game.AscendOffX) + 'px,' + Math.floor(Game.AscendOffY) + 'px)';
@@ -5037,14 +5023,14 @@ Game.Launch = function () {
 
             if (Game.T % 2 == 0) {
                 // @ts-expect-error
-                deepStringify('ascendPrestige').innerHTML = loc('Prestige level:') + '<br>' + SimpleBeautify(Game.prestige);
+                l('ascendPrestige').innerHTML = loc('Prestige level:') + '<br>' + SimpleBeautify(Game.prestige);
                 // @ts-expect-error
-                deepStringify('ascendHCs').innerHTML =
+                l('ascendHCs').innerHTML =
                     loc('Heavenly chips:') + '<br><span class="price heavenly">' + SimpleBeautify(Math.round(Game.heavenlyChipsDisplayed)) + '</span>';
                 // @ts-expect-error
-                if (Game.prestige > 0) deepStringify('ascendModeButton').style.display = 'block';
+                if (Game.prestige > 0) l('ascendModeButton').style.display = 'block';
                 // @ts-expect-error
-                else deepStringify('ascendModeButton').style.display = 'none';
+                else l('ascendModeButton').style.display = 'none';
             }
             Game.heavenlyChipsDisplayed += (Game.heavenlyChips - Game.heavenlyChipsDisplayed) * 0.4;
 
@@ -5056,7 +5042,7 @@ Game.Launch = function () {
                     str += me.id + ':[' + Math.floor(me.posX) + ',' + Math.floor(me.posY) + '],';
                 }
                 // @ts-expect-error
-                deepStringify('upgradePositions').value = 'Game.UpgradePositions={' + str + '};';
+                l('upgradePositions').value = 'Game.UpgradePositions={' + str + '};';
             }
             //if (Game.T%5==0) Game.BuildAscendTree();
         };
@@ -5070,9 +5056,9 @@ Game.Launch = function () {
         Game.PurchaseHeavenlyUpgrade = function (what) {
             //if (Game.Has('Neuromancy')) Game.UpgradesById[what].toggle(); else
             if (Game.UpgradesById[what].buy()) {
-                if (deepStringify('heavenlyUpgrade' + what)) {
+                if (l('heavenlyUpgrade' + what)) {
                     // @ts-expect-error
-                    let rect = deepStringify('heavenlyUpgrade' + what).getBounds();
+                    let rect = l('heavenlyUpgrade' + what).getBounds();
                     Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24);
                 }
                 //Game.BuildAscendTree();
@@ -5083,9 +5069,9 @@ Game.Launch = function () {
             Game.heavenlyBounds = { left: 0, right: 0, top: 0, bottom: 0 };
 
             // @ts-expect-error
-            if (Game.DebuggingPrestige) deepStringify('upgradePositions').style.display = 'block';
+            if (Game.DebuggingPrestige) l('upgradePositions').style.display = 'block';
             // @ts-expect-error
-            else deepStringify('upgradePositions').style.display = 'none';
+            else l('upgradePositions').style.display = 'none';
 
             let toPop = [];
             for (let i in Game.PrestigeUpgrades) {
@@ -5209,7 +5195,7 @@ Game.Launch = function () {
                 for (let i in Game.PrestigeUpgrades) {
                     let me = Game.PrestigeUpgrades[i];
                     AddEvent(
-                        deepStringify('heavenlyUpgrade' + me.id),
+                        l('heavenlyUpgrade' + me.id),
                         'mousedown',
                         (function (me) {
                             return function () {
@@ -5250,7 +5236,7 @@ Game.Launch = function () {
                         })(me)
                     );
                     AddEvent(
-                        deepStringify('heavenlyUpgrade' + me.id),
+                        l('heavenlyUpgrade' + me.id),
                         'mouseup',
                         (function (me) {
                             return function () {
@@ -5276,9 +5262,9 @@ Game.Launch = function () {
         Game.lumpOverripeAge = 1;
         Game.lumpCurrentType = 0;
         // @ts-expect-error
-        deepStringify('comments').innerHTML =
+        l('comments').innerHTML =
             // @ts-expect-error
-            deepStringify('comments').innerHTML +
+            l('comments').innerHTML +
             '<div id="lumps" onclick="Game.clickLump();" ' +
             Game.getDynamicTooltip('Game.lumpTooltip', 'bottom') +
             '><div id="lumpsIcon" class="usesIcon"></div><div id="lumpsIcon2" class="usesIcon"></div><div id="lumpsAmount">0</div></div>';
@@ -5400,8 +5386,8 @@ Game.Launch = function () {
             if (Game.lumpsTotal >= 365) Game.Win('Year\'s worth of cavities');
         };
         Game.clickLump = function () {
-            triggerAnim(deepStringify('lumpsIcon'), 'pucker');
-            triggerAnim(deepStringify('lumpsIcon2'), 'pucker');
+            triggerAnim(l('lumpsIcon'), 'pucker');
+            triggerAnim(l('lumpsIcon2'), 'pucker');
             if (!Game.canLumps()) return;
             let age = Date.now() - Game.lumpT;
             if (age < Game.lumpMatureAge) { /* empty */ } else if (age < Game.lumpRipeAge) {
@@ -5440,7 +5426,7 @@ Game.Launch = function () {
 
             if (!silent) {
                 // @ts-expect-error
-                let rect = deepStringify('lumpsIcon2').getBounds();
+                let rect = l('lumpsIcon2').getBounds();
                 Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24 + 32 - TopBarOffset);
                 if (total > 0)
                     Game.Popup(
@@ -5587,13 +5573,13 @@ Game.Launch = function () {
                 opacity = 1;
             }
             // @ts-expect-error
-            deepStringify('lumpsIcon').style.backgroundPosition = -icon[0] * 48 + 'px ' + -icon[1] * 48 + 'px';
+            l('lumpsIcon').style.backgroundPosition = -icon[0] * 48 + 'px ' + -icon[1] * 48 + 'px';
             // @ts-expect-error
-            deepStringify('lumpsIcon2').style.backgroundPosition = -icon2[0] * 48 + 'px ' + -icon2[1] * 48 + 'px';
+            l('lumpsIcon2').style.backgroundPosition = -icon2[0] * 48 + 'px ' + -icon2[1] * 48 + 'px';
             // @ts-expect-error
-            deepStringify('lumpsIcon2').style.opacity = opacity;
+            l('lumpsIcon2').style.opacity = opacity;
             // @ts-expect-error
-            deepStringify('lumpsAmount').textContent = Beautify(Game.lumps);
+            l('lumpsAmount').textContent = Beautify(Game.lumps);
         };
 
         /*=====================================================================================
@@ -5762,14 +5748,7 @@ Game.Launch = function () {
             }
             let x = 0;
             let y = TopBarOffset;
-            /*
-            let el=l('sectionLeft');
-            while(el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop))
-            {
-                x+=el.offsetLeft-el.scrollLeft;
-                y+=el.offsetTop-el.scrollTop;
-                el=el.offsetParent;
-            }*/
+
             Game.mouseX2 = Game.mouseX;
             Game.mouseY2 = Game.mouseY;
             Game.mouseX = (posx - x) / Game.scale;
@@ -5777,7 +5756,7 @@ Game.Launch = function () {
             Game.mouseMoved = 1;
             Game.lastActivity = Game.time;
         };
-        let bigCookie = deepStringify('bigCookie');
+        let bigCookie = l('bigCookie');
         if (Game.prefs.screenreader) {
             // @ts-expect-error
             bigCookie.ariaLabelledby = 'bigCookieLabel';
@@ -6159,7 +6138,7 @@ Game.Launch = function () {
         /*=====================================================================================
         SHIMMERS (GOLDEN COOKIES & SUCH)
         =======================================================================================*/
-        Game.shimmersL = deepStringify('shimmers');
+        Game.shimmersL = l('shimmers');
         Game.shimmers = []; //all shimmers currently on the screen
         Game.shimmersN = Math.floor(Math.random() * 10000);
         Game.shimmer = function (type, obj, noCount) {
@@ -7048,7 +7027,7 @@ Game.Launch = function () {
             str += '<div id="particle' + i + '" class="particle title"></div>';
         }
         // @ts-expect-error
-        deepStringify('particles').innerHTML = str;
+        l('particles').innerHTML = str;
         Game.textParticlesUpdate = function () {
             for (let i in Game.textParticles) {
                 let me = Game.textParticles[i];
@@ -7104,7 +7083,7 @@ Game.Launch = function () {
             y = Math.max(Game.bounds.top + 32, y);
 
             let me = Game.textParticles[i];
-            if (!me.l) me.l = deepStringify('particle' + i);
+            if (!me.l) me.l = l('particle' + i);
             me.life = 0;
             me.x = x;
             me.y = y;
@@ -7114,7 +7093,7 @@ Game.Launch = function () {
             me.l.style.bottom = Math.floor(-Game.textParticles[i].y) + 'px';
             for (let ii in Game.textParticles) {
                 // @ts-expect-error
-                if (ii != i) (Game.textParticles[ii].l || deepStringify('particle' + ii)).style.zIndex = 100000000;
+                if (ii != i) (Game.textParticles[ii].l || l('particle' + ii)).style.zIndex = 100000000;
             }
             me.l.style.zIndex = 100000001;
             me.l.style.display = 'block';
@@ -7129,7 +7108,7 @@ Game.Launch = function () {
         };
 
         //display sparkles at a set position
-        Game.sparkles = deepStringify('sparkles');
+        Game.sparkles = l('sparkles');
         Game.sparklesT = 0;
         Game.sparklesFrames = 16;
         Game.SparkleAt = function (x, y) {
@@ -7153,7 +7132,7 @@ Game.Launch = function () {
         Game.Notes = [];
         Game.NotesById = [];
         Game.noteId = 0;
-        Game.noteL = deepStringify('notes');
+        Game.noteL = l('notes');
         Game.Note = function (title, desc, pic, quick) {
             this.title = title;
             this.desc = desc || '';
@@ -7229,7 +7208,7 @@ Game.Launch = function () {
                 // @ts-expect-error
                 if (i < 5) {
                     let me = Game.Notes[i];
-                    me.l = deepStringify('note-' + me.id);
+                    me.l = l('note-' + me.id);
                 }
             }
         };
@@ -7274,7 +7253,7 @@ Game.Launch = function () {
         /*=====================================================================================
         PROMPT
         =======================================================================================*/
-        Game.darkenL = deepStringify('darken');
+        Game.darkenL = l('darken');
         AddEvent(Game.darkenL, 'click', function () {
             if (Game.promptNoClose) { /* empty */ } else {
                 Game.Click = 0;
@@ -7282,9 +7261,9 @@ Game.Launch = function () {
                 Game.ClosePrompt();
             }
         });
-        Game.promptL = deepStringify('promptContent');
-        Game.promptAnchorL = deepStringify('promptAnchor');
-        Game.promptWrapL = deepStringify('prompt');
+        Game.promptL = l('promptContent');
+        Game.promptAnchorL = l('promptAnchor');
+        Game.promptWrapL = l('prompt');
         Game.promptConfirm = '';
         Game.promptOn = 0;
         Game.promptUpdateFunc = 0;
@@ -7346,9 +7325,9 @@ Game.Launch = function () {
             Game.FocusPromptOption(0);
             Game.UpdatePrompt();
             // @ts-expect-error
-            if (!Game.promptNoClose) deepStringify('promptClose').style.display = 'block';
+            if (!Game.promptNoClose) l('promptClose').style.display = 'block';
             // @ts-expect-error
-            else deepStringify('promptClose').style.display = 'none';
+            else l('promptClose').style.display = 'none';
         };
         Game.ClosePrompt = function () {
             if (!Game.promptOn) return false;
@@ -7362,24 +7341,24 @@ Game.Launch = function () {
         };
         Game.ConfirmPrompt = function () {
             // @ts-expect-error
-            if (Game.promptOn && deepStringify('promptOption' + Game.promptOptionFocus) && deepStringify('promptOption' + Game.promptOptionFocus).style.display != 'none')
-                FireEvent(deepStringify('promptOption' + Game.promptOptionFocus), 'click');
+            if (Game.promptOn && l('promptOption' + Game.promptOptionFocus) && l('promptOption' + Game.promptOptionFocus).style.display != 'none')
+                FireEvent(l('promptOption' + Game.promptOptionFocus), 'click');
         };
         Game.FocusPromptOption = function (dir, tryN) {
             let id = Game.promptOptionFocus + dir;
             if (id < 0) id = Game.promptOptionsN - 1;
             if (id >= Game.promptOptionsN) id = 0;
             // @ts-expect-error
-            while (id >= 0 && id < Game.promptOptionsN && (!deepStringify('promptOption' + id) || deepStringify('promptOption' + id).style.display == 'none')) {
+            while (id >= 0 && id < Game.promptOptionsN && (!l('promptOption' + id) || l('promptOption' + id).style.display == 'none')) {
                 id += dir || 1;
             }
             // @ts-expect-error
-            if (deepStringify('promptOption' + id) && deepStringify('promptOption' + id).style.display != 'none') {
+            if (l('promptOption' + id) && l('promptOption' + id).style.display != 'none') {
                 // @ts-expect-error
-                if (deepStringify('promptOption' + Game.promptOptionFocus)) deepStringify('promptOption' + Game.promptOptionFocus).classList.remove('focused');
+                if (l('promptOption' + Game.promptOptionFocus)) l('promptOption' + Game.promptOptionFocus).classList.remove('focused');
                 Game.promptOptionFocus = id;
                 // @ts-expect-error
-                if (deepStringify('promptOption' + Game.promptOptionFocus)) deepStringify('promptOption' + Game.promptOptionFocus).classList.add('focused');
+                if (l('promptOption' + Game.promptOptionFocus)) l('promptOption' + Game.promptOptionFocus).classList.add('focused');
             } else if (!tryN && dir != 0) {
                 Game.promptOptionFocus = id;
                 Game.FocusPromptOption(dir, 1);
@@ -7436,15 +7415,15 @@ Game.Launch = function () {
         Game.Toggle = function (prefName, button, on, off, invert) {
             if (Game.prefs[prefName]) {
                 // @ts-expect-error
-                deepStringify(button).innerHTML = off;
+                l(button).innerHTML = off;
                 Game.prefs[prefName] = 0;
             } else {
                 // @ts-expect-error
-                deepStringify(button).innerHTML = on;
+                l(button).innerHTML = on;
                 Game.prefs[prefName] = 1;
             }
             // @ts-expect-error
-            deepStringify(button).className = 'smallFancyButton prefButton option' + (Game.prefs[prefName] ^ invert ? '' : ' off');
+            l(button).className = 'smallFancyButton prefButton option' + (Game.prefs[prefName] ^ invert ? '' : ' off');
         };
         Game.ToggleFancy = function () {
             if (Game.prefs.fancy) Game.removeClass('noFancy');
@@ -7506,15 +7485,14 @@ Game.Launch = function () {
                 Game.removeClass('onMenu');
                 what = '';
             }
-            //if (what=='log') l('donateBox').className='on'; else l('donateBox').className='';
             Game.onMenu = what;
 
             // @ts-expect-error
-            deepStringify('prefsButton').className = Game.onMenu == 'prefs' ? 'panelButton selected' : 'panelButton';
+            l('prefsButton').className = Game.onMenu == 'prefs' ? 'panelButton selected' : 'panelButton';
             // @ts-expect-error
-            deepStringify('statsButton').className = Game.onMenu == 'stats' ? 'panelButton selected' : 'panelButton';
+            l('statsButton').className = Game.onMenu == 'stats' ? 'panelButton selected' : 'panelButton';
             // @ts-expect-error
-            deepStringify('logButton').className = Game.onMenu == 'log' ? 'panelButton selected' : 'panelButton';
+            l('logButton').className = Game.onMenu == 'log' ? 'panelButton selected' : 'panelButton';
 
             if (Game.onMenu == '') PlaySound('snd/clickOff2.mp3');
             else PlaySound('snd/clickOn2.mp3');
@@ -7652,7 +7630,7 @@ Game.Launch = function () {
             for (let i in Langs) {
                 let lang = Langs[i];
                 AddEvent(
-                    deepStringify('langSelect-' + i),
+                    l('langSelect-' + i),
                     'click',
                     (function (lang) {
                         return function () {
@@ -7665,13 +7643,13 @@ Game.Launch = function () {
                     })(i)
                 );
                 AddEvent(
-                    deepStringify('langSelect-' + i),
+                    l('langSelect-' + i),
                     'mouseover',
                     (function (lang) {
                         return function () {
                             PlaySound('snd/smallTick.mp3', 0.75);
                             // @ts-expect-error
-                            deepStringify('languageSelectHeader').innerHTML = Langs[lang].changeLanguage;
+                            l('languageSelectHeader').innerHTML = Langs[lang].changeLanguage;
                         };
                     })(i)
                 );
@@ -8345,29 +8323,25 @@ Game.Launch = function () {
                     '</div>' +
                     '<div style="padding-bottom:128px;"></div>';
             }
-            //str='<div id="selectionKeeper" class="selectable">'+str+'</div>';
             // @ts-expect-error
-            deepStringify('menu').innerHTML = str;
-            /*AddEvent(l('selectionKeeper'),'mouseup',function(e){
-                console.log('selection:',window.getSelection());
-            });*/
+            l('menu').innerHTML = str;
         };
 
-        AddEvent(deepStringify('prefsButton'), 'click', function () {
+        AddEvent(l('prefsButton'), 'click', function () {
             Game.ShowMenu('prefs');
         });
-        AddEvent(deepStringify('statsButton'), 'click', function () {
+        AddEvent(l('statsButton'), 'click', function () {
             Game.ShowMenu('stats');
         });
-        AddEvent(deepStringify('logButton'), 'click', function () {
+        AddEvent(l('logButton'), 'click', function () {
             Game.ShowMenu('log');
         });
-        AddEvent(deepStringify('legacyButton'), 'click', function () {
+        AddEvent(l('legacyButton'), 'click', function () {
             PlaySound('snd/tick.mp3');
             Game.Ascend();
         });
-        Game.ascendMeter = deepStringify('ascendMeter');
-        Game.ascendNumber = deepStringify('ascendNumber');
+        Game.ascendMeter = l('ascendMeter');
+        Game.ascendNumber = l('ascendNumber');
 
         /*=====================================================================================
         NEWS TICKER
@@ -9676,8 +9650,8 @@ Game.Launch = function () {
             Game.TickerN++;
             Game.TickerDraw();
         };
-        Game.tickerL = deepStringify('commentsText1');
-        Game.tickerBelowL = deepStringify('commentsText2');
+        Game.tickerL = l('commentsText1');
+        Game.tickerBelowL = l('commentsText2');
         Game.tickerTooNarrow = 900;
         Game.TickerDraw = function () {
             let str = '';
@@ -9843,16 +9817,12 @@ Game.Launch = function () {
                 if (this.id != 0) {
                     if (this.onMinigame) {
                         // @ts-expect-error
-                        deepStringify('row' + this.id).classList.add('onMinigame');
-                        //l('rowSpecial'+this.id).style.display='block';
-                        //l('rowCanvas'+this.id).style.display='none';
+                        l('row' + this.id).classList.add('onMinigame');
                         // @ts-expect-error
                         if (this.minigame.onResize) this.minigame.onResize();
                     } else {
                         // @ts-expect-error
-                        deepStringify('row' + this.id).classList.remove('onMinigame');
-                        //l('rowSpecial'+this.id).style.display='none';
-                        //l('rowCanvas'+this.id).style.display='block';
+                        l('row' + this.id).classList.remove('onMinigame');
                     }
                 }
                 // @ts-expect-error
@@ -9921,7 +9891,7 @@ Game.Launch = function () {
                         if (this.buyFunction) this.buyFunction();
                         Game.recalculateGains = 1;
                         // @ts-expect-error
-                        if (this.amount == 1 && this.id != 0) deepStringify('row' + this.id).classList.add('enabled');
+                        if (this.amount == 1 && this.id != 0) l('row' + this.id).classList.add('enabled');
                         // @ts-expect-error
                         this.highest = Math.max(this.highest, this.amount);
                         Game.BuildingsOwned++;
@@ -9963,7 +9933,7 @@ Game.Launch = function () {
                         if (this.sellFunction) this.sellFunction();
                         Game.recalculateGains = 1;
                         // @ts-expect-error
-                        if (this.amount == 0 && this.id != 0) deepStringify('row' + this.id).classList.remove('enabled');
+                        if (this.amount == 0 && this.id != 0) l('row' + this.id).classList.remove('enabled');
                         Game.BuildingsOwned--;
                         success = 1;
                     }
@@ -10033,7 +10003,7 @@ Game.Launch = function () {
                         if (this.sellFunction) this.sellFunction();
                         Game.recalculateGains = 1;
                         // @ts-expect-error
-                        if (this.amount == 0 && this.id != 0) deepStringify('row' + this.id).classList.remove('enabled');
+                        if (this.amount == 0 && this.id != 0) l('row' + this.id).classList.remove('enabled');
                         Game.BuildingsOwned--;
                         success = 1;
                     }
@@ -10057,7 +10027,7 @@ Game.Launch = function () {
                         this.price = this.getPrice();
                         Game.recalculateGains = 1;
                         // @ts-expect-error
-                        if (this.amount == 1 && this.id != 0) deepStringify('row' + this.id).classList.add('enabled');
+                        if (this.amount == 1 && this.id != 0) l('row' + this.id).classList.add('enabled');
                         // @ts-expect-error
                         this.highest = Math.max(this.highest, this.amount);
                         Game.BuildingsOwned++;
@@ -10109,7 +10079,6 @@ Game.Launch = function () {
                     desc = '???';
                     icon = [0, 7];
                 }
-                //if (l('rowInfo'+me.id) && Game.drawT%10==0) l('rowInfoContent'+me.id).innerHTML='&bull; '+me.amount+' '+(me.amount==1?me.single:me.plural)+'<br>&bull; producing '+Beautify(me.storedTotalCps,1)+' '+(me.storedTotalCps==1?'cookie':'cookies')+' per second<br>&bull; total : '+Beautify(me.totalCookies)+' '+(Math.floor(me.totalCookies)==1?'cookie':'cookies')+' '+me.actionName;
 
                 let canBuy = false;
                 let price = this.bulkPrice;
@@ -10189,7 +10158,7 @@ Game.Launch = function () {
                     }
                     if (!this.locked) ariaText += desc;
 
-                    let ariaLabel = deepStringify('ariaReader-product-' + this.id);
+                    let ariaLabel = l('ariaReader-product-' + this.id);
                     if (ariaLabel) ariaLabel.innerHTML = ariaText.replace(/(<([^>]+)>)/gi, ' ');
                 }
 
@@ -10288,9 +10257,9 @@ Game.Launch = function () {
                             if (!free) PlaySound('snd/upgrade.mp3', 0.6);
                             Game.LoadMinigames();
                             me.refresh();
-                            if (deepStringify('productLevel' + me.id)) {
+                            if (l('productLevel' + me.id)) {
                                 // @ts-expect-error
-                                let rect = deepStringify('productLevel' + me.id).getBounds();
+                                let rect = l('productLevel' + me.id).getBounds();
                                 Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24 + 32 - TopBarOffset);
                             }
                             // @ts-expect-error
@@ -10314,22 +10283,22 @@ Game.Launch = function () {
                 // @ts-expect-error
                 this.rebuild();
                 // @ts-expect-error
-                if (this.amount == 0 && this.id != 0) deepStringify('row' + this.id).classList.remove('enabled');
+                if (this.amount == 0 && this.id != 0) l('row' + this.id).classList.remove('enabled');
                 // @ts-expect-error
-                else if (this.amount > 0 && this.id != 0) deepStringify('row' + this.id).classList.add('enabled');
+                else if (this.amount > 0 && this.id != 0) l('row' + this.id).classList.add('enabled');
                 // @ts-expect-error
                 if (this.muted > 0 && this.id != 0) {
                     // @ts-expect-error
-                    deepStringify('row' + this.id).classList.add('muted');
+                    l('row' + this.id).classList.add('muted');
                     // @ts-expect-error
-                    deepStringify('mutedProduct' + this.id).style.display = 'inline-block';
+                    l('mutedProduct' + this.id).style.display = 'inline-block';
                 }
                 // @ts-expect-error
                 else if (this.id != 0) {
                     // @ts-expect-error
-                    deepStringify('row' + this.id).classList.remove('muted');
+                    l('row' + this.id).classList.remove('muted');
                     // @ts-expect-error
-                    deepStringify('mutedProduct' + this.id).style.display = 'none';
+                    l('mutedProduct' + this.id).style.display = 'none';
                 }
                 //if (!this.onMinigame && !this.muted) {}
                 //else this.pics=[];
@@ -10368,44 +10337,41 @@ Game.Launch = function () {
                 icon = [icon[0] * 64, icon[1] * 64];
                 iconOff = [iconOff[0] * 64, iconOff[1] * 64];
 
-                //me.l.className=classes;
-                //l('productIcon'+me.id).style.backgroundImage='url(img/'+icon+')';
                 // @ts-expect-error
-                deepStringify('productIcon' + this.id).style.backgroundPosition = '-' + icon[0] + 'px -' + icon[1] + 'px';
-                //l('productIconOff'+me.id).style.backgroundImage='url(img/'+iconOff+')';
+                l('productIcon' + this.id).style.backgroundPosition = '-' + icon[0] + 'px -' + icon[1] + 'px';
                 // @ts-expect-error
-                deepStringify('productIconOff' + this.id).style.backgroundPosition = '-' + iconOff[0] + 'px -' + iconOff[1] + 'px';
+                l('productIconOff' + this.id).style.backgroundPosition = '-' + iconOff[0] + 'px -' + iconOff[1] + 'px';
                 // @ts-expect-error
-                deepStringify('productName' + this.id).innerHTML = displayName;
+                l('productName' + this.id).innerHTML = displayName;
                 // @ts-expect-error
-                if (name.length > 12 / Langs[locId].w && (Game.season == 'fools' || !EN)) deepStringify('productName' + this.id).classList.add('longProductName');
+                if (name.length > 12 / Langs[locId].w && (Game.season == 'fools' || !EN)) l('productName' + this.id).classList.add('longProductName');
                 // @ts-expect-error
-                else deepStringify('productName' + this.id).classList.remove('longProductName');
+                else l('productName' + this.id).classList.remove('longProductName');
                 // @ts-expect-error
-                deepStringify('productOwned' + this.id).textContent = this.amount ? this.amount : '';
+                l('productOwned' + this.id).textContent = this.amount ? this.amount : '';
                 // @ts-expect-error
-                deepStringify('productPrice' + this.id).textContent = Beautify(Math.round(price));
+                l('productPrice' + this.id).textContent = Beautify(Math.round(price));
                 // @ts-expect-error
-                deepStringify('productPriceMult' + this.id).textContent = Game.buyBulk > 1 ? 'x' + Game.buyBulk + ' ' : '';
+                l('productPriceMult' + this.id).textContent = Game.buyBulk > 1 ? 'x' + Game.buyBulk + ' ' : '';
                 // @ts-expect-error
-                deepStringify('productLevel' + this.id).textContent = 'lvl ' + Beautify(this.level);
+                l('productLevel' + this.id).textContent = 'lvl ' + Beautify(this.level);
                 if (Game.isMinigameReady(this) && Game.ascensionMode != 1) {
                     // @ts-expect-error
-                    deepStringify('productMinigameButton' + this.id).style.display = 'block';
+                    l('productMinigameButton' + this.id).style.display = 'block';
                     // @ts-expect-error
-                    if (!this.onMinigame) deepStringify('productMinigameButton' + this.id).textContent = loc('View %1', this.minigameName);
+                    if (!this.onMinigame) l('productMinigameButton' + this.id).textContent = loc('View %1', this.minigameName);
                     // @ts-expect-error
-                    else deepStringify('productMinigameButton' + this.id).textContent = loc('Close %1', this.minigameName);
+                    else l('productMinigameButton' + this.id).textContent = loc('Close %1', this.minigameName);
                 }
                 // @ts-expect-error
-                else deepStringify('productMinigameButton' + this.id).style.display = 'none';
+                else l('productMinigameButton' + this.id).style.display = 'none';
                 // @ts-expect-error
                 if (Game.isMinigameReady(this) && Game.ascensionMode != 1 && this.minigame.dragonBoostTooltip && Game.hasAura('Supreme Intellect')) {
                     // @ts-expect-error
-                    deepStringify('productDragonBoost' + this.id).style.display = 'block';
+                    l('productDragonBoost' + this.id).style.display = 'block';
                 }
                 // @ts-expect-error
-                else deepStringify('productDragonBoost' + this.id).style.display = 'none';
+                else l('productDragonBoost' + this.id).style.display = 'none';
             };
             this.muted = false;
             this.mute = function (val) {
@@ -10414,19 +10380,19 @@ Game.Launch = function () {
                 this.muted = val;
                 if (val) {
                     // @ts-expect-error
-                    deepStringify('productMute' + this.id).classList.add('on');
+                    l('productMute' + this.id).classList.add('on');
                     // @ts-expect-error
-                    deepStringify('row' + this.id).classList.add('muted');
+                    l('row' + this.id).classList.add('muted');
                     // @ts-expect-error
-                    deepStringify('mutedProduct' + this.id).style.display = 'inline-block';
+                    l('mutedProduct' + this.id).style.display = 'inline-block';
                 }
                 else {
                     // @ts-expect-error
-                    deepStringify('productMute' + this.id).classList.remove('on');
+                    l('productMute' + this.id).classList.remove('on');
                     // @ts-expect-error
-                    deepStringify('row' + this.id).classList.remove('muted');
+                    l('row' + this.id).classList.remove('muted');
                     // @ts-expect-error
-                    deepStringify('mutedProduct' + this.id).style.display = 'none';
+                    l('mutedProduct' + this.id).style.display = 'none';
                 }
             };
 
@@ -10492,13 +10458,13 @@ Game.Launch = function () {
                 'px;transform:scale(0.5);margin:-20px -16px;"></div></div>';
             str += '</div>';
             // @ts-expect-error
-            if (this.id == 0) deepStringify('sectionLeftExtra').innerHTML = deepStringify('sectionLeftExtra').innerHTML + str;
+            if (this.id == 0) l('sectionLeftExtra').innerHTML = l('sectionLeftExtra').innerHTML + str;
             else {
                 str += '<canvas class="rowCanvas" id="rowCanvas' + this.id + '"></canvas>';
                 str += '<div class="rowSpecial" id="rowSpecial' + this.id + '"></div>';
                 str += '</div>';
                 // @ts-expect-error
-                deepStringify('rows').innerHTML = deepStringify('rows').innerHTML + str;
+                l('rows').innerHTML = l('rows').innerHTML + str;
 
                 //building canvas
                 this.pics = [];
@@ -10804,41 +10770,41 @@ Game.Launch = function () {
             if (Game.buyMode == 1 && Game.buyBulk == -1) Game.buyBulk = 100;
 
             // @ts-expect-error
-            if (Game.buyMode == 1) deepStringify('storeBulkBuy').className = 'storePreButton storeBulkMode selected';
+            if (Game.buyMode == 1) l('storeBulkBuy').className = 'storePreButton storeBulkMode selected';
             // @ts-expect-error
-            else deepStringify('storeBulkBuy').className = 'storePreButton storeBulkMode';
+            else l('storeBulkBuy').className = 'storePreButton storeBulkMode';
             // @ts-expect-error
-            if (Game.buyMode == -1) deepStringify('storeBulkSell').className = 'storePreButton storeBulkMode selected';
+            if (Game.buyMode == -1) l('storeBulkSell').className = 'storePreButton storeBulkMode selected';
             // @ts-expect-error
-            else deepStringify('storeBulkSell').className = 'storePreButton storeBulkMode';
+            else l('storeBulkSell').className = 'storePreButton storeBulkMode';
 
             // @ts-expect-error
-            if (Game.buyBulk == 1) deepStringify('storeBulk1').className = 'storePreButton storeBulkAmount selected';
+            if (Game.buyBulk == 1) l('storeBulk1').className = 'storePreButton storeBulkAmount selected';
             // @ts-expect-error
-            else deepStringify('storeBulk1').className = 'storePreButton storeBulkAmount';
+            else l('storeBulk1').className = 'storePreButton storeBulkAmount';
             // @ts-expect-error
-            if (Game.buyBulk == 10) deepStringify('storeBulk10').className = 'storePreButton storeBulkAmount selected';
+            if (Game.buyBulk == 10) l('storeBulk10').className = 'storePreButton storeBulkAmount selected';
             // @ts-expect-error
-            else deepStringify('storeBulk10').className = 'storePreButton storeBulkAmount';
+            else l('storeBulk10').className = 'storePreButton storeBulkAmount';
             // @ts-expect-error
-            if (Game.buyBulk == 100) deepStringify('storeBulk100').className = 'storePreButton storeBulkAmount selected';
+            if (Game.buyBulk == 100) l('storeBulk100').className = 'storePreButton storeBulkAmount selected';
             // @ts-expect-error
-            else deepStringify('storeBulk100').className = 'storePreButton storeBulkAmount';
+            else l('storeBulk100').className = 'storePreButton storeBulkAmount';
             // @ts-expect-error
-            if (Game.buyBulk == -1) deepStringify('storeBulkMax').className = 'storePreButton storeBulkAmount selected';
+            if (Game.buyBulk == -1) l('storeBulkMax').className = 'storePreButton storeBulkAmount selected';
             // @ts-expect-error
-            else deepStringify('storeBulkMax').className = 'storePreButton storeBulkAmount';
+            else l('storeBulkMax').className = 'storePreButton storeBulkAmount';
 
             if (Game.buyMode == 1) {
                 // @ts-expect-error
-                deepStringify('storeBulkMax').style.visibility = 'hidden';
+                l('storeBulkMax').style.visibility = 'hidden';
                 // @ts-expect-error
-                deepStringify('products').className = 'storeSection';
+                l('products').className = 'storeSection';
             } else {
                 // @ts-expect-error
-                deepStringify('storeBulkMax').style.visibility = 'visible';
+                l('storeBulkMax').style.visibility = 'visible';
                 // @ts-expect-error
-                deepStringify('products').className = 'storeSection selling';
+                l('products').className = 'storeSection selling';
             }
 
             Game.storeToRefresh = 1;
@@ -10913,7 +10879,7 @@ Game.Launch = function () {
                     (Game.prefs.screenreader ? '</button>' : '</div>');
             }
             // @ts-expect-error
-            deepStringify('products').innerHTML = str;
+            l('products').innerHTML = str;
 
             Game.storeBulkButton(-1);
 
@@ -10924,7 +10890,7 @@ Game.Launch = function () {
 
             for (let i in Game.Objects) {
                 let me = Game.Objects[i];
-                me.l = deepStringify('product' + me.id);
+                me.l = l('product' + me.id);
 
                 //these are a bit messy but ah well
                 if (!Game.touchEvents) {
@@ -10979,7 +10945,7 @@ Game.Launch = function () {
         {
             for (let i in Game.Objects) {
                 let me = Game.Objects[i];
-                if (me.minigameUrl && me.level > 0 && !me.minigameLoaded && !me.minigameLoading && !deepStringify('minigameScript-' + me.id)) {
+                if (me.minigameUrl && me.level > 0 && !me.minigameLoaded && !me.minigameLoading && !l('minigameScript-' + me.id)) {
                     me.minigameLoading = true;
                     //we're only loading the minigame scripts that aren't loaded yet and which have enough building level
                     //we call this function on building level up and on load
@@ -11740,7 +11706,7 @@ Game.Launch = function () {
         str += '<div id="buildingsMute" class="shadowFilter" style="position:relative;z-index:100;padding:4px 16px 0px 64px;"></div>';
         str += '<div class="separatorBottom" style="position:absolute;bottom:-8px;z-index:0;"></div>';
         // @ts-expect-error
-        deepStringify('buildingsMaster').innerHTML = str;
+        l('buildingsMaster').innerHTML = str;
 
         //build object displays
         let muteStr = '<div style="position:absolute;left:8px;bottom:12px;opacity:0.5;">' + loc('Muted:') + '</div>';
@@ -11750,7 +11716,7 @@ Game.Launch = function () {
             if (locStrings[me.name + ' (short)']) me.displayName = loc(me.name + ' (short)');
 
             if (me.id > 0) {
-                me.canvas = deepStringify('rowCanvas' + me.id);
+                me.canvas = l('rowCanvas' + me.id);
                 me.ctx = me.canvas.getContext('2d', { alpha: false });
                 me.pics = [];
                 let icon = [0 * 64, me.icon * 64];
@@ -11821,7 +11787,7 @@ Game.Launch = function () {
             };
         };
         // @ts-expect-error
-        deepStringify('buildingsMute').innerHTML = muteStr;
+        l('buildingsMute').innerHTML = muteStr;
 
         /*=====================================================================================
         UPGRADES
@@ -11939,9 +11905,9 @@ Game.Launch = function () {
                 if (this.choicesFunction) {
                     if (Game.choiceSelectorOn == this.id) {
                         // @ts-expect-error
-                        deepStringify('toggleBox').style.display = 'none';
+                        l('toggleBox').style.display = 'none';
                         // @ts-expect-error
-                        deepStringify('toggleBox').innerHTML = '';
+                        l('toggleBox').innerHTML = '';
                         Game.choiceSelectorOn = -1;
                         PlaySound('snd/tickOff.mp3');
                     } else {
@@ -11999,11 +11965,11 @@ Game.Launch = function () {
                             }
                         }
                         // @ts-expect-error
-                        deepStringify('toggleBox').innerHTML = str;
+                        l('toggleBox').innerHTML = str;
                         // @ts-expect-error
-                        deepStringify('toggleBox').style.display = 'block';
+                        l('toggleBox').style.display = 'block';
                         // @ts-expect-error
-                        deepStringify('toggleBox').focus();
+                        l('toggleBox').focus();
                         Game.tooltip.hide();
                         PlaySound('snd/tick.mp3');
                         success = 1;
@@ -12097,15 +12063,6 @@ Game.Launch = function () {
             if (pool == '' || pool == 'cookie' || pool == 'tech') return true;
             else return false;
         };
-
-        /*AddEvent(l('toggleBox'),'blur',function()//if we click outside of the selector, close it
-            {
-                //this has a couple problems, such as when clicking on the upgrade - this toggles it off and back on instantly
-                l('toggleBox').style.display='none';
-                l('toggleBox').innerHTML='';
-                Game.choiceSelectorOn=-1;
-            }
-        );*/
 
         Game.RequiresConfirmation = function (upgrade, prompt) {
             upgrade.clickFunction = function () {
@@ -12211,10 +12168,10 @@ Game.Launch = function () {
                     '</div>' +
                     '</div>';
                 // @ts-expect-error
-                deepStringify('upgrades').classList.add('hasMenu');
+                l('upgrades').classList.add('hasMenu');
             }
             // @ts-expect-error
-            else deepStringify('upgrades').classList.remove('hasMenu');
+            else l('upgrades').classList.remove('hasMenu');
 
             for (let i in Game.UpgradesInStore) {
                 //if (!Game.UpgradesInStore[i]) break;
@@ -12233,25 +12190,25 @@ Game.Launch = function () {
             }
 
             // @ts-expect-error
-            deepStringify('upgrades').innerHTML = storeStr;
+            l('upgrades').innerHTML = storeStr;
             // @ts-expect-error
-            deepStringify('toggleUpgrades').innerHTML = toggleStr;
+            l('toggleUpgrades').innerHTML = toggleStr;
             // @ts-expect-error
-            if (toggleStr == '') deepStringify('toggleUpgrades').style.display = 'none';
+            if (toggleStr == '') l('toggleUpgrades').style.display = 'none';
             // @ts-expect-error
-            else deepStringify('toggleUpgrades').style.display = 'block';
+            else l('toggleUpgrades').style.display = 'block';
             // @ts-expect-error
-            deepStringify('techUpgrades').innerHTML = techStr;
+            l('techUpgrades').innerHTML = techStr;
             // @ts-expect-error
-            if (techStr == '') deepStringify('techUpgrades').style.display = 'none';
+            if (techStr == '') l('techUpgrades').style.display = 'none';
             // @ts-expect-error
-            else deepStringify('techUpgrades').style.display = 'block';
+            else l('techUpgrades').style.display = 'block';
             // @ts-expect-error
-            deepStringify('vaultUpgrades').innerHTML = vaultStr;
+            l('vaultUpgrades').innerHTML = vaultStr;
             // @ts-expect-error
-            if (vaultStr == '') deepStringify('vaultUpgrades').style.display = 'none';
+            if (vaultStr == '') l('vaultUpgrades').style.display = 'none';
             // @ts-expect-error
-            else deepStringify('vaultUpgrades').style.display = 'block';
+            else l('vaultUpgrades').style.display = 'block';
         };
 
         Game.UnlockAt = []; //this contains an array of every upgrade with a cookie requirement in the form of {cookies:(amount of cookies earned required),name:(name of upgrade or achievement to unlock)} (and possibly require:(name of upgrade of achievement to own))
@@ -14608,13 +14565,13 @@ Game.Launch = function () {
         Game.PutUpgradeInPermanentSlot = function (upgrade, slot) {
             Game.SelectingPermanentUpgrade = upgrade;
             // @ts-expect-error
-            deepStringify('upgradeToSlotWrap').innerHTML = '';
+            l('upgradeToSlotWrap').innerHTML = '';
             // @ts-expect-error
-            deepStringify('upgradeToSlotWrap').style.display = upgrade == -1 ? 'none' : 'block';
+            l('upgradeToSlotWrap').style.display = upgrade == -1 ? 'none' : 'block';
             // @ts-expect-error
-            deepStringify('upgradeToSlotNone').style.display = upgrade != -1 ? 'none' : 'block';
+            l('upgradeToSlotNone').style.display = upgrade != -1 ? 'none' : 'block';
             // @ts-expect-error
-            deepStringify('upgradeToSlotWrap').innerHTML = Game.crate(Game.UpgradesById[upgrade == -1 ? 0 : upgrade], '', '', 'upgradeToSlot');
+            l('upgradeToSlotWrap').innerHTML = Game.crate(Game.UpgradesById[upgrade == -1 ? 0 : upgrade], '', '', 'upgradeToSlot');
         };
 
         new Game.Upgrade(
@@ -18986,14 +18943,14 @@ Game.Launch = function () {
                 if (id >= Game.jukebox.sounds.length) id = 0;
                 else if (id < 0) id = Game.jukebox.sounds.length - 1;
                 Game.jukebox.onSound = id;
-                if (deepStringify('jukeboxOnSound')) {
-                    triggerAnim(deepStringify('jukeboxPlayer'), 'pucker');
+                if (l('jukeboxOnSound')) {
+                    triggerAnim(l('jukeboxPlayer'), 'pucker');
                     // @ts-expect-error
-                    deepStringify('jukeboxOnSound').innerHTML = '&bull; ' + Game.jukebox.sounds[Game.jukebox.onSound] + ' &bull;';
+                    l('jukeboxOnSound').innerHTML = '&bull; ' + Game.jukebox.sounds[Game.jukebox.onSound] + ' &bull;';
                     // @ts-expect-error
-                    deepStringify('jukeboxOnSoundN').innerHTML = Game.jukebox.onSound + 1 + '/' + Game.jukebox.sounds.length;
+                    l('jukeboxOnSoundN').innerHTML = Game.jukebox.onSound + 1 + '/' + Game.jukebox.sounds.length;
                     // @ts-expect-error
-                    deepStringify('jukeboxSoundSelect').value = Game.jukebox.onSound;
+                    l('jukeboxSoundSelect').value = Game.jukebox.onSound;
                 }
                 PlaySound('snd/' + Game.jukebox.sounds[Game.jukebox.onSound] + '.mp3', 1);
             },
@@ -19003,24 +18960,24 @@ Game.Launch = function () {
                 Game.jukebox.onTrack = id;
                 // @ts-expect-error
                 let data = Music.tracks[Game.jukebox.tracks[Game.jukebox.onTrack]].audio;
-                if (deepStringify('jukeboxOnTrack')) {
-                    triggerAnim(deepStringify('jukeboxPlayer'), 'pucker');
+                if (l('jukeboxOnTrack')) {
+                    triggerAnim(l('jukeboxPlayer'), 'pucker');
                     // @ts-expect-error
-                    deepStringify('jukeboxOnTrack').innerHTML = '&bull; ' + cap(Game.jukebox.tracks[Game.jukebox.onTrack]) + ' &bull;';
+                    l('jukeboxOnTrack').innerHTML = '&bull; ' + cap(Game.jukebox.tracks[Game.jukebox.onTrack]) + ' &bull;';
                     // @ts-expect-error
-                    deepStringify('jukeboxOnTrackAuthor').innerHTML = Music.tracks[Game.jukebox.tracks[Game.jukebox.onTrack]].author;
+                    l('jukeboxOnTrackAuthor').innerHTML = Music.tracks[Game.jukebox.tracks[Game.jukebox.onTrack]].author;
                     // @ts-expect-error
-                    deepStringify('jukeboxTrackSelect').value = Game.jukebox.onTrack;
+                    l('jukeboxTrackSelect').value = Game.jukebox.onTrack;
                     if (data) {
                         let dur = data.duration + 1;
                         // @ts-expect-error
-                        deepStringify('jukeboxMusicTotalTime').innerHTML = Math.floor(dur / 60) + ':' + (Math.floor(dur % 60) < 10 ? '0' : '') + Math.floor(dur % 60);
+                        l('jukeboxMusicTotalTime').innerHTML = Math.floor(dur / 60) + ':' + (Math.floor(dur % 60) < 10 ? '0' : '') + Math.floor(dur % 60);
                     }
 
                     if (!dontPlay && Music) {
                         Game.jukebox.trackAuto = false;
                         // @ts-expect-error
-                        deepStringify('jukeboxMusicAuto').classList.add('off');
+                        l('jukeboxMusicAuto').classList.add('off');
                         // @ts-expect-error
                         Music.playTrack(Game.jukebox.tracks[Game.jukebox.onTrack]);
                         // @ts-expect-error
@@ -19029,9 +18986,9 @@ Game.Launch = function () {
                         Music.loop(Game.jukebox.trackLooped);
                     }
                     // @ts-expect-error
-                    if (data.paused) deepStringify('jukeboxMusicPlay').innerHTML = loc('Play');
+                    if (data.paused) l('jukeboxMusicPlay').innerHTML = loc('Play');
                     // @ts-expect-error
-                    else deepStringify('jukeboxMusicPlay').innerHTML = loc('Stop');
+                    else l('jukeboxMusicPlay').innerHTML = loc('Stop');
                     Game.jukebox.updateMusicCurrentTime();
                 }
             },
@@ -19043,13 +19000,13 @@ Game.Launch = function () {
                     // @ts-expect-error
                     Music.pause();
                     // @ts-expect-error
-                    deepStringify('jukeboxMusicPlay').innerHTML = loc('Play');
+                    l('jukeboxMusicPlay').innerHTML = loc('Play');
                 }
                 else {
                     // @ts-expect-error
                     Music.unpause();
                     // @ts-expect-error
-                    deepStringify('jukeboxMusicPlay').innerHTML = loc('Stop');
+                    l('jukeboxMusicPlay').innerHTML = loc('Stop');
                 }
                 Game.jukebox.updateMusicCurrentTime();
             },
@@ -19060,13 +19017,13 @@ Game.Launch = function () {
                     // @ts-expect-error
                     Music.loop(true);
                     // @ts-expect-error
-                    deepStringify('jukeboxMusicLoop').classList.remove('off');
+                    l('jukeboxMusicLoop').classList.remove('off');
                 }
                 else {
                     // @ts-expect-error
                     Music.loop(false);
                     // @ts-expect-error
-                    deepStringify('jukeboxMusicLoop').classList.add('off');
+                    l('jukeboxMusicLoop').classList.add('off');
                 }
             },
             pressMusicAuto: function () {
@@ -19076,29 +19033,29 @@ Game.Launch = function () {
                     // @ts-expect-error
                     Music.cue('play');
                     // @ts-expect-error
-                    deepStringify('jukeboxMusicAuto').classList.remove('off');
+                    l('jukeboxMusicAuto').classList.remove('off');
                 }
                 else {
                     // @ts-expect-error
-                    /*Game.jukebox.setTrack(Game.jukebox.onTrack);*/ deepStringify('jukeboxMusicAuto').classList.add('off');
+                    /*Game.jukebox.setTrack(Game.jukebox.onTrack);*/ l('jukeboxMusicAuto').classList.add('off');
                 }
             },
             pressMusicShuffle: function () {
                 Game.jukebox.trackShuffle = !Game.jukebox.trackShuffle;
             },
             updateMusicCurrentTime: function (noLoop) {
-                if (!deepStringify('jukeboxMusicTime')) return false;
+                if (!l('jukeboxMusicTime')) return false;
                 // @ts-expect-error
                 let data = Music.tracks[Game.jukebox.tracks[Game.jukebox.onTrack]].audio;
                 // @ts-expect-error
-                deepStringify('jukeboxMusicPlay').innerHTML = data.paused ? loc('Play') : loc('Pause');
+                l('jukeboxMusicPlay').innerHTML = data.paused ? loc('Play') : loc('Pause');
                 // @ts-expect-error
-                deepStringify('jukeboxMusicTime').innerHTML =
+                l('jukeboxMusicTime').innerHTML =
                     Math.floor(data.currentTime / 60) + ':' + (Math.floor(data.currentTime % 60) < 10 ? '0' : '') + Math.floor(data.currentTime % 60);
                 // @ts-expect-error
-                deepStringify('jukeboxMusicScrub').value = (data.currentTime / data.duration) * 1000;
+                l('jukeboxMusicScrub').value = (data.currentTime / data.duration) * 1000;
                 // @ts-expect-error
-                deepStringify('jukeboxMusicScrubElapsed').style.width = Math.max(0, (data.currentTime / data.duration) * 288 - 4) + 'px';
+                l('jukeboxMusicScrubElapsed').style.width = Math.max(0, (data.currentTime / data.duration) * 288 - 4) + 'px';
                 if (!noLoop) setTimeout(Game.jukebox.updateMusicCurrentTime, 1000 / 2);
             },
             musicScrub: function (time) {
@@ -21182,7 +21139,7 @@ Game.Launch = function () {
 
         Game.buffs = {}; //buffs currently in effect by name
         Game.buffsI = 0;
-        Game.buffsL = deepStringify('buffs');
+        Game.buffsL = l('buffs');
         Game.gainBuff = function (type, time, arg1, arg2, arg3) {
             type = Game.buffTypesByName[type];
             let obj = type.func(time, arg1, arg2, arg3);
@@ -21237,7 +21194,7 @@ Game.Launch = function () {
                     writeIcon(buff.icon) +
                     '"></div>';
 
-                buff.l = deepStringify('buff' + buff.id);
+                buff.l = l('buff' + buff.id);
 
                 Game.buffsI++;
             }
@@ -21257,19 +21214,19 @@ Game.Launch = function () {
                 let buff = Game.buffs[i];
 
                 if (buff.time >= 0) {
-                    if (!deepStringify('buffPieTimer' + buff.id))
+                    if (!l('buffPieTimer' + buff.id))
                     // @ts-expect-error
-                        deepStringify('buff' + buff.id).innerHTML = deepStringify('buff' + buff.id).innerHTML + '<div class="pieTimer" id="buffPieTimer' + buff.id + '"></div>';
+                        l('buff' + buff.id).innerHTML = l('buff' + buff.id).innerHTML + '<div class="pieTimer" id="buffPieTimer' + buff.id + '"></div>';
                     let T = 1 - buff.time / buff.maxTime;
                     T = (T * 144) % 144;
                     // @ts-expect-error
-                    deepStringify('buffPieTimer' + buff.id).style.backgroundPosition = -Math.floor(T % 18) * 48 + 'px ' + -Math.floor(T / 18) * 48 + 'px';
+                    l('buffPieTimer' + buff.id).style.backgroundPosition = -Math.floor(T % 18) * 48 + 'px ' + -Math.floor(T / 18) * 48 + 'px';
                 }
                 buff.time--;
                 if (buff.time <= 0) {
-                    if (Game.onCrate == deepStringify('buff' + buff.id)) Game.tooltip.hide();
+                    if (Game.onCrate == l('buff' + buff.id)) Game.tooltip.hide();
                     if (buff.onDie) buff.onDie();
-                    Game.buffsL.removeChild(deepStringify('buff' + buff.id));
+                    Game.buffsL.removeChild(l('buff' + buff.id));
                     if (Game.buffs[buff.name]) {
                         Game.buffs[buff.name] = 0;
                         delete Game.buffs[buff.name];
@@ -21855,7 +21812,7 @@ Game.Launch = function () {
                     if (me.selected && onWrinkler == 0 && Game.CanClick) {
                         me.hurt = Math.max(me.hurt, 0.25);
                         //me.close*=0.99;
-                        if (Game.Click && Game.lastClickedEl == deepStringify('backgroundLeftCanvas')) {
+                        if (Game.Click && Game.lastClickedEl == l('backgroundLeftCanvas')) {
                             if (Game.keys[17] && Game.sesame) {
                                 me.type = !me.type;
                                 PlaySound('snd/shimmerClick.mp3');
@@ -22187,7 +22144,7 @@ Game.Launch = function () {
                         Game.specialTabHovered = Game.specialTabs[i];
                         Game.mousePointer = 1;
                         Game.CanClick = 0;
-                        if (Game.Click && Game.lastClickedEl == deepStringify('backgroundLeftCanvas')) {
+                        if (Game.Click && Game.lastClickedEl == l('backgroundLeftCanvas')) {
                             if (Game.specialTab != Game.specialTabs[i]) {
                                 Game.specialTab = Game.specialTabs[i];
                                 Game.ToggleSpecialMenu(1);
@@ -22261,9 +22218,9 @@ Game.Launch = function () {
 
                 Game.ToggleSpecialMenu(1);
 
-                if (deepStringify('specialPic')) {
+                if (l('specialPic')) {
                     // @ts-expect-error
-                    let rect = deepStringify('specialPic').getBounds();
+                    let rect = l('specialPic').getBounds();
                     Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2) + 32 - TopBarOffset;
                 }
 
@@ -22730,7 +22687,7 @@ Game.Launch = function () {
         };
         Game.DescribeDragonAura = function (aura) {
             // @ts-expect-error
-            deepStringify('dragonAuraInfo').innerHTML =
+            l('dragonAuraInfo').innerHTML =
                 '<div style="min-width:200px;text-align:center;"><h4>' +
                 Game.dragonAuras[aura].dname +
                 '</h4>' +
@@ -22747,9 +22704,9 @@ Game.Launch = function () {
 
                 if (Game.dragonLevel >= Game.dragonLevels.length - 1) Game.Win('Here be dragon');
                 Game.ToggleSpecialMenu(1);
-                if (deepStringify('specialPic')) {
+                if (l('specialPic')) {
                     // @ts-expect-error
-                    let rect = deepStringify('specialPic').getBounds();
+                    let rect = l('specialPic').getBounds();
                     Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2) + 32 - TopBarOffset;
                 }
                 Game.recalculateGains = 1;
@@ -22759,8 +22716,8 @@ Game.Launch = function () {
 
         Game.lastClickedSpecialPic = 0;
         Game.ClickSpecialPic = function () {
-            if (Game.specialTab == 'dragon' && Game.dragonLevel >= 4 && Game.Has('Pet the dragon') && deepStringify('specialPic')) {
-                triggerAnim(deepStringify('specialPic'), 'pucker');
+            if (Game.specialTab == 'dragon' && Game.dragonLevel >= 4 && Game.Has('Pet the dragon') && l('specialPic')) {
+                triggerAnim(l('specialPic'), 'pucker');
                 PlaySound('snd/click' + Math.floor(Math.random() * 7 + 1) + '.mp3', 0.5);
                 if (Date.now() - Game.lastClickedSpecialPic > 2000) PlaySound('snd/growl.mp3');
                 Game.lastClickedSpecialPic = Date.now();
@@ -22899,19 +22856,19 @@ Game.Launch = function () {
                 }
 
                 // @ts-expect-error
-                deepStringify('specialPopup').innerHTML = str;
+                l('specialPopup').innerHTML = str;
 
                 // @ts-expect-error
-                deepStringify('specialPopup').className = 'framed prompt onScreen';
+                l('specialPopup').className = 'framed prompt onScreen';
             } else {
                 if (Game.specialTab != '') {
                     Game.specialTab = '';
                     // @ts-expect-error
-                    deepStringify('specialPopup').className = 'framed prompt offScreen';
+                    l('specialPopup').className = 'framed prompt offScreen';
                     setTimeout(function () {
                         if (Game.specialTab == '') {
                             // @ts-expect-error
-                            deepStringify('specialPopup').innerHTML = '';
+                            l('specialPopup').innerHTML = '';
                         }
                     }, 1000 * 0.2);
                 }
@@ -23100,11 +23057,11 @@ Game.Launch = function () {
             if (!Game.Background) {
                 //init some stuff
                 // @ts-expect-error
-                Game.Background = deepStringify('backgroundCanvas').getContext('2d');
+                Game.Background = l('backgroundCanvas').getContext('2d');
                 Game.Background.canvas.width = Game.Background.canvas.parentNode.offsetWidth;
                 Game.Background.canvas.height = Game.Background.canvas.parentNode.offsetHeight;
                 // @ts-expect-error
-                Game.LeftBackground = deepStringify('backgroundLeftCanvas').getContext('2d');
+                Game.LeftBackground = l('backgroundLeftCanvas').getContext('2d');
                 Game.LeftBackground.canvas.width = Game.LeftBackground.canvas.parentNode.offsetWidth;
                 Game.LeftBackground.canvas.height = Game.LeftBackground.canvas.parentNode.offsetHeight;
                 //preload ascend animation bits so they show up instantly
@@ -23183,7 +23140,7 @@ Game.Launch = function () {
 
                 if (Game.drawT % 5 == 0) {
                     // @ts-expect-error
-                    deepStringify('backgroundCanvas').style.background = 'transparent';
+                    l('backgroundCanvas').style.background = 'transparent';
                     Game.defaultBg = 'bgBlue';
                     Game.bgR = 0;
 
@@ -23617,7 +23574,7 @@ Game.Launch = function () {
                                     this.s +
                                     'px;background:#999;position:absolute;left:0px;top:0px;z-index:10000000;transform:translate(-1000px,-1000px);';
                                 // @ts-expect-error
-                                deepStringify('sectionLeft').appendChild(this.l);
+                                l('sectionLeft').appendChild(this.l);
                                 AddEvent(
                                     this.l,
                                     'mousedown',
@@ -23920,9 +23877,9 @@ Game.Launch = function () {
             str += '</div>';
 
             // @ts-expect-error
-            deepStringify('devConsole').innerHTML = str;
+            l('devConsole').innerHTML = str;
 
-            if (!deepStringify('fpsGraph')) {
+            if (!l('fpsGraph')) {
                 let div = document.createElement('canvas');
                 div.id = 'fpsGraph';
                 div.width = 128;
@@ -23932,9 +23889,8 @@ Game.Launch = function () {
                 div.style.pointerEvents = 'none';
                 div.style.transformOrigin = '0% 0%';
                 div.style.transform = 'scale(0.75)';
-                //l('devConsole').appendChild(div);
                 // @ts-expect-error
-                deepStringify('devConsole').parentNode.insertBefore(div, deepStringify('devConsole').nextSibling);
+                l('devConsole').parentNode.insertBefore(div, l('devConsole').nextSibling);
                 Game.fpsGraph = div;
                 Game.fpsGraphCtx = Game.fpsGraph.getContext('2d', {
                     alpha: false
@@ -23945,7 +23901,7 @@ Game.Launch = function () {
             }
 
             // @ts-expect-error
-            deepStringify('debug').style.display = 'block';
+            l('debug').style.display = 'block';
             Game.sesame = 1;
             Game.Achievements['Cheated cookies taste awful'].won = 1;
         };
@@ -24009,13 +23965,13 @@ Game.Launch = function () {
 
         Game.ready = 1;
         setTimeout(function () {
-            const detectAds = deepStringify('detectAds');
+            const detectAds = l('detectAds');
             if (!detectAds || detectAds.clientHeight < 1) Game.addClass('noAds');
         }, 500);
         // @ts-expect-error
-        deepStringify('offGameMessage').innerHTML = '';
+        l('offGameMessage').innerHTML = '';
         // @ts-expect-error
-        deepStringify('offGameMessageWrap').style.display = 'none';
+        l('offGameMessageWrap').style.display = 'none';
         Game.Loop();
         Game.Draw();
 
@@ -24035,23 +23991,23 @@ Game.Launch = function () {
                 }
             };
             // @ts-expect-error
-            deepStringify('prefsButton').firstChild.innerHTML = loc('Options');
+            l('prefsButton').firstChild.innerHTML = loc('Options');
             // @ts-expect-error
-            deepStringify('statsButton').firstChild.innerHTML = loc('Stats');
+            l('statsButton').firstChild.innerHTML = loc('Stats');
             // @ts-expect-error
-            deepStringify('logButton').firstChild.innerHTML = loc('Info');
+            l('logButton').firstChild.innerHTML = loc('Info');
             // @ts-expect-error
-            deepStringify('legacyButton').firstChild.innerHTML = loc('Legacy');
-            adaptWidth(deepStringify('prefsButton'));
-            adaptWidth(deepStringify('statsButton'));
-            adaptWidth(deepStringify('logButton'));
-            adaptWidth(deepStringify('legacyButton'));
+            l('legacyButton').firstChild.innerHTML = loc('Legacy');
+            adaptWidth(l('prefsButton'));
+            adaptWidth(l('statsButton'));
+            adaptWidth(l('logButton'));
+            adaptWidth(l('legacyButton'));
             // @ts-expect-error
-            deepStringify('checkForUpdate').childNodes[0].textContent = loc('New update!');
+            l('checkForUpdate').childNodes[0].textContent = loc('New update!');
             // @ts-expect-error
-            deepStringify('buildingsTitle').childNodes[0].textContent = loc('Buildings');
+            l('buildingsTitle').childNodes[0].textContent = loc('Buildings');
             // @ts-expect-error
-            deepStringify('storeTitle').childNodes[0].textContent = loc('Store');
+            l('storeTitle').childNodes[0].textContent = loc('Store');
         }
     };
     /*=====================================================================================
@@ -24088,9 +24044,9 @@ Game.Launch = function () {
             Game.particlesUpdate();
 
             // @ts-expect-error
-            if (Game.mousePointer) deepStringify('sectionLeft').style.cursor = 'pointer';
+            if (Game.mousePointer) l('sectionLeft').style.cursor = 'pointer';
             // @ts-expect-error
-            else deepStringify('sectionLeft').style.cursor = 'auto';
+            else l('sectionLeft').style.cursor = 'auto';
             Game.mousePointer = 0;
 
             //handle milk and milk accessories
@@ -24506,7 +24462,6 @@ Game.Launch = function () {
                     Game.LeftBackground.canvas.height * 0.4 + 256 / 2 - 16 > (1 - Game.milkHd) * Game.LeftBackground.canvas.height
                 )
                     Game.Win('Cookie-dunker');
-                //&& l('bigCookie').getBounds().bottom>l('milk').getBounds().top+16 && Game.milkProgress>0.1) Game.Win('Cookie-dunker');
 
                 Game.runModHook('check');
             }
@@ -24566,7 +24521,7 @@ Game.Launch = function () {
                 str += loc('You need <b>%1 more cookies</b> for the next level.', Beautify(cookiesToNext)) + '<br>';
             }
             // @ts-expect-error
-            deepStringify('ascendTooltip').innerHTML = str;
+            l('ascendTooltip').innerHTML = str;
 
             if (ascendNowToGet > 0) {
                 //show number saying how many chips you'd get resetting now
@@ -24678,7 +24633,7 @@ Game.Launch = function () {
                 Beautify(Game.cookiesPs * (1 - Game.cpsSucked), 1) +
                 '</div>';
             // @ts-expect-error
-            deepStringify('cookies').innerHTML = str;
+            l('cookies').innerHTML = str;
             Timer.track('cookie amount');
 
             for (let i in Game.Objects) {
@@ -24688,7 +24643,6 @@ Game.Launch = function () {
             Timer.track('draw minigames');
 
             if (Game.drawT % 5 == 0) {
-                //if (Game.prefs.monospace) {l('cookies').className='title monospace';} else {l('cookies').className='title';}
                 let lastLocked = 0;
                 for (let i in Game.Objects) {
                     let me = Game.Objects[i];
@@ -24709,7 +24663,6 @@ Game.Launch = function () {
                     else classes += ' disabled';
                     if (lastLocked > 2) classes += ' toggledOff';
                     me.l.className = classes;
-                    //if (me.id>0) {l('productName'+me.id).innerHTML=Beautify(me.storedTotalCps/Game.ObjectsById[me.id-1].storedTotalCps,2);}
                 }
 
                 //make upgrades full-opacity if we can buy them
@@ -24720,7 +24673,7 @@ Game.Launch = function () {
                         let price = me.getPrice();
                         let canBuy = me.canBuy(); //(Game.cookies>=price);
                         // @ts-expect-error
-                        let enabled = deepStringify('upgrade' + i).className.indexOf('enabled') > -1;
+                        let enabled = l('upgrade' + i).className.indexOf('enabled') > -1;
                         if ((canBuy && !enabled) || (!canBuy && enabled)) Game.upgradesToRebuild = 1;
                         if (price < lastPrice) Game.storeToRefresh = 1; //is this upgrade less expensive than the previous one? trigger a refresh to sort it again
                         lastPrice = price;
@@ -24728,16 +24681,14 @@ Game.Launch = function () {
                     if (me.timerDisplay) {
                         let T = me.timerDisplay();
                         if (T != -1) {
-                            if (!deepStringify('upgradePieTimer' + i))
+                            if (!l('upgradePieTimer' + i))
                                 // @ts-expect-error
-                                deepStringify('upgrade' + i).innerHTML = deepStringify('upgrade' + i).innerHTML + '<div class="pieTimer" id="upgradePieTimer' + i + '"></div>';
+                                l('upgrade' + i).innerHTML = l('upgrade' + i).innerHTML + '<div class="pieTimer" id="upgradePieTimer' + i + '"></div>';
                             T = (T * 144) % 144;
                             // @ts-expect-error
-                            deepStringify('upgradePieTimer' + i).style.backgroundPosition = -Math.floor(T % 18) * 48 + 'px ' + -Math.floor(T / 18) * 48 + 'px';
+                            l('upgradePieTimer' + i).style.backgroundPosition = -Math.floor(T % 18) * 48 + 'px ' + -Math.floor(T / 18) * 48 + 'px';
                         }
                     }
-
-                    //if (me.canBuy()) l('upgrade'+i).className='crate upgrade enabled'; else l('upgrade'+i).className='crate upgrade disabled';
                 }
             }
             Timer.track('store');
@@ -24828,17 +24779,17 @@ Game.Launch = function () {
             ctx.stroke();
 
             // @ts-expect-error
-            deepStringify('fpsCounter').textContent = Game.currentFps + ' fps';
+            l('fpsCounter').textContent = Game.currentFps + ' fps';
             let str = '';
             for (let i in Timer.labels) {
                 str += Timer.labels[i];
             }
             // @ts-expect-error
-            if (Game.debugTimersOn) deepStringify('debugLog').style.display = 'block';
+            if (Game.debugTimersOn) l('debugLog').style.display = 'block';
             // @ts-expect-error
-            else deepStringify('debugLog').style.display = 'none';
+            else l('debugLog').style.display = 'none';
             // @ts-expect-error
-            deepStringify('debugLog').innerHTML = str;
+            l('debugLog').innerHTML = str;
         }
         Timer.reset();
 
@@ -24898,12 +24849,12 @@ window.onload = function () {
                 str += '<div class="langSelectButton title" id="langSelect-' + i + '">' + lang.name + '</div>';
             }
             // @ts-expect-error
-            deepStringify('offGameMessage').innerHTML =
+            l('offGameMessage').innerHTML =
                 '<div class="title" id="languageSelectHeader">Language</div>' + '<div class="line" style="max-width:300px;"></div>' + str;
             for (let i in Langs) {
                 let lang = Langs[i];
                 AddEvent(
-                    deepStringify('langSelect-' + i),
+                    l('langSelect-' + i),
                     'click',
                     (function (lang) {
                         return function () {
@@ -24912,13 +24863,13 @@ window.onload = function () {
                     })(i)
                 );
                 AddEvent(
-                    deepStringify('langSelect-' + i),
+                    l('langSelect-' + i),
                     'mouseover',
                     (function (lang) {
                         return function () {
                             PlaySound('snd/smallTick.mp3', 0.75);
                             // @ts-expect-error
-                            deepStringify('languageSelectHeader').innerHTML = Langs[lang].changeLanguage;
+                            l('languageSelectHeader').innerHTML = Langs[lang].changeLanguage;
                         };
                     })(i)
                 );
