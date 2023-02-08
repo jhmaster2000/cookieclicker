@@ -10983,7 +10983,7 @@ Game.Launch = function () {
                     me.minigameLoading = true;
                     //we're only loading the minigame scripts that aren't loaded yet and which have enough building level
                     //we call this function on building level up and on load
-                    //console.log('Loading script '+me.minigameUrl+'...');
+                    console.log('Loading script '+me.minigameUrl+'...');
                     setTimeout(
                         (function (me) {
                             return function () {
@@ -11267,7 +11267,6 @@ Game.Launch = function () {
                 if (this.amount >= Game.SpecialGrandmaUnlock && Game.Objects['Grandma'].amount > 0) Game.Unlock(this.grandma.name);
             }
         );
-        //Game.last.minigameUrl='minigameDungeon.js';//not yet
         Game.last.minigameName = loc('Dungeon');
 
         new Game.Object(
@@ -24811,19 +24810,8 @@ Game.Launch = function () {
         Game.catchupLogic = 0;
         Timer.track('logic');
         Timer.say('END LOGIC');
-        /*
-        if (!Game.prefs.altDraw)
-        {
-            let hasFocus=document.hasFocus();
-            Timer.say('DRAW');
-            if (hasFocus || Game.prefs.focus || Game.loopT%10==0) requestAnimationFrame(Game.Draw);
-            //if (document.hasFocus() || Game.loopT%5==0) Game.Draw();
-            Timer.say('END DRAW');
-        }
-        else requestAnimationFrame(Game.Draw);*/
-        if (Game.visible) Game.Draw();
 
-        //if (!hasFocus) Game.tooltip.hide();
+        if (Game.visible) Game.Draw();
 
         if (Game.sesame) {
             //fps counter and graph
@@ -24862,17 +24850,11 @@ Game.Launch = function () {
 /*=====================================================================================
 LAUNCH THIS THING
 =======================================================================================*/
-//Game.Launch();
-
-//try {Game.Launch();}
-//catch(err) {console.log('ERROR : '+err.message);}
-
 window.onload = function () {
     if (!Game.ready) {
         let loadLangAndLaunch = function (lang, firstLaunch) {
             if (!firstLaunch) localStorageSet('CookieClickerLang', lang);
 
-            //LoadLang('../Cookie Clicker Localization/EN.js',function(lang){return function(){
             LoadLang(
                 'loc/EN.js?v=' + Game.version,
                 (function (lang) {
