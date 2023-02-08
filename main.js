@@ -23,11 +23,11 @@ const STUB = (..._) => void 0;
 /**
  * @template T
  * @param {T} v
- * @returns {Exclude<T, null>}
+ * @returns {Exclude<T, null | undefined>}
  */
 const ASSERT_NOT_NULL = (v) => {
     if (v === null || v === undefined) throw new Error('Non-null assertion failed. Follow stacktrace for location.');
-    return /** @type Exclude<T, null> */(v);
+    return /** @type Exclude<T, null | undefined> */(v);
 };
 /**
  * @template {boolean} asserted
@@ -2992,7 +2992,7 @@ Game.Launch = function () {
             let filename = Game.bakeryName.replace(/[^a-zA-Z0-9]+/g, '') + 'Bakery';
             let text = Game.WriteSave(1);
             let blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-            saveAs(blob, `${filename}.txt`);
+            ASSERT_NOT_NULL(saveAs)(blob, `${filename}.txt`);
         };
         Game.FileLoad = function (e) {
             if (e.target.files.length == 0) return false;
