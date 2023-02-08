@@ -1,7 +1,7 @@
-//declare global {
-    //interface globalThis { foofoofoo: string; }
-//}
-
 declare interface Element {
     getBounds(): DOMRect;
-};
+}
+
+declare interface Math {
+    seedrandom(seed?: string, useSharedCharcodeArrayForSeed?: boolean): string;
+}
