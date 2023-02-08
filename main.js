@@ -16,7 +16,7 @@ http://orteil.dashnet.org
 let VERSION = 9.999;
 let BETA = 1;
 
-/*=====================================================================================
+/* =====================================================================================
 MISC HELPER FUNCTIONS
 =======================================================================================*/
 const STUB = (..._) => void 0;
@@ -202,7 +202,7 @@ function toFixed(x) {
     return x;
 }
 
-//Beautify and number-formatting adapted from the Frozen Cookies add-on (http://cookieclicker.wikia.com/wiki/Frozen_Cookies_%28JavaScript_Add-on%29)
+// Beautify and number-formatting adapted from the Frozen Cookies add-on (http://cookieclicker.wikia.com/wiki/Frozen_Cookies_%28JavaScript_Add-on%29)
 /**
  * @param {string | string[]} notations
  */
@@ -270,7 +270,6 @@ const Beautify = function (/** @type {number} */ val, /** @type {number=} */ flo
     val = Math.floor(Math.abs(val));
     // @ts-expect-error
     if (floats > 0 && fixed == val + 1) val++;
-    //let format=!EN?2:Game.prefs.format?2:1;
     let format = Game.prefs.format ? 2 : 1;
     let formatter = numberFormatters[format];
     let output =
@@ -279,14 +278,13 @@ const Beautify = function (/** @type {number} */ val, /** @type {number=} */ flo
             : formatter(val)
                 .toString()
                 .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    //let output=formatter(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
     if (output == '0') negative = false;
     return negative ? '-' + output : output + decimal;
 };
 const shortenNumber = function (val) {
-    //if no scientific notation, return as is, else :
-    //keep only the 5 first digits (plus dot), round the rest
-    //may or may not work properly
+    // if no scientific notation, return as is, else :
+    // keep only the 5 first digits (plus dot), round the rest
+    // may or may not work properly
     if (val >= 1000000 && isFinite(val)) {
         let num = val.toString();
         let ind = num.indexOf('e+');
@@ -307,7 +305,7 @@ const SimpleBeautify = function (/** @type {number} */ val) {
     let str2 = '';
     // @ts-expect-error
     for (let i in str) {
-        //add commas
+        // add commas
         // @ts-expect-error
         if ((str.length - i) % 3 == 0 && i > 0) str2 += ',';
         str2 += str[i];
@@ -315,16 +313,15 @@ const SimpleBeautify = function (/** @type {number} */ val) {
     return str2;
 };
 
-const beautifyInTextFilter = /(([\d]+[,]*)+)/g; //new regex
+const beautifyInTextFilter = /(([\d]+[,]*)+)/g; // new regex
 function BeautifyInTextFunction(str) {
     return Beautify(parseInt(str.replace(/,/g, ''), 10));
 }
 function BeautifyInText(str) {
     return str.replace(beautifyInTextFilter, BeautifyInTextFunction);
-} //reformat every number inside a string
+} // reformat every number inside a string
 function BeautifyAll() {
-    //run through upgrades and achievements to reformat the numbers
-    //const func = function (what) { what.ddesc = BeautifyInText(what.ddesc); };
+    // run through upgrades and achievements to reformat the numbers
     for (let i in Game.UpgradesById) {
         Game.UpgradesById[i].ddesc = BeautifyInText(Game.UpgradesById[i].ddesc);
     }
@@ -333,7 +330,7 @@ function BeautifyAll() {
     }
 }
 
-//=== LOCALIZATION ===
+// === LOCALIZATION ===
 
 let locStrings = {};
 let locStringsFallback = {};
@@ -341,20 +338,12 @@ let locId = 'NONE';
 let EN = true;
 let locName = 'none';
 let locPatches = [];
-let locPlur = 'nplurals=2;plural=(n!=1);'; //see http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
+let locPlur = 'nplurals=2;plural=(n!=1);'; // see http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
 let locPlurFallback = locPlur;
-//note : plural index will be downgraded to the last matching, ie. in this case, if we get "0" but don't have a 3rd option, use the 2nd option (or 1st, lacking that too)
+// note : plural index will be downgraded to the last matching, ie. in this case, if we get "0" but don't have a 3rd option, use the 2nd option (or 1st, lacking that too)
 let locStringsByPart = {};
 let FindLocStringByPart = function (match) {
     return locStringsByPart[match] || undefined;
-    /*
-    //note: slow, only do this on init
-    for (let i in locStrings){
-        let bit=i.split(']');
-        if (bit[0].substring(1)==match) return i;
-    }
-    return undefined;
-    */
 };
 
 let Langs = {
@@ -465,9 +454,9 @@ let Langs = {
     }
 };
 
-//note : baseline should be the original english text
-//in several instances, the english text will be quite different from the other languages, as this game was initially never meant to be translated and the translation process doesn't always play well with complex sentence structures
-/*use:
+// note : baseline should be the original english text
+// in several instances, the english text will be quite different from the other languages, as this game was initially never meant to be translated and the translation process doesn't always play well with complex sentence structures
+/* use:
     loc('Plain text')
     loc('Text where %1 is a parameter','something')
     loc('Text where %1 and %2 are parameters',['a thing','another thing'])
@@ -495,7 +484,7 @@ let loc = function (id, params, baseline) {
         str = '';
         str = parseLoc(found, params);
         if (str.constructor === Array) return str;
-        if (locBlink && !fallback) return '<span class="blinking">' + str + '</span>'; //will make every localized text blink on screen, making omissions obvious; will not work for elements filled with textContent
+        if (locBlink && !fallback) return '<span class="blinking">' + str + '</span>'; // will make every localized text blink on screen, making omissions obvious; will not work for elements filled with textContent
     }
 
     if (found) return str;
@@ -511,15 +500,12 @@ let parseLoc = function (str, params) {
     if (typeof params === 'undefined') params = [];
     else if (params.constructor !== Array) params = [params];
     if (!str) return '';
-    //if (str.constructor===Array) return str;
-    //if (typeof str==='function') return str(params);
-    //str=str.replace(/[\t\n\r]/gm,'');
 
     if (params.length == 0) return str;
 
     if (str.constructor === Array) {
         if (typeof params[0] === 'object') {
-            //an object containing a beautified number
+            // an object containing a beautified number
             // @ts-expect-error
             let plurIndex = locPlur(params[0].n);
             plurIndex = Math.min(str.length - 1, plurIndex);
@@ -550,19 +536,19 @@ let parseLoc = function (str, params) {
 };
 
 let LBeautify = function (val, floats) {
-    //returns an object in the form {n:original value floored,b:beautified value as string} for localization purposes
+    // returns an object in the form {n:original value floored,b:beautified value as string} for localization purposes
     return { n: Math.floor(Math.abs(val)), b: Beautify(val, floats) };
 };
 
 let AddLanguage = function (id, name, json, mod) {
-    //used in loc files
-    //if mod is true, this file is augmenting the current language
-    if (id == locId && !mod) return false; //don't load twice
+    // used in loc files
+    // if mod is true, this file is augmenting the current language
+    if (id == locId && !mod) return false; // don't load twice
     if (!Langs[id]) return false;
     locId = id;
     if (Langs[locId].isEN) EN = true;
     else EN = false;
-    locName = Langs[id].nameEN; //name
+    locName = Langs[id].nameEN; // name
 
     if (mod) {
         for (let i in json) {
@@ -583,11 +569,11 @@ let AddLanguage = function (id, name, json, mod) {
 
         // @ts-expect-error
         locPlur = (function (plural_form) {
-            //lifted and modified from gettext.js
+            // lifted and modified from gettext.js
             let pf_re = new RegExp('^\\s*nplurals\\s*=\\s*[0-9]+\\s*;\\s*plural\\s*=\\s*(?:\\s|[-\\?\\|&=!<>+*/%:;n0-9_()])+');
             if (!pf_re.test(plural_form)) throw new Error('The plural form "' + plural_form + '" is not valid');
             return new Function('n', 'let plural, nplurals; ' + plural_form + ' return plural;');
-            //return new Function('n','let plural, nplurals; '+ plural_form +' return { nplurals: nplurals, plural: (plural === true ? 1 : (plural ? plural : 0)) };');
+            // return new Function('n','let plural, nplurals; '+ plural_form +' return { nplurals: nplurals, plural: (plural === true ? 1 : (plural ? plural : 0)) };');
         })(locPlur);
 
         locPatches = [];
@@ -637,7 +623,7 @@ let LocalizeUpgradesAndAchievs = function () {
         found = FindLocStringByPart(type + ' name ' + it.id);
         if (found) it.dname = loc(found);
 
-        if (!EN) it.baseDesc = it.baseDesc.replace(/<q>.*/, ''); //strip quote section
+        if (!EN) it.baseDesc = it.baseDesc.replace(/<q>.*/, ''); // strip quote section
         it.ddesc = BeautifyInText(it.baseDesc);
 
         found = FindLocStringByPart(type + ' desc ' + it.id);
@@ -660,7 +646,7 @@ let getAchievementName = function (name) {
     else return name;
 };
 
-//phewie! https://stackoverflow.com/questions/30106476/using-javascripts-atob-to-decode-base64-doesnt-properly-decode-utf-8-strings
+// phewie! https://stackoverflow.com/questions/30106476/using-javascripts-atob-to-decode-base64-doesnt-properly-decode-utf-8-strings
 function utf8_to_b64(str) {
     try {
         return btoa(
@@ -688,7 +674,7 @@ function b64_to_utf8(str) {
 }
 
 function CompressBin(arr) {
-    //compress a sequence like [0,1,1,0,1,0]... into a number like 54.
+    // compress a sequence like [0,1,1,0,1,0]... into a number like 54.
     let str = '';
     let arr2 = arr.slice(0);
     arr2.unshift(1);
@@ -703,7 +689,7 @@ function CompressBin(arr) {
 }
 
 function UncompressBin(num) {
-    //uncompress a number like 54 to a sequence like [0,1,1,0,1,0].
+    // uncompress a number like 54 to a sequence like [0,1,1,0,1,0].
     let arr = num.toString(2);
     arr = arr.split('');
     arr.reverse();
@@ -713,7 +699,7 @@ function UncompressBin(num) {
 }
 
 function CompressLargeBin(arr) {
-    //we have to compress in smaller chunks to avoid getting into scientific notation
+    // we have to compress in smaller chunks to avoid getting into scientific notation
     let arr2 = arr.slice(0);
     let thisBit = [];
     let bits = [];
@@ -761,17 +747,24 @@ function unpack(str) {
     return bytes;
 }
 
-//modified from http://www.smashingmagazine.com/2011/10/19/optimizing-long-lists-of-yesno-values-with-javascript/
-function pack2(/* string */ values) {
+// modified from http://www.smashingmagazine.com/2011/10/19/optimizing-long-lists-of-yesno-values-with-javascript/
+/**
+ * @param {string} values
+ */
+function pack2(values) {
     let chunks = values.match(/.{1,14}/g),
         packed = '';
+    if (!chunks) throw new Error('OOps chunks was null!!!');
     for (let i = 0; i < chunks.length; i++) {
         packed += String.fromCharCode(parseInt('1' + chunks[i], 2));
     }
     return packed;
 }
 
-function unpack2(/* string */ packed) {
+/**
+ * @param {string} packed
+ */
+function unpack2(packed) {
     let values = '';
     for (let i = 0; i < packed.length; i++) {
         values += packed.charCodeAt(i).toString(2).substring(1);
@@ -780,11 +773,11 @@ function unpack2(/* string */ packed) {
 }
 
 function pack3(values) {
-    //too many save corruptions, darn it to heck
+    // too many save corruptions, darn it to heck
     return values;
 }
 
-//file save function from https://github.com/eligrey/FileSaver.js
+// file save function from https://github.com/eligrey/FileSaver.js
 let saveAs = (function (view) {
     'use strict';
     if (typeof navigator !== 'undefined' && /MSIE [1-9]\./.test(navigator.userAgent)) return;
@@ -1011,7 +1004,7 @@ let saveAs = (function (view) {
 })((typeof self !== 'undefined' && self) || (typeof window !== 'undefined' && window) || this.content);
 
 function bind(scope, fn) {
-    //use : bind(this,function(){this.x++;}) - returns a function where "this" refers to the scoped this
+    // use : bind(this,function(){this.x++;}) - returns a function where "this" refers to the scoped this
     return function () {
         fn.apply(scope, arguments);
     };
@@ -1028,7 +1021,7 @@ let grabProps = function (arr, prop) {
 
 // @ts-expect-error
 CanvasRenderingContext2D.prototype.fillPattern = function (img, X, Y, W, H, iW, iH, offX, offY) {
-    //for when built-in patterns aren't enough
+    // for when built-in patterns aren't enough
     if (img.alt != 'blank') {
         offX ||= 0;
         offY ||= 0;
@@ -1054,14 +1047,14 @@ CanvasRenderingContext2D.prototype.fillPattern = function (img, X, Y, W, H, iW, 
 
 let OldCanvasDrawImage = CanvasRenderingContext2D.prototype.drawImage;
 CanvasRenderingContext2D.prototype.drawImage = function () {
-    //only draw the image if it's loaded
+    // only draw the image if it's loaded
     if (arguments[0].alt != 'blank') OldCanvasDrawImage.apply(this, arguments);
 };
 
 if (!document.hasFocus)
     document.hasFocus = function () {
         return document.hidden;
-    }; //for Opera
+    }; // for Opera
 
 function AddEvent(el, ev, func) {
     if (el.addEventListener) {
@@ -1077,7 +1070,7 @@ function AddEvent(el, ev, func) {
     return false;
 }
 function RemoveEvent(evObj) {
-    //ie. RemoveEvent(myListener);
+    // ie. RemoveEvent(myListener);
     if (!evObj) return false;
     if (evObj[0].removeEventListener) evObj[0].removeEventListener(evObj[1], evObj[2], false);
     else if (evObj[0].detachEvent) evObj[0].detachEvent('on' + evObj[1], evObj[2]);
@@ -1095,14 +1088,14 @@ function FireEvent(el, ev) {
 }
 
 function writeIcon(icon) {
-    //returns CSS for an icon's background image
-    //for use in CSS strings
+    // returns CSS for an icon's background image
+    // for use in CSS strings
     return (
         `${icon[2] ? `background-image:url('${icon[2].replace(/'/g, '\\\'')}');` : ''}background-position:${-icon[0] * 48}px ${-icon[1] * 48}px;`
     );
 }
 function tinyIcon(icon, css) {
-    //returns HTML displaying an icon, with optional extra CSS
+    // returns HTML displaying an icon, with optional extra CSS
     return (
         '<div class="icon tinyIcon" style="vertical-align:middle;display:inline-block;' +
         writeIcon(icon) +
@@ -1112,7 +1105,7 @@ function tinyIcon(icon, css) {
     );
 }
 
-let Loader = function () //asset-loading system
+let Loader = function () // asset-loading system
 {
     this.loadingN = 0;
     this.assetsN = 0;
@@ -1120,7 +1113,7 @@ let Loader = function () //asset-loading system
     this.assetsLoading = [];
     this.assetsLoaded = [];
     this.domain = '';
-    this.loaded = 0; //callback
+    this.loaded = 0; // callback
     this.doneLoading = 0;
 
     this.blank = document.createElement('canvas');
@@ -1147,7 +1140,7 @@ let Loader = function () //asset-loading system
     this.Replace = function (old, newer) {
         if (!this.assets[old]) this.Load([old]);
         let img = new Image();
-        if (newer.indexOf('/') != -1) /*newer.indexOf('http')!=-1 || newer.indexOf('https')!=-1)*/ img.src = newer;
+        if (newer.indexOf('/') != -1) img.src = newer;
         else img.src = this.domain + newer;
         img.alt = newer;
         img.onload = bind(this, this.onLoad);
@@ -1201,13 +1194,12 @@ for (let i = 0; i < 12; i++) {
     SoundInsts[i] = new Audio();
 }
 let pitchSupport = false;
-//note : Chrome turns out to not support webkitPreservesPitch despite the specifications claiming otherwise, and Firefox clips some short sounds when changing playbackRate, so i'm turning the feature off completely until browsers get it together
-//if (SoundInsts[0].preservesPitch || SoundInsts[0].mozPreservesPitch || SoundInsts[0].webkitPreservesPitch) pitchSupport=true;
+// note : Chrome turns out to not support webkitPreservesPitch despite the specifications claiming otherwise, and Firefox clips some short sounds when changing playbackRate, so i'm turning the feature off completely until browsers get it together
 
 let PlaySound = function (url, vol, pitchVar) {
-    //url : the url of the sound to play (will be cached so it only loads once)
-    //vol : volume between 0 and 1 (multiplied by game volume setting); defaults to 1 (full volume)
-    //(DISABLED) pitchVar : pitch variance in browsers that support it (Firefox only at the moment); defaults to 0.05 (which means pitch can be up to -5% or +5% anytime the sound plays)
+    // url : the url of the sound to play (will be cached so it only loads once)
+    // vol : volume between 0 and 1 (multiplied by game volume setting); defaults to 1 (full volume)
+    // (DISABLED) pitchVar : pitch variance in browsers that support it (Firefox only at the moment); defaults to 0.05 (which means pitch can be up to -5% or +5% anytime the sound plays)
     let volume = 1;
     let volumeSetting = Game.volume;
     if (typeof vol !== 'undefined') volume = vol;
@@ -1217,18 +1209,16 @@ let PlaySound = function (url, vol, pitchVar) {
     }
     if (!volumeSetting || volume == 0) return 0;
     if (typeof Sounds[url] === 'undefined') {
-        //sound isn't loaded, cache it
+        // sound isn't loaded, cache it
         Sounds[url] = new Audio(url);
         Sounds[url].onloadeddata = function (e) {
             PlaySound(url, vol, pitchVar);
         };
-        //Sounds[url].load();
     } else if (Sounds[url].readyState >= 2 && SoundInsts[SoundI].paused) {
         let sound = SoundInsts[SoundI];
         SoundI++;
         if (SoundI >= 12) SoundI = 0;
         sound.src = Sounds[url].src;
-        //sound.currentTime=0;
         sound.volume = Math.pow((volume * volumeSetting) / 100, 2);
         if (pitchSupport) {
             pitchVar ??= 0.05;
@@ -1241,15 +1231,10 @@ let PlaySound = function (url, vol, pitchVar) {
         try {
             sound.play();
         } catch (e) { /* empty */ }
-        /*
-        let sound=Sounds[url].cloneNode();
-        sound.volume=Math.pow(volume*volumeSetting/100,2);
-        sound.onended=function(e){if (e.target){delete e.target;}};
-        sound.play();*/
     }
 };
 let PlayMusicSound = function (url, vol, pitchVar) {
-    //like PlaySound but, if music is enabled, play with music volume
+    // like PlaySound but, if music is enabled, play with music volume
     PlaySound(url, (vol || 1) - (Music ? 10 : 0), pitchVar);
 };
 
@@ -1298,13 +1283,13 @@ Timer.say = function (label) {
     Timer.labels[label] = '<div style="border-top:1px solid #ccc;">' + label + '</div>';
 };
 
-/*=====================================================================================
+/* =====================================================================================
 GAME INITIALIZATION
 =======================================================================================*/
 let Game = {};
 
 (function () {
-    /*=====================================================================================
+    /* =====================================================================================
     MODDING API
     =======================================================================================*/
     /*
@@ -1315,15 +1300,15 @@ let Game = {};
         -the "mod object" value is an object structured like so:
             {
                 init:function(){
-                    //this function is called as soon as the mod is registered
-                    //declare hooks here
+                    // this function is called as soon as the mod is registered
+                    // declare hooks here
                 },
                 save:function(){
-                    //use this to store persistent data associated with your mod
+                    // use this to store persistent data associated with your mod
                     return 'a string to be saved';
                 },
                 load:function(str){
-                    //do stuff with the string data you saved previously
+                    // do stuff with the string data you saved previously
                 },
             }
         -the mod object may also contain any other data or functions you want, for instance to make them accessible to other mods
@@ -1386,7 +1371,6 @@ let Game = {};
                 console.log('===initializing mod', mod.id);
                 mod.init();
                 mod.init = 0;
-                //if (mod.load && Game.modSaveData[mod.id]) mod.load(Game.modSaveData[mod.id]);
             }
         }
         if (Game.sortedMods.length > 0) Game.Win('Third-party');
@@ -1426,7 +1410,7 @@ let Game = {};
         return val;
     };
     Game.safeSaveString = function (str) {
-        //look as long as it works
+        // look as long as it works
         str = replaceAll('|', '[P]', str);
         str = replaceAll(';', '[S]', str);
         return str;
@@ -1502,11 +1486,11 @@ let Game = {};
         );
     };
 
-    Game.LoadMod = LoadScript; //loads the mod at the given URL
+    Game.LoadMod = LoadScript; // loads the mod at the given URL
 
     const ENABLE_EXAMPLE_MOD = false;
     if (ENABLE_EXAMPLE_MOD) {
-        //EXAMPLE MOD
+        // EXAMPLE MOD
         Game.registerMod('test mod', {
             /*
                 what this example mod does:
@@ -1532,7 +1516,7 @@ let Game = {};
                 });
             },
             save: function () {
-                //note: we use stringified JSON for ease and clarity but you could store any type of string
+                // note: we use stringified JSON for ease and clarity but you could store any type of string
                 return JSON.stringify({ text: Game.playerIntro });
             },
             load: function (str) {
@@ -1540,7 +1524,7 @@ let Game = {};
                 if (data.text) Game.mods['test mod'].addIntro(data.text);
             },
             addIntro: function (text) {
-                //note: this is not a mod hook, just a function that's part of the mod
+                // note: this is not a mod hook, just a function that's part of the mod
                 Game.playerIntro =
                     text || choose(['oh snap, it\'s', 'watch out, it\'s', 'oh no! here comes', 'hide your cookies, for here comes', 'behold! it\'s']);
                 if (!l('bakerySubtitle'))
@@ -1555,9 +1539,9 @@ let Game = {};
         });
     }
 
-    //replacing an existing canvas picture with a new one at runtime : Game.Loader.Replace('perfectCookie.png','imperfectCookie.png');
-    //upgrades and achievements can use other pictures than icons.png; declare their icon with [posX,posY,'http://example.com/myIcons.png']
-    //check out the "UNLOCKING STUFF" section to see how unlocking achievs and upgrades is done
+    // replacing an existing canvas picture with a new one at runtime : Game.Loader.Replace('perfectCookie.png','imperfectCookie.png');
+    // upgrades and achievements can use other pictures than icons.png; declare their icon with [posX,posY,'http://example.com/myIcons.png']
+    // check out the "UNLOCKING STUFF" section to see how unlocking achievs and upgrades is done
 })();
 
 Game.version = VERSION;
@@ -1571,16 +1555,13 @@ if (Game.beta) Game.SaveTo = 'CookieClickerGameBeta';
 Game.Launch = function () {
     Game.mobile = 0;
     Game.touchEvents = 0;
-    //if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) Game.mobile=1;
-    //if (Game.mobile) Game.touchEvents=1;
-    //if ('ontouchstart' in document.documentElement) Game.touchEvents=1;
 
     let css = document.createElement('style');
     css.type = 'text/css';
     css.innerHTML = 'body .icon,body .crate,body .usesIcon{background-image:url(img/icons.png?v=' + Game.version + ');}';
     document.head.appendChild(css);
 
-    //this is so shimmers can still appear even if you lose connection after the game is loaded
+    // this is so shimmers can still appear even if you lose connection after the game is loaded
     let preloadImages = [
         'img/goldCookie.png',
         'img/wrathCookie.png',
@@ -1606,7 +1587,7 @@ Game.Launch = function () {
     });
 
     if (!EN) {
-        //code-patching the CSS for localization feels like it should be against the law, and yet
+        // code-patching the CSS for localization feels like it should be against the law, and yet
         let css = document.createElement('style');
         css.type = 'text/css';
         css.innerHTML =
@@ -1629,8 +1610,8 @@ Game.Launch = function () {
         document.head.appendChild(css);
     }
 
-    Game.baseSeason = ''; //halloween, christmas, valentines, fools, easter
-    //automatic season detection (might not be 100% accurate)
+    Game.baseSeason = ''; // halloween, christmas, valentines, fools, easter
+    // automatic season detection (might not be 100% accurate)
     let year = new Date().getFullYear();
     let leap = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0 ? 1 : 0;
     // @ts-expect-error
@@ -1640,7 +1621,7 @@ Game.Launch = function () {
     else if (day >= 304 - 7 + leap && day <= 304 + leap) Game.baseSeason = 'halloween';
     else if (day >= 349 + leap && day <= 365 + leap) Game.baseSeason = 'christmas';
     else {
-        //easter is a pain goddamn
+        // easter is a pain goddamn
         let easterDay = (function (Y) {
             let C = Math.floor(Y / 100);
             let N = Y - 19 * Math.floor(Y / 19);
@@ -1770,7 +1751,6 @@ Game.Launch = function () {
         '<div class="listing">&bull; game has been renamed to "Cookie Clicker" to avoid confusion</div>' +
         '<div class="listing">&bull; can now click the big cookie to generate cookies for free</div>' +
         '<div class="listing">&bull; removed fall damage</div>' +
-        //'<div class="listing">&bull; fixed various typos : player\'s name is now correctly spelled as "[bakeryName]"</div>'+
         '<div class="listing">&bull; removed all references to computer-animated movie <i style="font-style:italic;">Hoodwinked!</i> (2005)</div>' +
         '<div class="listing">&bull; went back in time and invented cookies and computer mice, ensuring Cookie Clicker would one day come to exist</div>' +
         '<div class="listing">&bull; game now fully compliant with Geneva Conventions</div>' +
@@ -1947,7 +1927,6 @@ Game.Launch = function () {
         '-golden switch now gives +50% CpS, and residual luck is +10% CpS per golden cookie upgrade (up from +25% and +1%, respectively)<br>' +
         '-lucky cookies and cookie chain payouts have been modified a bit, possibly for the better, who knows!<br>' +
         '-wrinklers had previously been reduced to a maximum of 8 (10 with a heavenly upgrade), but are now back to 10 (12 with the upgrade)<br>' +
-        /*'-all animations are now handled by requestAnimationFrame(), which should hopefully help make the game less resource-intensive<br>'+*/
         '-an ascension now only counts for achievement purposes if you earned at least 1 prestige level from it<br>' +
         '-the emblematic Cookie Clicker font (Kavoon) was bugged in Firefox, and has been replaced with a new font (Merriweather)<br>' +
         '-the mysterious wrinkly creature is now even rarer, but has a shadow achievement tied to it<br>' +
@@ -2245,7 +2224,7 @@ Game.Launch = function () {
     Game.Init = function () {
         Game.ready = 1;
 
-        /*=====================================================================================
+        /* =====================================================================================
         VARIABLES AND PRESETS
         =======================================================================================*/
         Game.T = 0;
@@ -2257,7 +2236,7 @@ Game.Launch = function () {
 
         Game.l = l('game');
         Game.wrapper = l('wrapper');
-        Game.bounds = 0; //rectangle defining screen limits (right,left,bottom,top) updated every logic frame
+        Game.bounds = 0; // rectangle defining screen limits (right,left,bottom,top) updated every logic frame
 
         let TopBarOffset = 32;
         Game.wrapper.classList.add('onWeb');
@@ -2283,12 +2262,12 @@ Game.Launch = function () {
             me.parentNode.removeChild(me);
         }
 
-        Game.lastActivity = Date.now(); //reset on mouse move, key press or click
+        Game.lastActivity = Date.now(); // reset on mouse move, key press or click
 
-        //latency compensator stuff
+        // latency compensator stuff
         Game.time = Date.now();
         Game.accumulatedDelay = 0;
-        Game.delayTimeouts = 0; //how many times we've gone over the timeout delay
+        Game.delayTimeouts = 0; // how many times we've gone over the timeout delay
         Game.catchupLogic = 0;
         Game.fpsStartTime = 0;
         Game.frameNumber = 0;
@@ -2305,36 +2284,36 @@ Game.Launch = function () {
             return result;
         };
 
-        Game.cookiesEarned = 0; //all cookies earned during gameplay
-        Game.cookies = 0; //cookies
-        Game.cookiesd = 0; //cookies display
-        Game.cookiesPs = 1; //cookies per second (to recalculate with every new purchase)
-        Game.cookiesPsRaw = 0; //raw cookies per second
-        Game.cookiesPsRawHighest = 0; //highest raw cookies per second this ascension
-        Game.cookiesReset = 0; //cookies lost to resetting (used to determine prestige and heavenly chips)
-        Game.cookieClicks = 0; //+1 for each click on the cookie
-        Game.goldenClicks = 0; //+1 for each golden cookie clicked (all time)
-        Game.goldenClicksLocal = 0; //+1 for each golden cookie clicked (this game only)
-        Game.missedGoldenClicks = 0; //+1 for each golden cookie missed
-        Game.handmadeCookies = 0; //all the cookies made from clicking the cookie
-        Game.milkProgress = 0; //you gain a little bit for each achievement. Each increment of 1 is a different milk displayed.
-        Game.milkH = Game.milkProgress / 2; //milk height, between 0 and 1 (although should never go above 0.5)
-        Game.milkHd = 0; //milk height display
-        Game.milkType = 0; //custom milk
-        Game.bgType = 0; //custom background
-        Game.chimeType = 0; //golden cookie chime
-        Game.prestige = 0; //prestige level (recalculated depending on Game.cookiesReset)
-        Game.heavenlyChips = 0; //heavenly chips the player currently has
-        Game.heavenlyChipsDisplayed = 0; //ticks up or down to match Game.heavenlyChips
-        Game.heavenlyChipsSpent = 0; //heavenly chips spent on cookies, upgrades and such
-        Game.heavenlyCookies = 0; //how many cookies have we baked from chips (unused)
+        Game.cookiesEarned = 0; // all cookies earned during gameplay
+        Game.cookies = 0; // cookies
+        Game.cookiesd = 0; // cookies display
+        Game.cookiesPs = 1; // cookies per second (to recalculate with every new purchase)
+        Game.cookiesPsRaw = 0; // raw cookies per second
+        Game.cookiesPsRawHighest = 0; // highest raw cookies per second this ascension
+        Game.cookiesReset = 0; // cookies lost to resetting (used to determine prestige and heavenly chips)
+        Game.cookieClicks = 0; // +1 for each click on the cookie
+        Game.goldenClicks = 0; // +1 for each golden cookie clicked (all time)
+        Game.goldenClicksLocal = 0; // +1 for each golden cookie clicked (this game only)
+        Game.missedGoldenClicks = 0; // +1 for each golden cookie missed
+        Game.handmadeCookies = 0; // all the cookies made from clicking the cookie
+        Game.milkProgress = 0; // you gain a little bit for each achievement. Each increment of 1 is a different milk displayed.
+        Game.milkH = Game.milkProgress / 2; // milk height, between 0 and 1 (although should never go above 0.5)
+        Game.milkHd = 0; // milk height display
+        Game.milkType = 0; // custom milk
+        Game.bgType = 0; // custom background
+        Game.chimeType = 0; // golden cookie chime
+        Game.prestige = 0; // prestige level (recalculated depending on Game.cookiesReset)
+        Game.heavenlyChips = 0; // heavenly chips the player currently has
+        Game.heavenlyChipsDisplayed = 0; // ticks up or down to match Game.heavenlyChips
+        Game.heavenlyChipsSpent = 0; // heavenly chips spent on cookies, upgrades and such
+        Game.heavenlyCookies = 0; // how many cookies have we baked from chips (unused)
         Game.permanentUpgrades = [-1, -1, -1, -1, -1];
-        Game.ascensionMode = 0; //type of challenge run if any
-        Game.resets = 0; //reset counter
-        Game.lumps = -1; //sugar lumps
-        Game.lumpsTotal = -1; //sugar lumps earned across all playthroughs (-1 means they haven't even started yet)
-        Game.lumpT = Date.now(); //time when the current lump started forming
-        Game.lumpRefill = 0; //time left before a sugar lump can be used again (on minigame refills etc) in logic frames
+        Game.ascensionMode = 0; // type of challenge run if any
+        Game.resets = 0; // reset counter
+        Game.lumps = -1; // sugar lumps
+        Game.lumpsTotal = -1; // sugar lumps earned across all playthroughs (-1 means they haven't even started yet)
+        Game.lumpT = Date.now(); // time when the current lump started forming
+        Game.lumpRefill = 0; // time left before a sugar lump can be used again (on minigame refills etc) in logic frames
 
         Game.makeSeed = function () {
             let chars = 'abcdefghijklmnopqrstuvwxyz'.split('');
@@ -2344,10 +2323,10 @@ Game.Launch = function () {
             }
             return str;
         };
-        Game.seed = Game.makeSeed(); //each run has its own seed, used for deterministic random stuff
+        Game.seed = Game.makeSeed(); // each run has its own seed, used for deterministic random stuff
 
-        Game.volume = 75; //sound volume
-        Game.volumeMusic = 50; //music volume
+        Game.volume = 75; // sound volume
+        Game.volumeMusic = 50; // music volume
 
         Game.elderWrath = 0;
         Game.elderWrathOld = 0;
@@ -2356,8 +2335,8 @@ Game.Launch = function () {
         Game.pledgeT = 0;
         Game.researchT = 0;
         Game.nextResearch = 0;
-        Game.cookiesSucked = 0; //cookies sucked by wrinklers
-        Game.cpsSucked = 0; //percent of CpS being sucked by wrinklers
+        Game.cookiesSucked = 0; // cookies sucked by wrinklers
+        Game.cpsSucked = 0; // percent of CpS being sucked by wrinklers
         Game.wrinklersPopped = 0;
         Game.santaLevel = 0;
         Game.reindeerClicked = 0;
@@ -2372,10 +2351,10 @@ Game.Launch = function () {
 
         Game.blendModesOn = document.createElement('detect').style.mixBlendMode === '';
 
-        Game.bg = ''; //background (grandmas and such)
-        Game.bgFade = ''; //fading to background
-        Game.bgR = 0; //ratio (0 - not faded, 1 - fully faded)
-        Game.bgRd = 0; //ratio displayed
+        Game.bg = ''; // background (grandmas and such)
+        Game.bgFade = ''; // fading to background
+        Game.bgR = 0; // ratio (0 - not faded, 1 - fully faded)
+        Game.bgRd = 0; // ratio displayed
 
         Game.windowW = window.innerWidth;
         Game.windowH = window.innerHeight;
@@ -2420,44 +2399,44 @@ Game.Launch = function () {
         Game.resize();
 
         // @ts-expect-error
-        Game.startDate = parseInt(Date.now()); //when we started playing
+        Game.startDate = parseInt(Date.now()); // when we started playing
         // @ts-expect-error
-        Game.fullDate = parseInt(Date.now()); //when we started playing (carries over with resets)
+        Game.fullDate = parseInt(Date.now()); // when we started playing (carries over with resets)
         // @ts-expect-error
-        Game.lastDate = parseInt(Date.now()); //when we last saved the game (used to compute "cookies made since we closed the game" etc)
+        Game.lastDate = parseInt(Date.now()); // when we last saved the game (used to compute "cookies made since we closed the game" etc)
 
         Game.prefs = [];
         Game.DefaultPrefs = function () {
-            Game.prefs.particles = 1; //particle effects : falling cookies etc
-            Game.prefs.numbers = 1; //numbers that pop up when clicking the cookie
-            Game.prefs.autosave = 1; //save the game every minute or so
-            Game.prefs.autoupdate = 1; //send an AJAX request to the server every 30 minutes (note : ignored)
-            Game.prefs.milk = 1; //display milk
-            Game.prefs.fancy = 1; //CSS shadow effects (might be heavy on some browsers)
-            Game.prefs.warn = 0; //warn before closing the window
-            Game.prefs.cursors = 1; //display cursors
-            Game.prefs.focus = 1; //make the game refresh less frequently when off-focus
-            Game.prefs.popups = 0; //use old-style popups (no longer used)
-            Game.prefs.format = 0; //shorten numbers
-            Game.prefs.notifs = 0; //notifications fade faster
-            Game.prefs.animate = 1; //animate buildings
-            Game.prefs.wobbly = 1; //wobbly cookie
-            Game.prefs.monospace = 0; //alt monospace font for cookies
-            Game.prefs.filters = 1; //CSS filter effects (might be heavy on some browsers)
-            Game.prefs.cookiesound = 1; //use new cookie click sound
-            Game.prefs.crates = 0; //show crates around icons in stats
-            Game.prefs.altDraw = 0; //use requestAnimationFrame to update drawing instead of fixed 30 fps setTimeout
-            Game.prefs.showBackupWarning = 1; //if true, show a "Have you backed up your save?" message on save load; set to false when save is exported
-            Game.prefs.extraButtons = 1; //if true, show Mute buttons and the building master bar
-            Game.prefs.askLumps = 0; //if true, show a prompt before spending lumps
-            Game.prefs.customGrandmas = 1; //if true, show patreon names for grandmas
-            Game.prefs.timeout = 0; //if true, game may show pause screen when timed out
-            Game.prefs.cloudSave = 1; //if true and on Steam, save and load to cloud
-            Game.prefs.bgMusic = 1; //if true and on Steam, play music even when game isn't focused
-            Game.prefs.notScary = 0; //if true, make some of the scary stuff less scary ("eyebrow mode")
-            Game.prefs.fullscreen = 0; //if true, Steam game will be fullscreen
-            Game.prefs.screenreader = 0; //if true, add some DOM stuff to facilitate screenreader interaction (requires reload)
-            Game.prefs.discordPresence = 1; //if true and applicable, show game activity in Discord status
+            Game.prefs.particles = 1; // particle effects : falling cookies etc
+            Game.prefs.numbers = 1; // numbers that pop up when clicking the cookie
+            Game.prefs.autosave = 1; // save the game every minute or so
+            Game.prefs.autoupdate = 1; // send an AJAX request to the server every 30 minutes (note : ignored)
+            Game.prefs.milk = 1; // display milk
+            Game.prefs.fancy = 1; // CSS shadow effects (might be heavy on some browsers)
+            Game.prefs.warn = 0; // warn before closing the window
+            Game.prefs.cursors = 1; // display cursors
+            Game.prefs.focus = 1; // make the game refresh less frequently when off-focus
+            Game.prefs.popups = 0; // use old-style popups (no longer used)
+            Game.prefs.format = 0; // shorten numbers
+            Game.prefs.notifs = 0; // notifications fade faster
+            Game.prefs.animate = 1; // animate buildings
+            Game.prefs.wobbly = 1; // wobbly cookie
+            Game.prefs.monospace = 0; // alt monospace font for cookies
+            Game.prefs.filters = 1; // CSS filter effects (might be heavy on some browsers)
+            Game.prefs.cookiesound = 1; // use new cookie click sound
+            Game.prefs.crates = 0; // show crates around icons in stats
+            Game.prefs.altDraw = 0; // use requestAnimationFrame to update drawing instead of fixed 30 fps setTimeout
+            Game.prefs.showBackupWarning = 1; // if true, show a "Have you backed up your save?" message on save load; set to false when save is exported
+            Game.prefs.extraButtons = 1; // if true, show Mute buttons and the building master bar
+            Game.prefs.askLumps = 0; // if true, show a prompt before spending lumps
+            Game.prefs.customGrandmas = 1; // if true, show patreon names for grandmas
+            Game.prefs.timeout = 0; // if true, game may show pause screen when timed out
+            Game.prefs.cloudSave = 1; // if true and on Steam, save and load to cloud
+            Game.prefs.bgMusic = 1; // if true and on Steam, play music even when game isn't focused
+            Game.prefs.notScary = 0; // if true, make some of the scary stuff less scary ("eyebrow mode")
+            Game.prefs.fullscreen = 0; // if true, Steam game will be fullscreen
+            Game.prefs.screenreader = 0; // if true, add some DOM stuff to facilitate screenreader interaction (requires reload)
+            Game.prefs.discordPresence = 1; // if true and applicable, show game activity in Discord status
         };
         Game.DefaultPrefs();
 
@@ -2491,7 +2470,7 @@ Game.Launch = function () {
             );
         };
 
-        /*=====================================================================================
+        /* =====================================================================================
         BAKERY NAME
         =======================================================================================*/
         Game.RandomBakeryName = function () {
@@ -2641,12 +2620,10 @@ Game.Launch = function () {
             try {
                 let exp = new RegExp('[^\'\\-_0-9 \\p{L}]', 'gu');
                 Game.bakeryName = what.replace(exp, ' ');
-                //Game.bakeryName=what.replace(/[^'\-_0-9 \p{L}]/gu,' ');
                 Game.bakeryName = Game.bakeryName.trim().substring(0, 28);
             } catch (e) {
                 let exp = new RegExp('W+', 'g');
                 Game.bakeryName = what.replace(exp, ' ');
-                //Game.bakeryName=what.replace(/\W+/g,' ');
                 Game.bakeryName = Game.bakeryName.substring(0, 28);
             }
             Game.bakeryNameRefresh();
@@ -2695,7 +2672,7 @@ Game.Launch = function () {
 
         Game.bakeryNameSet(Game.GetBakeryName());
 
-        /*=====================================================================================
+        /* =====================================================================================
         TOOLTIP
         =======================================================================================*/
         Game.tooltip = {
@@ -2714,8 +2691,6 @@ Game.Launch = function () {
             this.shouldHide = 0;
             this.text = text;
             this.from = from;
-            //this.x=x;
-            //this.y=y;
             this.origin = origin;
             // @ts-expect-error
             let tt = this.tt;
@@ -2752,16 +2727,12 @@ Game.Launch = function () {
                 Y = Game.mouseY - 32;
                 if (Game.onCrate) Y = Game.onCrate.getBounds().top - 42;
                 Y = Math.max(0, Math.min(Game.windowH - height - 44, Y));
-                /*this.tta.style.right='308px';//'468px';
-                this.tta.style.left='auto';
-                if (Game.onCrate) Y=Game.onCrate.getBounds().top-2;
-                this.tta.style.top=Math.max(0,Math.min(Game.windowH-this.tt.clientHeight-64,Y-48))+'px';*/
             } else {
                 if (Game.onCrate) {
                     let rect = Game.onCrate.getBounds();
                     if (rect.left == 0 && rect.top == 0) {
-                        //if we get that bug where we get stuck in the top-left, move to the mouse (REVISION : just do nothing)
-                        return false; /*rect.left=Game.mouseX-24;rect.right=Game.mouseX+24;rect.top=Game.mouseY-24;rect.bottom=Game.mouseY+24;*/
+                        // if we get that bug where we get stuck in the top-left, move to the mouse (REVISION : just do nothing)
+                        return false;
                     }
                     // @ts-expect-error
                     if (this.origin == 'left') {
@@ -2805,7 +2776,6 @@ Game.Launch = function () {
                     // @ts-expect-error
                     Y = rect.top - this.tt.clientHeight - 48;
                     X = Math.max(0, Math.min(Game.windowW - width - 16, X));
-                    //Y=Math.max(0,Math.min(Game.windowH-this.tt.clientHeight-64,Y));
                     if (Y < 0) Y = rect.bottom - 24;
                     if (Y + height + 40 > Game.windowH) {
                         X = rect.right + 8;
@@ -2923,7 +2893,7 @@ Game.Launch = function () {
                 })()
             );
         };
-        Game.tooltip.wobble = function () { /*//!nullsub*/ };
+        Game.tooltip.wobble = STUB;
 
         Game.externalDataLoaded = false;
 
@@ -3113,9 +3083,8 @@ Game.Launch = function () {
         l('heralds').style.display = 'inline-block';
 
         Game.useLocalStorage = 1;
-        //window.localStorage.clear();//won't switch back to cookie-based if there is localStorage info
 
-        /*=====================================================================================
+        /* =====================================================================================
         SAVE
         =======================================================================================*/
         Game.ExportSave = function () {
@@ -3129,7 +3098,7 @@ Game.Launch = function () {
                 Game.WriteSave(1) +
                 '</textarea></div>',
                 [loc('All done!')]
-            ); //prompt('Copy this text and keep it somewhere safe!',Game.WriteSave(1));
+            );
             // @ts-expect-error
             l('textareaPrompt').focus();
             // @ts-expect-error
@@ -3151,7 +3120,7 @@ Game.Launch = function () {
                     ],
                     loc('Nevermind')
                 ]
-            ); //prompt('Please paste in the text that was given to you on save export.','');
+            );
             // @ts-expect-error
             l('textareaPrompt').focus();
         };
@@ -3183,18 +3152,18 @@ Game.Launch = function () {
         Game.toReload = false;
         Game.toSave = false;
         Game.toQuit = false;
-        Game.isSaving = false; //true while we're saving, to block some behavior
+        Game.isSaving = false; // true while we're saving, to block some behavior
         Game.lastSaveData = '';
         Game.WriteSave = function (type) {
             Game.toSave = false;
-            //type: none is default, 1=return string only, 2=return uncompressed string, 3=return uncompressed, commented string
+            // type: none is default, 1=return string only, 2=return uncompressed string, 3=return uncompressed, commented string
             Game.lastDate = parseInt(Game.time);
             let str = '';
             if (type == 3) str += '\nGame version\n';
             str += Game.version + '|';
-            str += '|'; //just in case we need some more stuff here
+            str += '|'; // just in case we need some more stuff here
             if (type == 3) str += '\n\nRun details';
-            str += //save stats
+            str += // save stats
                 (type == 3 ? '\n	run start date : ' : '') +
                 parseInt(Game.startDate) +
                 ';' +
@@ -3211,7 +3180,7 @@ Game.Launch = function () {
                 Game.seed +
                 '|';
             if (type == 3) str += '\n\nPacked preferences bitfield\n	';
-            let str2 = //prefs
+            let str2 = // prefs
                 (Game.prefs.particles ? '1' : '0') +
                 (Game.prefs.numbers ? '1' : '0') +
                 (Game.prefs.autosave ? '1' : '0') +
@@ -3401,11 +3370,11 @@ Game.Launch = function () {
                 (type == 3 ? '\n	music volume : ' : '') +
                 parseInt(Math.floor(Game.volumeMusic).toString()) +
                 ';' +
-                '|'; //cookies and lots of other stuff
+                '|'; // cookies and lots of other stuff
 
             if (type == 3) str += '\n\nBuildings : amount, bought, cookies produced, level, minigame data';
             for (let i in Game.Objects) {
-                //buildings
+                // buildings
                 let me = Game.Objects[i];
                 if (type == 3) str += '\n	' + me.name + ' : ';
                 if (me.vanilla) {
@@ -3422,23 +3391,23 @@ Game.Launch = function () {
             if (type == 3) str += '\n\nPacked upgrades bitfield (unlocked and bought)\n	';
             let toCompress = [];
             for (let i in Game.UpgradesById) {
-                //upgrades
+                // upgrades
                 let me = Game.UpgradesById[i];
                 if (me.vanilla) toCompress.push(Math.min(me.unlocked, 1), Math.min(me.bought, 1));
             }
 
-            toCompress = pack3(toCompress.join('')); //toCompress=pack(toCompress);//CompressLargeBin(toCompress);
+            toCompress = pack3(toCompress.join(''));
 
             str += toCompress;
             str += '|';
             if (type == 3) str += '\n\nPacked achievements bitfield (won)\n	';
             toCompress = [];
             for (let i in Game.AchievementsById) {
-                //achievements
+                // achievements
                 let me = Game.AchievementsById[i];
                 if (me.vanilla) toCompress.push(Math.min(me.won));
             }
-            toCompress = pack3(toCompress.join('')); //toCompress=pack(toCompress);//CompressLargeBin(toCompress);
+            toCompress = pack3(toCompress.join(''));
             str += toCompress;
 
             str += '|';
@@ -3471,9 +3440,9 @@ Game.Launch = function () {
                 return str;
             } else {
                 if (Game.useLocalStorage) {
-                    //so we used to save the game using browser cookies, which was just really neat considering the game's name
-                    //we're using localstorage now, which is more efficient but not as cool
-                    //a moment of silence for our fallen puns
+                    // so we used to save the game using browser cookies, which was just really neat considering the game's name
+                    // we're using localstorage now, which is more efficient but not as cool
+                    // a moment of silence for our fallen puns
                     str = utf8_to_b64(str) + '!END!';
                     if (str.length < 10) {
                         Game.Notify(
@@ -3482,24 +3451,24 @@ Game.Launch = function () {
                         );
                     } else {
                         str = escape(str);
-                        localStorageSet(Game.SaveTo, str); //aaand save
+                        localStorageSet(Game.SaveTo, str); // aaand save
                         if (!localStorageGet(Game.SaveTo)) {
                             Game.Notify(loc('Error while saving'), loc('Export your save instead!'));
                         } else if (document.hasFocus()) {
                             Game.Notify(loc('Game saved'), '', '', 1, 1);
                         }
                     }
-                } //legacy system
+                } // legacy system
                 else {
-                    //that's right
-                    //we're using cookies
-                    //yeah I went there
-                    let now = new Date(); //we storin dis for 5 years, people
-                    now.setFullYear(now.getFullYear() + 5); //mmh stale cookies
+                    // that's right
+                    // we're using cookies
+                    // yeah I went there
+                    let now = new Date(); // we storin dis for 5 years, people
+                    now.setFullYear(now.getFullYear() + 5); // mmh stale cookies
                     str = utf8_to_b64(str) + '!END!';
                     Game.saveData = escape(str);
                     str = Game.SaveTo + '=' + escape(str) + '; expires=' + now.toUTCString() + ';';
-                    document.cookie = str; //aaand save
+                    document.cookie = str; // aaand save
                     if (document.cookie.indexOf(Game.SaveTo) < 0) {
                         Game.Notify(loc('Error while saving'), loc('Export your save instead!'), '', 0, 1);
                     } else if (document.hasFocus()) {
@@ -3509,11 +3478,11 @@ Game.Launch = function () {
             }
         };
 
-        /*=====================================================================================
+        /* =====================================================================================
         LOAD
         =======================================================================================*/
         Game.salvageSave = function () {
-            //for when Cookie Clicker won't load and you need your save
+            // for when Cookie Clicker won't load and you need your save
             console.log('===================================================');
             console.log('This is your save data. Copypaste it (without quotation marks) into another version using the "Import save" feature.');
             console.log(localStorageGet(Game.SaveTo));
@@ -3525,7 +3494,7 @@ Game.Launch = function () {
                 if (Game.useLocalStorage) {
                     let local = localStorageGet(Game.SaveTo);
                     if (!local) {
-                        //no localstorage save found? let's get the cookie one last time
+                        // no localstorage save found? let's get the cookie one last time
                         if (document.cookie.indexOf(Game.SaveTo) >= 0) {
                             str = unescape(document.cookie.split(Game.SaveTo + '=')[1]);
                             document.cookie = Game.SaveTo + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
@@ -3534,10 +3503,10 @@ Game.Launch = function () {
                         // @ts-expect-error
                         str = unescape(local);
                     }
-                } //legacy system
+                } // legacy system
                 else {
                     if (document.cookie.indexOf(Game.SaveTo) >= 0) str = unescape(document.cookie.split(Game.SaveTo + '=')[1]);
-                    //get cookie here
+                    // get cookie here
                     else return false;
                 }
             }
@@ -3579,13 +3548,13 @@ Game.Launch = function () {
                         Game.T = 0;
 
                         // @ts-expect-error
-                        spl = str[2].split(';'); //save stats
+                        spl = str[2].split(';'); // save stats
                         Game.startDate = parseInt(spl[0]);
                         Game.fullDate = parseInt(spl[1]);
                         Game.lastDate = parseInt(spl[2]);
                         let bakeryName = spl[3] ? spl[3] : Game.GetBakeryName();
                         Game.seed = spl[4] ? spl[4] : Game.makeSeed();
-                        //prefs
+                        // prefs
                         // @ts-expect-error
                         spl = str[3].split('');
                         Game.prefs.particles = parseInt(spl[0]);
@@ -3623,7 +3592,7 @@ Game.Launch = function () {
                         Game.prefs.discordPresence = spl[26] ? parseInt(spl[26]) : 1;
                         BeautifyAll();
                         // @ts-expect-error
-                        spl = str[4].split(';'); //cookies and lots of other stuff
+                        spl = str[4].split(';'); // cookies and lots of other stuff
                         Game.cookies = parseFloat(spl[0]);
                         Game.cookiesEarned = parseFloat(spl[1]);
                         Game.cookieClicks = spl[2] ? parseInt(spl[2]) : 0;
@@ -3677,7 +3646,7 @@ Game.Launch = function () {
                         for (let i in Game.vault) {
                             Game.vault[i] = parseInt(Game.vault[i]);
                         }
-                        actualHeralds = Game.heralds; //we store the actual amount of heralds to restore it later; here we used the amount present in the save to compute offline CpS
+                        actualHeralds = Game.heralds; // we store the actual amount of heralds to restore it later; here we used the amount present in the save to compute offline CpS
                         Game.heralds = spl[48] ? parseFloat(spl[48]) : Game.heralds;
                         Game.fortuneGC = spl[49] ? parseInt(spl[49]) : 0;
                         Game.fortuneCPS = spl[50] ? parseInt(spl[50]) : 0;
@@ -3685,7 +3654,7 @@ Game.Launch = function () {
                         Game.volumeMusic = spl[52] ? parseInt(spl[52]) : 50;
 
                         // @ts-expect-error
-                        spl = str[5].split(';'); //buildings
+                        spl = str[5].split(';'); // buildings
                         Game.BuildingsOwned = 0;
                         for (let i in Game.ObjectsById) {
                             let me = Game.ObjectsById[i];
@@ -3720,7 +3689,7 @@ Game.Launch = function () {
 
                         if (str[6]) spl = str[6];
                         // @ts-expect-error
-                        else spl = []; //upgrades
+                        else spl = []; // upgrades
                         // @ts-expect-error
                         spl = spl.split('');
                         Game.UpgradesOwned = 0;
@@ -3740,7 +3709,7 @@ Game.Launch = function () {
                         }
                         if (str[7]) spl = str[7];
                         // @ts-expect-error
-                        else spl = []; //achievements
+                        else spl = []; // achievements
                         // @ts-expect-error
                         spl = spl.split('');
                         Game.AchievementsOwned = 0;
@@ -3758,7 +3727,7 @@ Game.Launch = function () {
                         Game.killBuffs();
                         let buffsToLoad = [];
                         // @ts-expect-error
-                        spl = (str[8] || '').split(';'); //buffs
+                        spl = (str[8] || '').split(';'); // buffs
                         // @ts-expect-error
                         for (let i in spl) {
                             if (spl[i]) {
@@ -3768,7 +3737,7 @@ Game.Launch = function () {
                         }
 
                         // @ts-expect-error
-                        spl = (str[9] || '').split(';'); //mod data
+                        spl = (str[9] || '').split(';'); // mod data
 
                         // @ts-expect-error
                         for (let i in spl) {
@@ -3794,7 +3763,7 @@ Game.Launch = function () {
                         if (Game.bgType == -1) Game.bgType = 0;
                         if (Game.milkType == -1 || !Game.AllMilks[Game.milkType]) Game.milkType = 0;
 
-                        //advance timers
+                        // advance timers
                         let framesElapsed = Math.ceil(((Date.now() - Game.lastDate) / 1000) * Game.fps);
                         if (Game.pledgeT > 0) Game.pledgeT = Math.max(Game.pledgeT - framesElapsed, 1);
                         if (Game.seasonT > 0) Game.seasonT = Math.max(Game.seasonT - framesElapsed, 1);
@@ -3803,7 +3772,7 @@ Game.Launch = function () {
                         Game.ResetWrinklers();
                         Game.LoadWrinklers(wrinklers.amount, wrinklers.number, wrinklers.shinies, wrinklers.amountShinies);
 
-                        //recompute season trigger prices
+                        // recompute season trigger prices
                         if (Game.Has('Season switcher')) {
                             for (let i in Game.seasons) {
                                 Game.Unlock(Game.seasons[i].trigger);
@@ -3811,10 +3780,8 @@ Game.Launch = function () {
                         }
                         Game.computeSeasonPrices();
 
-                        //recompute prestige
+                        // recompute prestige
                         Game.prestige = Math.floor(Game.HowMuchPrestige(Game.cookiesReset));
-                        //if ((Game.heavenlyChips+Game.heavenlyChipsSpent)<Game.prestige)
-                        //{Game.heavenlyChips=Game.prestige;Game.heavenlyChipsSpent=0;}//chips owned and spent don't add up to total prestige? set chips owned to prestige
 
                         Game.bakeryNameSet(bakeryName);
 
@@ -3829,10 +3796,10 @@ Game.Launch = function () {
 
                         let timeOffline = (Date.now() - Game.lastDate) / 1000;
 
-                        if (Math.random() < 1 / 10000) Game.TOYS = 1; //teehee!
-                        if (Math.random() < 1 / 10000) Game.WINKLERS = 1; //squeak
+                        if (Math.random() < 1 / 10000) Game.TOYS = 1; // teehee!
+                        if (Math.random() < 1 / 10000) Game.WINKLERS = 1; // squeak
 
-                        //compute cookies earned while the game was closed
+                        // compute cookies earned while the game was closed
                         if (Game.mobile || Game.Has('Perfect idling') || Game.Has('Twin Gates of Transcendence')) {
                             let maxTime, percent;
                             if (Game.Has('Perfect idling')) {
@@ -3892,7 +3859,7 @@ Game.Launch = function () {
                             }
                         }
 
-                        //we load buffs after everything as we do not want them to interfer with offline CpS
+                        // we load buffs after everything as we do not want them to interfer with offline CpS
                         for (let i in buffsToLoad) {
                             let mestr = buffsToLoad[i];
                             let type = Game.buffTypes[parseInt(mestr[0])];
@@ -3908,7 +3875,7 @@ Game.Launch = function () {
                         Game.loadLumps(timeOffline);
 
                         Game.bakeryNameRefresh();
-                    } //importing old version save
+                    } // importing old version save
                     else {
                         Game.Notify(loc('Error importing save'), loc('Sorry, you can\'t import saves from the classic version.'), '', 6, 1);
                         return false;
@@ -3938,7 +3905,7 @@ Game.Launch = function () {
                     Game.killShimmers();
 
                     if (Game.T > Game.fps * 5 && Game.ReincarnateTimer == 0) {
-                        //fade out of black and pop the cookie
+                        // fade out of black and pop the cookie
                         Game.ReincarnateTimer = 1;
                         Game.addClass('reincarnating');
                         Game.BigCookieSize = 0;
@@ -3996,7 +3963,7 @@ Game.Launch = function () {
             return true;
         };
 
-        /*=====================================================================================
+        /* =====================================================================================
         RESET
         =======================================================================================*/
         Game.Reset = function (hard) {
@@ -4038,8 +4005,8 @@ Game.Launch = function () {
             Game.cookiesEarned = 0;
             Game.cookieClicks = 0;
             Game.goldenClicksLocal = 0;
-            //Game.goldenClicks=0;
-            //Game.missedGoldenClicks=0;
+            // Game.goldenClicks=0;
+            // Game.missedGoldenClicks=0;
             Game.handmadeCookies = 0;
             Game.cookiesPsRawHighest = 0;
             if (hard) {
@@ -4140,12 +4107,6 @@ Game.Launch = function () {
                 }
             }
 
-            /*for (let i in Game.AchievementsById)
-            {
-                let me=Game.AchievementsById[i];
-                me.won=0;
-            }*/
-            //Game.DefaultPrefs();
             BeautifyAll();
 
             Game.RebuildUpgrades();
@@ -4185,7 +4146,7 @@ Game.Launch = function () {
             if (hard) {
                 Game.clicksThisSession = 0;
                 if (Game.T > Game.fps * 5 && Game.ReincarnateTimer == 0) {
-                    //fade out of black and pop the cookie
+                    // fade out of black and pop the cookie
                     Game.ReincarnateTimer = 1;
                     Game.addClass('reincarnating');
                     Game.BigCookieSize = 0;
@@ -4269,11 +4230,11 @@ Game.Launch = function () {
             Game.onCrate = what;
         };
         Game.crate = function (me, context, forceClickStr, id, style) {
-            //produce a crate with associated tooltip for an upgrade or achievement
-            //me is an object representing the upgrade or achievement
-            //context can be "store", "ascend", "stats" or undefined
-            //forceClickStr changes what is done when the crate is clicked
-            //id is the resulting div's desired id
+            // produce a crate with associated tooltip for an upgrade or achievement
+            // me is an object representing the upgrade or achievement
+            // context can be "store", "ascend", "stats" or undefined
+            // forceClickStr changes what is done when the crate is clicked
+            // id is the resulting div's desired id
 
             let classes = 'crate';
             let enabled = 0;
@@ -4543,7 +4504,7 @@ Game.Launch = function () {
                         '<div style="font-size:80%;text-align:center;">' +
                         (EN ? 'From' : loc('Source:')) +
                         ' <b>' +
-                        'Oops this text is missing???' +//text +
+                        'Oops this text is missing???' +//! text +
                         '</b></div><div class="line"></div>' +
                         desc;
                 }
@@ -4593,29 +4554,29 @@ Game.Launch = function () {
             return '<div style="font-size:80%;opacity:0.7;line-height:90%;" class="costDetails">' + priceInfo + '</div>';
         };
 
-        /*=====================================================================================
+        /* =====================================================================================
         PRESTIGE
         =======================================================================================*/
 
         Game.HCfactor = 3;
         Game.HowMuchPrestige = function (
-            cookies //how much prestige [cookies] should land you
+            cookies // how much prestige [cookies] should land you
         ) {
             return Math.pow(cookies / 1000000000000, 1 / Game.HCfactor);
         };
         Game.HowManyCookiesReset = function (
-            chips //how many cookies [chips] are worth
+            chips // how many cookies [chips] are worth
         ) {
-            //this must be the inverse of the above function (ie. if cookies=chips^2, chips=cookies^(1/2) )
+            // this must be the inverse of the above function (ie. if cookies=chips^2, chips=cookies^(1/2) )
             return Math.pow(chips, Game.HCfactor) * 1000000000000;
         };
         Game.gainedPrestige = 0;
         Game.EarnHeavenlyChips = function (cookiesForfeited, silent) {
-            //recalculate prestige and chips owned
+            // recalculate prestige and chips owned
             let prestige = Math.floor(Game.HowMuchPrestige(Game.cookiesReset + cookiesForfeited));
             prestige = Math.max(0, prestige);
             if (prestige != Game.prestige) {
-                //did we change prestige levels?
+                // did we change prestige levels?
                 let prestigeDifference = prestige - Game.prestige;
                 Game.gainedPrestige = prestigeDifference;
                 Game.heavenlyChips += prestigeDifference;
@@ -4636,7 +4597,6 @@ Game.Launch = function () {
             if (Game.Has('Heavenly bakery')) heavenlyMult += 0.25;
             if (Game.Has('Heavenly confectionery')) heavenlyMult += 0.25;
             if (Game.Has('Heavenly key')) heavenlyMult += 0.25;
-            //if (Game.hasAura('Dragon God')) heavenlyMult*=1.05;
             heavenlyMult *= 1 + Game.auraMult('Dragon God') * 0.05;
             if (Game.Has('Lucky digit')) heavenlyMult *= 1.01;
             if (Game.Has('Lucky number')) heavenlyMult *= 1.01;
@@ -4664,8 +4624,7 @@ Game.Launch = function () {
                     'This run will behave as if you\'d just started the game from scratch. Prestige levels and heavenly upgrades will have no effect, as will sugar lumps and building levels. Perma-upgrades and minigames will be unavailable.<div class="line"></div>Some achievements are only available in this mode.'
                 ),
                 icon: [2, 7]
-            } /*,
-		2:{name:'Trigger finger',dname:loc("Trigger finger [ascension type]"),desc:loc("In this run, scrolling your mouse wheel on the cookie counts as clicking it. Some upgrades introduce new clicking behaviors.<br>No clicking achievements may be obtained in this mode.<div class=\"line\"></div>Reaching 1 quadrillion cookies in this mode unlocks a special heavenly upgrade."),icon:[12,0]}*/
+            }
         };
 
         Game.ascendMeterPercent = 0;
@@ -4801,15 +4760,15 @@ Game.Launch = function () {
         Game.ascendZoomablel = l('ascendZoomable');
         Game.ascendUpgradesl = l('ascendUpgrades');
         Game.OnAscend = 0;
-        Game.AscendTimer = 0; //how far we are into the ascend animation
-        Game.AscendDuration = Game.fps * 5; //how long the ascend animation is
-        Game.AscendBreakpoint = Game.AscendDuration * 0.5; //at which point the cookie explodes during the ascend animation
+        Game.AscendTimer = 0; // how far we are into the ascend animation
+        Game.AscendDuration = Game.fps * 5; // how long the ascend animation is
+        Game.AscendBreakpoint = Game.AscendDuration * 0.5; // at which point the cookie explodes during the ascend animation
         Game.UpdateAscendIntro = function () {
             if (Game.AscendTimer == 1) PlaySound('snd/charging.mp3');
             if (Game.AscendTimer == Math.floor(Game.AscendBreakpoint)) PlaySound('snd/thud.mp3');
             Game.AscendTimer++;
             if (Game.AscendTimer > Game.AscendDuration) {
-                //end animation and launch ascend screen
+                // end animation and launch ascend screen
                 PlayCue('ascend');
                 PlayMusicSound('snd/cymbalRev.mp3');
                 PlaySound('snd/choir.mp3');
@@ -4825,13 +4784,13 @@ Game.Launch = function () {
                 Game.UpdateAscensionModePrompt();
             }
         };
-        Game.ReincarnateTimer = 0; //how far we are into the reincarnation animation
-        Game.ReincarnateDuration = Game.fps * 1; //how long the reincarnation animation is
+        Game.ReincarnateTimer = 0; // how far we are into the reincarnation animation
+        Game.ReincarnateDuration = Game.fps * 1; // how long the reincarnation animation is
         Game.UpdateReincarnateIntro = function () {
             if (Game.ReincarnateTimer == 1) PlaySound('snd/pop' + Math.floor(Math.random() * 3 + 1) + '.mp3', 0.75);
             Game.ReincarnateTimer++;
             if (Game.ReincarnateTimer > Game.ReincarnateDuration) {
-                //end animation and launch regular game
+                // end animation and launch regular game
                 Game.ReincarnateTimer = 0;
                 Game.removeClass('reincarnating');
             }
@@ -4863,7 +4822,7 @@ Game.Launch = function () {
 
                 Game.removeClass('ascending');
                 Game.OnAscend = 0;
-                //trigger the reincarnate animation
+                // trigger the reincarnate animation
                 Game.ReincarnateTimer = 1;
                 Game.addClass('reincarnating');
                 Game.BigCookieSize = 0;
@@ -4899,7 +4858,7 @@ Game.Launch = function () {
                 Game.OnAscend = 0;
                 Game.removeClass('ascending');
                 Game.addClass('ascendIntro');
-                //trigger the ascend animation
+                // trigger the ascend animation
                 Game.AscendTimer = 1;
                 Game.killShimmers();
                 // @ts-expect-error
@@ -4957,12 +4916,12 @@ Game.Launch = function () {
                 if (Game.DebuggingPrestige) {
                     if (Game.SelectedHeavenlyUpgrade) {
                         Game.tooltip.hide();
-                        //drag upgrades around
+                        // drag upgrades around
                         let me = Game.SelectedHeavenlyUpgrade;
                         me.posX += (Game.mouseX - Game.AscendDragX) * (1 / Game.AscendZoomT);
                         me.posY += (Game.mouseY - Game.AscendDragY) * (1 / Game.AscendZoomT);
-                        let posX = me.posX; //Math.round(me.posX/Game.AscendGridSnap)*Game.AscendGridSnap;
-                        let posY = me.posY; //Math.round(me.posY/Game.AscendGridSnap)*Game.AscendGridSnap;
+                        let posX = me.posX;
+                        let posY = me.posY;
                         // @ts-expect-error
                         l('heavenlyUpgrade' + me.id).style.left = Math.floor(posX) + 'px';
                         // @ts-expect-error
@@ -5013,7 +4972,6 @@ Game.Launch = function () {
             Game.ascendZoomablel.style.mozTransform = 'scale(' + Game.AscendZoom + ',' + Game.AscendZoom + ')';
             Game.ascendZoomablel.style.transform = 'scale(' + Game.AscendZoom + ',' + Game.AscendZoom + ')';
 
-            //if (Game.Scroll!=0) Game.ascendContentl.style.transformOrigin=Math.floor(Game.windowW/2-Game.mouseX)+'px '+Math.floor(Game.windowH/2-Game.mouseY)+'px';
             if (Game.Scroll < 0 && !Game.promptOn) {
                 Game.AscendZoomT = 0.5;
             }
@@ -5044,7 +5002,6 @@ Game.Launch = function () {
                 // @ts-expect-error
                 l('upgradePositions').value = 'Game.UpgradePositions={' + str + '};';
             }
-            //if (Game.T%5==0) Game.BuildAscendTree();
         };
         Game.AscendRefocus = function () {
             Game.AscendOffX = 0;
@@ -5054,14 +5011,12 @@ Game.Launch = function () {
 
         Game.SelectedHeavenlyUpgrade = 0;
         Game.PurchaseHeavenlyUpgrade = function (what) {
-            //if (Game.Has('Neuromancy')) Game.UpgradesById[what].toggle(); else
             if (Game.UpgradesById[what].buy()) {
                 if (l('heavenlyUpgrade' + what)) {
                     // @ts-expect-error
                     let rect = l('heavenlyUpgrade' + what).getBounds();
                     Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24);
                 }
-                //Game.BuildAscendTree();
             }
         };
         Game.BuildAscendTree = function (justBought) {
@@ -5104,7 +5059,7 @@ Game.Launch = function () {
             }
             str +=
                 '<div class="crate upgrade heavenly enabled" style="position:absolute;left:-30px;top:-30px;opacity:0.8;pointer-events:none;transform:scale(1.3);background:transparent;"></div>';
-            str += '<div class="crateBox" style="filter:none;-webkit-filter:none;">'; //chrome is still bad at these
+            str += '<div class="crateBox" style="filter:none;-webkit-filter:none;">'; // chrome is still bad at these
             for (let i in Game.PrestigeUpgrades) {
                 let me = Game.PrestigeUpgrades[i];
 
@@ -5123,7 +5078,7 @@ Game.Launch = function () {
                     }
                     if (me.showIf && !me.showIf()) ghosted = 0;
                     if (ghosted) {
-                        //maybe replace this with Game.crate()
+                        // maybe replace this with Game.crate()
                         str +=
                             '<div class="crate upgrade heavenly ghosted" id="heavenlyUpgrade' +
                             me.id +
@@ -5143,7 +5098,7 @@ Game.Launch = function () {
                     if (me.posY > Game.heavenlyBounds.bottom) Game.heavenlyBounds.bottom = me.posY;
                 }
                 for (let ii in me.parents) {
-                    //create pulsing links
+                    // create pulsing links
                     if (me.parents[ii] != -1 && (me.canBePurchased || ghosted)) {
                         let origX = 0;
                         let origY = 0;
@@ -5187,7 +5142,6 @@ Game.Launch = function () {
             Game.heavenlyBounds.top -= 128;
             Game.heavenlyBounds.right += 128 + 64;
             Game.heavenlyBounds.bottom += 128 + 64;
-            //str+='<div style="border:1px solid red;position:absolute;left:'+Game.heavenlyBounds.left+'px;width:'+(Game.heavenlyBounds.right-Game.heavenlyBounds.left)+'px;top:'+Game.heavenlyBounds.top+'px;height:'+(Game.heavenlyBounds.bottom-Game.heavenlyBounds.top)+'px;"></div>';
             str += '</div>';
             Game.ascendUpgradesl.innerHTML = str;
 
@@ -5202,7 +5156,7 @@ Game.Launch = function () {
                                 let LASTHEAVENLYSELECTED;
                                 if (!Game.DebuggingPrestige) return;
                                 if (Game.keys[16] && typeof LASTHEAVENLYSELECTED !== 'undefined' && me != LASTHEAVENLYSELECTED) {
-                                    //when clicking an upgrade with ctrl, set it as reference point; clicking any sibling upgrade with shift will align it in a nice arc around their shared parent
+                                    // when clicking an upgrade with ctrl, set it as reference point; clicking any sibling upgrade with shift will align it in a nice arc around their shared parent
                                     let parent = 0;
                                     for (let i = 0; i < me.parents.length; i++) {
                                         // @ts-expect-error
@@ -5254,7 +5208,7 @@ Game.Launch = function () {
             }, 100);
         };
 
-        /*=====================================================================================
+        /* =====================================================================================
         COALESCING SUGAR LUMPS
         =======================================================================================*/
         Game.lumpMatureAge = 1;
@@ -5337,14 +5291,13 @@ Game.Launch = function () {
             if (Game.Has('Stevia Caelestis')) Game.lumpRipeAge -= hour;
             if (Game.Has('Diabetica Daemonicus')) Game.lumpMatureAge -= hour;
             if (Game.Has('Ichor syrup')) Game.lumpMatureAge -= 1000 * 60 * 7;
-            if (Game.Has('Sugar aging process')) Game.lumpRipeAge -= 6000 * Math.min(600, Game.Objects['Grandma'].amount); //capped at 600 grandmas
+            if (Game.Has('Sugar aging process')) Game.lumpRipeAge -= 6000 * Math.min(600, Game.Objects['Grandma'].amount); // capped at 600 grandmas
             if (Game.hasGod && Game.BuildingsOwned % 10 == 0) {
                 let godLvl = Game.hasGod('order');
                 if (godLvl == 1) Game.lumpRipeAge -= hour;
                 else if (godLvl == 2) Game.lumpRipeAge -= (hour / 3) * 2;
                 else if (godLvl == 3) Game.lumpRipeAge -= hour / 3;
             }
-            //if (Game.hasAura('Dragon\'s Curve')) {Game.lumpMatureAge/=1.05;Game.lumpRipeAge/=1.05;}
             Game.lumpMatureAge /= 1 + Game.auraMult('Dragon\'s Curve') * 0.05;
             Game.lumpRipeAge /= 1 + Game.auraMult('Dragon\'s Curve') * 0.05;
             Game.lumpOverripeAge = Game.lumpRipeAge + hour;
@@ -5356,16 +5309,15 @@ Game.Launch = function () {
         };
         Game.loadLumps = function (time) {
             Game.computeLumpTimes();
-            //Game.computeLumpType();
             if (!Game.canLumps()) Game.removeClass('lumpsOn');
             else {
                 if (Game.ascensionMode != 1) Game.addClass('lumpsOn');
                 Game.lumpT = Math.min(Date.now(), Game.lumpT);
                 let age = Math.max(Date.now() - Game.lumpT, 0);
-                let amount = Math.floor(age / Game.lumpOverripeAge); //how many lumps did we harvest since we closed the game?
+                let amount = Math.floor(age / Game.lumpOverripeAge); // how many lumps did we harvest since we closed the game?
                 if (amount >= 1) {
                     Game.harvestLumps(1, true);
-                    Game.lumpCurrentType = 0; //all offline lumps after the first one have a normal type
+                    Game.lumpCurrentType = 0; // all offline lumps after the first one have a normal type
                     if (amount > 1) Game.harvestLumps(amount - 1, true);
                     Game.Notify('', loc('You harvested <b>%1</b> while you were away.', loc('%1 sugar lump', LBeautify(amount))), [29, 14]);
                     Game.lumpT = Date.now() - (age - amount * Game.lumpOverripeAge);
@@ -5414,7 +5366,7 @@ Game.Launch = function () {
             } else if (Game.lumpCurrentType == 3) total *= choose([0, 0, 1, 2, 2]);
             else if (Game.lumpCurrentType == 4) {
                 total *= choose([1, 2, 3]);
-                Game.lumpRefill = 0; //Date.now()-Game.getLumpRefillMax();
+                Game.lumpRefill = 0;
                 Game.Notify(loc('Sugar lump cooldowns cleared!'), '', [29, 27]);
             }
             total = Math.floor(total);
@@ -5443,49 +5395,48 @@ Game.Launch = function () {
             Math.seedrandom(Game.seed + '/' + Game.lumpT);
             let types = [0];
             let loop = 1;
-            //if (Game.hasAura('Dragon\'s Curve')) loop=2;
             loop += Game.auraMult('Dragon\'s Curve');
             loop = randomFloor(loop);
             for (let i = 0; i < loop; i++) {
-                if (Math.random() < (Game.Has('Sucralosia Inutilis') ? 0.15 : 0.1)) types.push(1); //bifurcated
-                if (Math.random() < 3 / 1000) types.push(2); //golden
-                if (Math.random() < 0.1 * Game.elderWrath) types.push(3); //meaty
-                if (Math.random() < 1 / 50) types.push(4); //caramelized
+                if (Math.random() < (Game.Has('Sucralosia Inutilis') ? 0.15 : 0.1)) types.push(1); // bifurcated
+                if (Math.random() < 3 / 1000) types.push(2); // golden
+                if (Math.random() < 0.1 * Game.elderWrath) types.push(3); // meaty
+                if (Math.random() < 1 / 50) types.push(4); // caramelized
             }
             Game.lumpCurrentType = choose(types);
             Math.seedrandom();
         };
 
-        Game.canLumps = function () //grammatically pleasing function name
+        Game.canLumps = function () // grammatically pleasing function name
         {
             if (Game.lumpsTotal > -1 || (Game.ascensionMode != 1 && Game.cookiesEarned + Game.cookiesReset >= 1000000000)) return true;
             return false;
         };
 
         Game.getLumpRefillMax = function () {
-            return Game.fps * 60 * 15; //1000*60*15;//15 minutes
+            return Game.fps * 60 * 15; // 15 minutes
         };
         Game.getLumpRefillRemaining = function () {
-            return Game.lumpRefill; //Game.getLumpRefillMax()-(Date.now()-Game.lumpRefill);
+            return Game.lumpRefill;
         };
         Game.canRefillLump = function () {
-            return Game.lumpRefill <= 0; //((Date.now()-Game.lumpRefill)>=Game.getLumpRefillMax());
+            return Game.lumpRefill <= 0;
         };
         Game.refillLump = function (n, func) {
             if (Game.lumps >= n && Game.canRefillLump()) {
                 Game.spendLump(n, 'refill', function () {
-                    if (!Game.sesame) Game.lumpRefill = Game.getLumpRefillMax(); //Date.now();
+                    if (!Game.sesame) Game.lumpRefill = Game.getLumpRefillMax();
                     func();
                 })();
             }
         };
         Game.spendLump = function (n, str, func, free) {
-            //ask if we want to spend N lumps (unless free)
+            // ask if we want to spend N lumps (unless free)
             return function () {
                 if (!free && Game.lumps < n) return false;
                 if (!free && Game.prefs.askLumps) {
                     PlaySound('snd/tick.mp3');
-                    Game.promptConfirmFunc = func; //bit dumb
+                    Game.promptConfirmFunc = func; // bit dumb
                     Game.Prompt(
                         '<id SpendLump><div class="icon" style="background:url(img/icons.png?v=' +
                         Game.version +
@@ -5518,7 +5469,7 @@ Game.Launch = function () {
                 return;
             }
             if (Game.lumpsTotal == -1) {
-                //first time !
+                // first time !
                 if (Game.ascensionMode != 1) Game.addClass('lumpsOn');
                 Game.lumpT = Date.now();
                 Game.lumpsTotal = 0;
@@ -5546,19 +5497,18 @@ Game.Launch = function () {
             let row2 = 14;
             let type = Game.lumpCurrentType;
             if (type == 1) {
-                //double
-                //if (phase>=6) row=15;
+                // double
                 if (phase2 >= 6) row2 = 15;
             } else if (type == 2) {
-                //golden
+                // golden
                 if (phase >= 4) row = 16;
                 if (phase2 >= 4) row2 = 16;
             } else if (type == 3) {
-                //meaty
+                // meaty
                 if (phase >= 4) row = 17;
                 if (phase2 >= 4) row2 = 17;
             } else if (type == 4) {
-                //caramelized
+                // caramelized
                 if (phase >= 4) row = 27;
                 if (phase2 >= 4) row2 = 27;
             }
@@ -5582,7 +5532,7 @@ Game.Launch = function () {
             l('lumpsAmount').textContent = Beautify(Game.lumps);
         };
 
-        /*=====================================================================================
+        /* =====================================================================================
         COOKIE ECONOMICS
         =======================================================================================*/
         Game.Earn = function (howmuch) {
@@ -5659,7 +5609,6 @@ Game.Launch = function () {
                 if (typeof Game.buffs[i].multClick != 'undefined') mult *= Game.buffs[i].multClick;
             }
 
-            //if (Game.hasAura('Dragon Cursor')) mult*=1.05;
             mult *= 1 + Game.auraMult('Dragon Cursor') * 0.05;
 
             let out =
@@ -5677,7 +5626,7 @@ Game.Launch = function () {
         Game.lastClick = 0;
         Game.CanClick = 1;
         Game.autoclickerDetected = 0;
-        Game.BigCookieState = 0; //0 = normal, 1 = clicked (small), 2 = released/hovered (big)
+        Game.BigCookieState = 0; // 0 = normal, 1 = clicked (small), 2 = released/hovered (big)
         Game.BigCookieSize = 0;
         Game.BigCookieSizeD = 0;
         Game.BigCookieSizeT = 1;
@@ -5818,7 +5767,7 @@ Game.Launch = function () {
             AddEvent(document, 'DOMMouseScroll', Game.handleScroll);
             AddEvent(document, 'mousewheel', Game.handleScroll);
         } else {
-            //touch events
+            // touch events
             AddEvent(bigCookie, 'touchend', Game.ClickCookie);
             AddEvent(bigCookie, 'touchstart', function (event) {
                 Game.BigCookieState = 1;
@@ -5828,7 +5777,6 @@ Game.Launch = function () {
                 Game.BigCookieState = 0;
                 if (event) event.preventDefault();
             });
-            //AddEvent(document,'touchmove',Game.GetMouseCoords);
             AddEvent(document, 'mousemove', Game.GetMouseCoords);
             AddEvent(document, 'touchstart', function (event) {
                 Game.lastActivity = Game.time;
@@ -5853,16 +5801,16 @@ Game.Launch = function () {
                     PlaySound('snd/tickOff.mp3');
                 }
                 if (Game.AscendTimer > 0) Game.AscendTimer = Game.AscendDuration;
-            } //esc closes prompt
+            } // esc closes prompt
             if (Game.promptOn) {
-                if (e.keyCode == 13) Game.ConfirmPrompt(); //enter confirms prompt
+                if (e.keyCode == 13) Game.ConfirmPrompt(); // enter confirms prompt
             }
             Game.keys[e.keyCode] = 0;
         });
         AddEvent(window, 'keydown', function (e) {
             if (Game.promptOn) {
                 if (e.keyCode == 9) {
-                    //tab to shift through prompt buttons
+                    // tab to shift through prompt buttons
                     if (e.shiftKey) Game.FocusPromptOption(-1);
                     else Game.FocusPromptOption(1);
                     e.preventDefault();
@@ -5872,30 +5820,30 @@ Game.Launch = function () {
                 if (e.ctrlKey && e.keyCode == 83) {
                     Game.toSave = true;
                     e.preventDefault();
-                } //ctrl-s saves the game
+                } // ctrl-s saves the game
                 else if (e.ctrlKey && e.keyCode == 79) {
                     Game.ImportSave();
                     e.preventDefault();
-                } //ctrl-o opens the import menu
+                } // ctrl-o opens the import menu
             }
             if ((e.keyCode == 16 || e.keyCode == 17) && Game.tooltip.dynamic) Game.tooltip.update();
             Game.keys[e.keyCode] = 1;
-            if (e.keyCode == 9) Game.keys = []; //reset keys on tab press
+            if (e.keyCode == 9) Game.keys = []; // reset keys on tab press
         });
 
         AddEvent(window, 'visibilitychange', function (e) {
-            Game.keys = []; //reset all key pressed on visibility change (should help prevent ctrl still being down after ctrl-tab)
+            Game.keys = []; // reset all key pressed on visibility change (should help prevent ctrl still being down after ctrl-tab)
         });
 
-        /*=====================================================================================
+        /* =====================================================================================
         CPS RECALCULATOR
         =======================================================================================*/
 
-        Game.heavenlyPower = 1; //how many CpS percents a single heavenly chip gives
+        Game.heavenlyPower = 1; // how many CpS percents a single heavenly chip gives
         Game.recalculateGains = 1;
         Game.cookiesPsByType = {};
         Game.cookiesMultByType = {};
-        //display bars with http://codepen.io/anon/pen/waGyEJ
+        // display bars with http://codepen.io/anon/pen/waGyEJ
         Game.effs = {};
         Game.eff = function (name, def) {
             if (typeof Game.effs[name] === 'undefined') return typeof def === 'undefined' ? 1 : def;
@@ -5905,7 +5853,7 @@ Game.Launch = function () {
         Game.CalculateGains = function () {
             Game.cookiesPs = 0;
             let mult = 1;
-            //add up effect bonuses from building minigames
+            // add up effect bonuses from building minigames
             let effs = {};
             for (let i in Game.Objects) {
                 if (Game.Objects[i].minigameLoaded && Game.Objects[i].minigame.effs) {
@@ -5981,7 +5929,6 @@ Game.Launch = function () {
             Game.milkProgress = Game.AchievementsOwned / 25;
             let milkMult = 1;
             if (Game.Has('Santa\'s milk and cookies')) milkMult *= 1.05;
-            //if (Game.hasAura('Breath of Milk')) milkMult*=1.05;
             milkMult *= 1 + Game.auraMult('Breath of Milk') * 0.05;
             if (Game.hasGod) {
                 let godLvl = Game.hasGod('mother');
@@ -6016,18 +5963,18 @@ Game.Launch = function () {
                 let me = Game.Objects[i];
                 me.storedCps = me.cps(me);
                 if (Game.ascensionMode != 1) me.storedCps *= (1 + me.level * 0.01) * buildMult;
-                if (me.id == 1 && Game.Has('Milkhelp&reg; lactose intolerance relief tablets')) me.storedCps *= 1 + 0.05 * Game.milkProgress * milkMult; //this used to be "me.storedCps*=1+0.1*Math.pow(catMult-1,0.5)" which was. hmm
+                if (me.id == 1 && Game.Has('Milkhelp&reg; lactose intolerance relief tablets')) me.storedCps *= 1 + 0.05 * Game.milkProgress * milkMult; // this used to be "me.storedCps*=1+0.1*Math.pow(catMult-1,0.5)" which was. hmm
                 me.storedTotalCps = me.amount * me.storedCps;
                 Game.cookiesPs += me.storedTotalCps;
                 Game.cookiesPsByType[me.name] = me.storedTotalCps;
             }
-            //cps from buildings only
+            // cps from buildings only
             Game.buildingCps = Game.cookiesPs;
 
             if (Game.Has('"egg"')) {
                 Game.cookiesPs += 9;
                 Game.cookiesPsByType['"egg"'] = 9;
-            } //"egg"
+            } // "egg"
 
             mult *= catMult;
 
@@ -6045,7 +5992,7 @@ Game.Launch = function () {
             if (Game.Has('Turtle egg')) eggMult *= 1.01;
             if (Game.Has('Ant larva')) eggMult *= 1.01;
             if (Game.Has('Century egg')) {
-                //the boost increases a little every day, with diminishing returns up to +10% on the 100th day
+                // the boost increases a little every day, with diminishing returns up to +10% on the 100th day
                 let day = (Math.floor((Date.now() - Game.startDate) / 1000 / 10) * 10) / 60 / 60 / 24;
                 day = Math.min(day, 100);
                 eggMult *= 1 + (1 - Math.pow(1 - day / 100, 3)) * 0.1;
@@ -6056,7 +6003,6 @@ Game.Launch = function () {
 
             if (Game.Has('Sugar baking')) mult *= 1 + Math.min(100, Game.lumps) * 0.01;
 
-            //if (Game.hasAura('Radiant Appetite')) mult*=2;
             mult *= 1 + Game.auraMult('Radiant Appetite');
 
             let rawCookiesPs = Game.cookiesPs * mult;
@@ -6074,13 +6020,13 @@ Game.Launch = function () {
 
             window.name = Game.bakeryName.toLowerCase();
             if (window.name == 'orteil') mult *= 0.99;
-            else if (window.name == 'ortiel') mult *= 0.98; //or so help me
+            else if (window.name == 'ortiel') mult *= 0.98; // or so help me
 
             let sucking = 0;
             for (let i in Game.wrinklers) {
                 if (Game.wrinklers[i].phase == 2) sucking++;
             }
-            let suckRate = 1 / 20; //each wrinkler eats a twentieth of your CpS
+            let suckRate = 1 / 20; // each wrinkler eats a twentieth of your CpS
             suckRate *= Game.eff('wrinklerEat');
 
             Game.cpsSucked = sucking * suckRate;
@@ -6105,7 +6051,7 @@ Game.Launch = function () {
 
             Game.cookiesPs = Game.runModHookOnValue('cps', Game.cookiesPs);
 
-            //cps without golden cookie effects
+            // cps without golden cookie effects
             Game.unbuffedCps = Game.cookiesPs * mult;
 
             for (let i in Game.buffs) {
@@ -6114,8 +6060,6 @@ Game.Launch = function () {
 
             Game.globalCpsMult = mult;
             Game.cookiesPs *= Game.globalCpsMult;
-
-            //if (Game.hasBuff('Cursed finger')) Game.cookiesPs=0;
 
             Game.computedMouseCps = Game.mouseCps();
 
@@ -6129,17 +6073,16 @@ Game.Launch = function () {
             if (Game.Has('Green yeast digestives')) rate *= 1.03;
             if (Game.Has('Dragon teddy bear')) rate *= 1.03;
             rate *= Game.eff('itemDrops');
-            //if (Game.hasAura('Mind Over Matter')) rate*=1.25;
             rate *= 1 + Game.auraMult('Mind Over Matter') * 0.25;
             if (Game.Has('Santa\'s bottomless bag')) rate *= 1.1;
             if (Game.Has('Cosmic beginner\'s luck') && !Game.Has('Heavenly chip secret')) rate *= 5;
             return rate;
         };
-        /*=====================================================================================
+        /* =====================================================================================
         SHIMMERS (GOLDEN COOKIES & SUCH)
         =======================================================================================*/
         Game.shimmersL = l('shimmers');
-        Game.shimmers = []; //all shimmers currently on the screen
+        Game.shimmers = []; // all shimmers currently on the screen
         Game.shimmersN = Math.floor(Math.random() * 10000);
         Game.shimmer = function (type, obj, noCount) {
             this.type = type;
@@ -6168,7 +6111,7 @@ Game.Launch = function () {
                         };
                     })(this)
                 );
-            } //touch events
+            } // touch events
 
             this.x = 0;
             this.y = 0;
@@ -6190,26 +6133,26 @@ Game.Launch = function () {
             Game.shimmers.push(this);
             Game.shimmersN++;
         };
-        Game.shimmer.prototype.init = function () //executed when the shimmer is created
+        Game.shimmer.prototype.init = function () // executed when the shimmer is created
         {
             Game.shimmerTypes[this.type].initFunc(this);
         };
-        Game.shimmer.prototype.update = function () //executed every frame
+        Game.shimmer.prototype.update = function () // executed every frame
         {
             Game.shimmerTypes[this.type].updateFunc(this);
         };
         Game.shimmer.prototype.pop = function (
-            event //executed when the shimmer is popped by the player
+            event // executed when the shimmer is popped by the player
         ) {
             if (event) event.preventDefault();
             Game.loseShimmeringVeil('shimmer');
             Game.Click = 0;
             Game.shimmerTypes[this.type].popFunc(this);
         };
-        Game.shimmer.prototype.die = function () //executed after the shimmer disappears (from old age or popping)
+        Game.shimmer.prototype.die = function () // executed after the shimmer disappears (from old age or popping)
         {
             if (Game.shimmerTypes[this.type].spawnsOnTimer && this.spawnLead) {
-                //if this was the spawn lead for this shimmer type, set the shimmer type's "spawned" to 0 and restart its spawn timer
+                // if this was the spawn lead for this shimmer type, set the shimmer type's "spawned" to 0 and restart its spawn timer
                 let type = Game.shimmerTypes[this.type];
                 type.time = 0;
                 type.spawned = 0;
@@ -6224,28 +6167,27 @@ Game.Launch = function () {
             }
         };
 
-        Game.updateShimmers = function () //run shimmer functions, kill overtimed shimmers and spawn new ones
+        Game.updateShimmers = function () // run shimmer functions, kill overtimed shimmers and spawn new ones
         {
             for (let i in Game.shimmers) {
                 Game.shimmers[i].update();
             }
 
-            //cookie storm!
+            // cookie storm!
             if (Game.hasBuff('Cookie storm') && Math.random() < 0.5) {
                 let newShimmer = new Game.shimmer('golden', { type: 'cookie storm drop' }, 1);
                 newShimmer.dur = Math.ceil(Math.random() * 4 + 1);
                 newShimmer.life = Math.ceil(Game.fps * newShimmer.dur);
-                //newShimmer.force='cookie storm drop';
                 newShimmer.sizeMult = Math.random() * 0.75 + 0.25;
             }
 
-            //spawn shimmers
+            // spawn shimmers
             for (let i in Game.shimmerTypes) {
                 let me = Game.shimmerTypes[i];
                 if (me.spawnsOnTimer && me.spawnConditions()) {
-                    //only run on shimmer types that work on a timer
+                    // only run on shimmer types that work on a timer
                     if (!me.spawned) {
-                        //no shimmer spawned for this type? check the timer and try to spawn one
+                        // no shimmer spawned for this type? check the timer and try to spawn one
                         me.time++;
                         if (Math.random() < Math.pow(Math.max(0, (me.time - me.minTime) / (me.maxTime - me.minTime)), 5)) {
                             let newShimmer = new Game.shimmer(i);
@@ -6257,7 +6199,7 @@ Game.Launch = function () {
                 }
             }
         };
-        Game.killShimmers = function () //stop and delete all shimmers (used on resetting etc)
+        Game.killShimmers = function () // stop and delete all shimmers (used on resetting etc)
         {
             for (let i = Game.shimmers.length - 1; i >= 0; i--) {
                 Game.shimmers[i].die();
@@ -6276,7 +6218,7 @@ Game.Launch = function () {
         };
 
         Game.shimmerTypes = {
-            //in these, "me" refers to the shimmer itself, and "this" to the shimmer's type object
+            // in these, "me" refers to the shimmer itself, and "this" to the shimmer's type object
             golden: {
                 reset: function () {
                     this.chain = 0;
@@ -6286,7 +6228,7 @@ Game.Launch = function () {
                 initFunc: function (me) {
                     if (!this.spawned && me.force != 'cookie storm drop' && Game.chimeType != 0 && Game.ascensionMode != 1) Game.playGoldenCookieChime();
 
-                    //set image
+                    // set image
                     let bgPic = 'img/goldCookie.png';
                     let picX = 0;
                     let picY = 0;
@@ -6331,8 +6273,8 @@ Game.Launch = function () {
                     me.l.style.display = 'block';
                     me.l.setAttribute('alt', loc(me.wrath ? 'Wrath cookie' : 'Golden cookie'));
 
-                    me.life = 1; //the cookie's current progression through its lifespan (in frames)
-                    me.dur = 13; //duration; the cookie's lifespan in seconds before it despawns
+                    me.life = 1; // the cookie's current progression through its lifespan (in frames)
+                    me.dur = 13; // duration; the cookie's lifespan in seconds before it despawns
 
                     let dur = 13;
                     if (Game.Has('Lucky day')) dur *= 2;
@@ -6343,8 +6285,8 @@ Game.Launch = function () {
                     if (Game.Has('Lucky payout')) dur *= 1.01;
                     if (!me.wrath) dur *= Game.eff('goldenCookieDur');
                     else dur *= Game.eff('wrathCookieDur');
-                    dur *= Math.pow(0.95, Game.shimmerTypes['golden'].n - 1); //5% shorter for every other golden cookie on the screen
-                    if (this.chain > 0) dur = Math.max(2, 10 / this.chain); //this is hilarious
+                    dur *= Math.pow(0.95, Game.shimmerTypes['golden'].n - 1); // 5% shorter for every other golden cookie on the screen
+                    if (this.chain > 0) dur = Math.max(2, 10 / this.chain); // this is hilarious
                     me.dur = dur;
                     me.life = Math.ceil(Game.fps * me.dur);
                     me.sizeMult = 1;
@@ -6352,12 +6294,12 @@ Game.Launch = function () {
                 updateFunc: function (me) {
                     let curve = 1 - Math.pow((me.life / (Game.fps * me.dur)) * 2 - 1, 4);
                     me.l.style.opacity = curve;
-                    //this line makes each golden cookie pulse in a unique way
+                    // this line makes each golden cookie pulse in a unique way
                     if (Game.prefs.fancy)
                         me.l.style.transform =
                             'rotate(' +
                             (Math.sin(me.id * 0.69) * 24 +
-                                Math.sin(Game.T * (0.35 + Math.sin(me.id * 0.97) * 0.15) + me.id /*+Math.sin(Game.T*0.07)*2+2*/) *
+                                Math.sin(Game.T * (0.35 + Math.sin(me.id * 0.97) * 0.15) + me.id) *
                                 (3 + Math.sin(me.id * 0.36) * 2)) +
                             'deg) scale(' +
                             me.sizeMult *
@@ -6372,7 +6314,7 @@ Game.Launch = function () {
                     }
                 },
                 popFunc: function (me) {
-                    //get achievs and stats
+                    // get achievs and stats
                     if (me.spawnLead) {
                         Game.goldenClicks++;
                         Game.goldenClicksLocal++;
@@ -6397,7 +6339,7 @@ Game.Launch = function () {
                         if (Game.forceUnslotGod('asceticism')) Game.useSwap(1000000);
                     }
 
-                    //select an effect
+                    // select an effect
                     let list = [];
                     if (me.wrath > 0) list.push('clot', 'multiply cookies', 'ruin cookies');
                     else list.push('frenzy', 'multiply cookies');
@@ -6413,13 +6355,11 @@ Game.Launch = function () {
                     if (Game.canLumps() && Math.random() < 0.0005) list.push('free sugar lump');
 
                     if ((me.wrath == 0 && Math.random() < 0.15) || Math.random() < 0.05) {
-                        //if (Game.hasAura('Reaper of Fields')) list.push('dragon harvest');
                         if (Math.random() < Game.auraMult('Reaper of Fields')) list.push('dragon harvest');
-                        //if (Game.hasAura('Dragonflight')) list.push('dragonflight');
                         if (Math.random() < Game.auraMult('Dragonflight')) list.push('dragonflight');
                     }
 
-                    if (this.last != '' && Math.random() < 0.8 && list.indexOf(this.last) != -1) list.splice(list.indexOf(this.last), 1); //80% chance to force a different one
+                    if (this.last != '' && Math.random() < 0.8 && list.indexOf(this.last) != -1) list.splice(list.indexOf(this.last), 1); // 80% chance to force a different one
                     if (Math.random() < 0.0001) list.push('blab');
                     let choice = choose(list);
 
@@ -6433,8 +6373,8 @@ Game.Launch = function () {
 
                     this.last = choice;
 
-                    //create buff for effect
-                    //buff duration multiplier
+                    // create buff for effect
+                    // buff duration multiplier
                     let effectDurMod = 1;
                     if (Game.Has('Get lucky')) effectDurMod *= 2;
                     if (Game.Has('Lasting fortune')) effectDurMod *= 1.1;
@@ -6442,7 +6382,6 @@ Game.Launch = function () {
                     if (Game.Has('Lucky number')) effectDurMod *= 1.01;
                     if (Game.Has('Green yeast digestives')) effectDurMod *= 1.01;
                     if (Game.Has('Lucky payout')) effectDurMod *= 1.01;
-                    //if (Game.hasAura('Epoch Manipulator')) effectDurMod*=1.05;
                     effectDurMod *= 1 + Game.auraMult('Epoch Manipulator') * 0.05;
                     if (!me.wrath) effectDurMod *= Game.eff('goldenCookieEffDur');
                     else effectDurMod *= Game.eff('wrathCookieEffDur');
@@ -6454,10 +6393,8 @@ Game.Launch = function () {
                         else if (godLvl == 3) effectDurMod *= 1.02;
                     }
 
-                    //effect multiplier (from lucky etc)
+                    // effect multiplier (from lucky etc)
                     let mult = 1;
-                    //if (me.wrath>0 && Game.hasAura('Unholy Dominion')) mult*=1.1;
-                    //else if (me.wrath==0 && Game.hasAura('Ancestral Metamorphosis')) mult*=1.1;
                     if (me.wrath > 0) mult *= 1 + Game.auraMult('Unholy Dominion') * 0.1;
                     else if (me.wrath == 0) mult *= 1 + Game.auraMult('Ancestral Metamorphosis') * 0.1;
                     if (Game.Has('Green yeast digestives')) mult *= 1.01;
@@ -6476,7 +6413,7 @@ Game.Launch = function () {
                         }
                         if (list.length == 0) {
                             choice = 'frenzy';
-                        } //default to frenzy if no proper building
+                        } // default to frenzy if no proper building
                         else {
                             let obj = choose(list);
                             let pow = Game.ObjectsById[obj].amount / 10 + 1;
@@ -6498,11 +6435,11 @@ Game.Launch = function () {
                     } else if (choice == 'everything must go') {
                         buff = Game.gainBuff('everything must go', Math.ceil(8 * effectDurMod), 5);
                     } else if (choice == 'multiply cookies') {
-                        let moni = mult * Math.min(Game.cookies * 0.15, Game.cookiesPs * 60 * 15) + 13; //add 15% to cookies owned (+13), or 15 minutes of cookie production - whichever is lowest
+                        let moni = mult * Math.min(Game.cookies * 0.15, Game.cookiesPs * 60 * 15) + 13; // add 15% to cookies owned (+13), or 15 minutes of cookie production - whichever is lowest
                         Game.Earn(moni);
                         popup = loc('Lucky!') + '<br><small>' + loc('+%1!', loc('%1 cookie', LBeautify(moni))) + '</small>';
                     } else if (choice == 'ruin cookies') {
-                        let moni = Math.min(Game.cookies * 0.05, Game.cookiesPs * 60 * 10) + 13; //lose 5% of cookies owned (-13), or 10 minutes of cookie production - whichever is lowest
+                        let moni = Math.min(Game.cookies * 0.05, Game.cookiesPs * 60 * 10) + 13; // lose 5% of cookies owned (-13), or 10 minutes of cookie production - whichever is lowest
                         moni = Math.min(Game.cookies, moni);
                         Game.Spend(moni);
                         popup = loc('Ruin!') + '<br><small>' + loc('Lost %1!', loc('%1 cookie', LBeautify(moni))) + '</small>';
@@ -6518,7 +6455,7 @@ Game.Launch = function () {
                         buff = Game.gainBuff('dragonflight', Math.ceil(10 * effectDurMod), 1111);
                         if (Math.random() < 0.8) Game.killBuff('Click frenzy');
                     } else if (choice == 'chain cookie') {
-                        //fix by Icehawk78
+                        // fix by Icehawk78
                         if (this.chain == 0) this.totalFromChain = 0;
                         this.chain++;
                         let digit = me.wrath ? 6 : 7;
@@ -6529,7 +6466,7 @@ Game.Launch = function () {
                         let nextMoni = Math.max(digit, Math.min(Math.floor((1 / 9) * Math.pow(10, this.chain + 1) * digit * mult), maxPayout));
                         this.totalFromChain += moni;
 
-                        //break the chain if we're above 5 digits AND it's more than 50% of our bank, it grants more than 6 hours of our CpS, or just a 1% chance each digit (update : removed digit limit)
+                        // break the chain if we're above 5 digits AND it's more than 50% of our bank, it grants more than 6 hours of our CpS, or just a 1% chance each digit (update : removed digit limit)
                         if (Math.random() < 0.01 || nextMoni >= maxPayout) {
                             this.chain = 0;
                             popup =
@@ -6546,11 +6483,11 @@ Game.Launch = function () {
                     } else if (choice == 'cookie storm') {
                         buff = Game.gainBuff('cookie storm', Math.ceil(7 * effectDurMod), 7);
                     } else if (choice == 'cookie storm drop') {
-                        let moni = Math.max(mult * (Game.cookiesPs * 60 * Math.floor(Math.random() * 7 + 1)), Math.floor(Math.random() * 7 + 1)); //either 1-7 cookies or 1-7 minutes of cookie production, whichever is highest
+                        let moni = Math.max(mult * (Game.cookiesPs * 60 * Math.floor(Math.random() * 7 + 1)), Math.floor(Math.random() * 7 + 1)); // either 1-7 cookies or 1-7 minutes of cookie production, whichever is highest
                         Game.Earn(moni);
                         popup = '<div style="font-size:75%;">' + loc('+%1!', loc('%1 cookie', LBeautify(moni))) + '</div>';
                     } else if (choice == 'blab') {
-                        //sorry (it's really rare)
+                        // sorry (it's really rare)
                         let str = EN
                             ? choose([
                                 'Cookie crumbliness x3 for 60 seconds!',
@@ -6602,7 +6539,7 @@ Game.Launch = function () {
 
                     Game.DropEgg(0.9);
 
-                    //sparkle and kill the shimmer
+                    // sparkle and kill the shimmer
                     Game.SparkleAt(me.x + 48, me.y + 48);
                     if (choice == 'cookie storm drop') {
                         if (Game.prefs.cookiesound) PlaySound('snd/clickb' + Math.floor(Math.random() * 7 + 1) + '.mp3', 0.75);
@@ -6637,7 +6574,6 @@ Game.Launch = function () {
                     if (Game.Has('Golden goose egg')) m *= 0.95;
                     if (Game.Has('Heavenly luck')) m *= 0.95;
                     if (Game.Has('Green yeast digestives')) m *= 0.99;
-                    //if (Game.hasAura('Arcane Aura')) m*=0.95;
                     m *= 1 - Game.auraMult('Arcane Aura') * 0.05;
                     if (Game.hasBuff('Sugar blessing')) m *= 0.9;
                     if (Game.season == 'easter' && Game.Has('Starspawn')) m *= 0.98;
@@ -6690,18 +6626,15 @@ Game.Launch = function () {
 
                     me.x = -128;
                     me.y = Math.floor(Math.random() * Math.max(0, Game.bounds.bottom - Game.bounds.top - 256) + Game.bounds.top + 128) - 128;
-                    //me.l.style.left=me.x+'px';
-                    //me.l.style.top=me.y+'px';
                     me.l.style.width = '167px';
                     me.l.style.height = '212px';
                     me.l.style.backgroundImage = 'url(img/frostedReindeer.png)';
                     me.l.style.opacity = '0';
-                    //me.l.style.transform='rotate('+(Math.random()*60-30)+'deg) scale('+(Math.random()*1+0.25)+')';
                     me.l.style.display = 'block';
                     me.l.setAttribute('alt', loc('Reindeer'));
 
-                    me.life = 1; //the reindeer's current progression through its lifespan (in frames)
-                    me.dur = 4; //duration; the cookie's lifespan in seconds before it despawns
+                    me.life = 1; // the reindeer's current progression through its lifespan (in frames)
+                    me.dur = 4; // duration; the cookie's lifespan in seconds before it despawns
 
                     let dur = 4;
                     if (Game.Has('Weighted sleighs')) dur *= 2;
@@ -6730,15 +6663,15 @@ Game.Launch = function () {
                     }
                 },
                 popFunc: function (me) {
-                    //get achievs and stats
+                    // get achievs and stats
                     if (me.spawnLead) {
                         Game.reindeerClicked++;
                     }
 
                     let val = Game.cookiesPs * 60;
-                    if (Game.hasBuff('Elder frenzy')) val *= 0.5; //very sorry
-                    if (Game.hasBuff('Frenzy')) val *= 0.75; //I sincerely apologize
-                    let moni = Math.max(25, val); //1 minute of cookie production, or 25 cookies - whichever is highest
+                    if (Game.hasBuff('Elder frenzy')) val *= 0.5; // very sorry
+                    if (Game.hasBuff('Frenzy')) val *= 0.75; // I sincerely apologize
+                    let moni = Math.max(25, val); // 1 minute of cookie production, or 25 cookies - whichever is highest
                     if (Game.Has('Ho ho ho-flavored frosting')) moni *= 2;
                     moni *= Game.eff('reindeerGain');
                     Game.Earn(moni);
@@ -6756,7 +6689,7 @@ Game.Launch = function () {
                         else if (godLvl == 3) failRate *= 0.97;
                     }
                     if (Math.random() > failRate) {
-                        //christmas cookie drops
+                        // christmas cookie drops
                         cookie = choose([
                             'Christmas tree biscuits',
                             'Snowflake biscuits',
@@ -6784,7 +6717,7 @@ Game.Launch = function () {
 
                     if (popup != '') Game.Popup(popup, Game.mouseX, Game.mouseY);
 
-                    //sparkle and kill the shimmer
+                    // sparkle and kill the shimmer
                     Game.SparkleAt(Game.mouseX, Game.mouseY);
                     PlaySound('snd/jingleClick.mp3');
                     me.die();
@@ -6875,11 +6808,11 @@ Game.Launch = function () {
             'Cortex baker': ['Brainstorm', 'Brain freeze']
         };
 
-        /*=====================================================================================
+        /* =====================================================================================
         PARTICLES
         =======================================================================================*/
-        //generic particles (falling cookies etc)
-        //only displayed on left section
+        // generic particles (falling cookies etc)
+        // only displayed on left section
         Game.particles = [];
         Game.particlesN = 50;
         for (let i = 0; i < Game.particlesN; i++) {
@@ -6908,7 +6841,6 @@ Game.Launch = function () {
                     if (!me.text) me.yd += 0.2 + Math.random() * 0.1;
                     me.x += me.xd;
                     me.y += me.yd;
-                    //me.y+=me.life*0.25+Math.random()*0.25;
                     me.life++;
                     if (me.life >= Game.fps * me.dur) {
                         me.life = -1;
@@ -6917,9 +6849,8 @@ Game.Launch = function () {
             }
         };
         Game.particleAdd = function (x, y, xd, yd, size, dur, z, pic, text) {
-            //Game.particleAdd(pos X,pos Y,speed X,speed Y,size (multiplier),duration (seconds),layer,picture,text);
-            //pick the first free (or the oldest) particle to replace it
-            //Game.prefs.particles)
+            // Game.particleAdd(pos X,pos Y,speed X,speed Y,size (multiplier),duration (seconds),layer,picture,text);
+            // pick the first free (or the oldest) particle to replace it
             let highest = 0;
             let highestI = 0;
             for (let i = 0; i < Game.particlesN; i++) {
@@ -7018,7 +6949,7 @@ Game.Launch = function () {
             }
         };
 
-        //text particles (popups etc)
+        // text particles (popups etc)
         Game.textParticles = [];
         Game.textParticlesY = 0;
         let str = '';
@@ -7043,7 +6974,7 @@ Game.Launch = function () {
             }
         };
         Game.textParticlesAdd = function (text, el, posX, posY) {
-            //pick the first free (or the oldest) particle to replace it
+            // pick the first free (or the oldest) particle to replace it
             let highest = 0;
             let highestI = 0;
             for (let i in Game.textParticles) {
@@ -7067,13 +6998,13 @@ Game.Launch = function () {
                 noStack = 1;
             } else {
                 let x = (Math.random() - 0.5) * 40;
-                let y = 0; //+(Math.random()-0.5)*40;
+                let y = 0;
                 if (!el) {
                     let rect = Game.bounds;
                     let x = Math.floor((rect.left + rect.right) / 2);
                     let y = Math.floor(rect.bottom) - Game.mobile * 64;
                     x += (Math.random() - 0.5) * 40;
-                    y += 0; //(Math.random()-0.5)*40;
+                    y += 0;
                 }
             }
             if (!noStack) y -= Game.textParticlesY;
@@ -7107,7 +7038,7 @@ Game.Launch = function () {
             if (Game.popups) Game.textParticlesAdd(text, 0, x, y);
         };
 
-        //display sparkles at a set position
+        // display sparkles at a set position
         Game.sparkles = l('sparkles');
         Game.sparklesT = 0;
         Game.sparklesFrames = 16;
@@ -7125,10 +7056,10 @@ Game.Launch = function () {
             Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24);
         };
 
-        /*=====================================================================================
+        /* =====================================================================================
         NOTIFICATIONS
         =======================================================================================*/
-        //maybe do all this mess with proper DOM instead of rewriting the innerHTML
+        // maybe do all this mess with proper DOM instead of rewriting the innerHTML
         Game.Notes = [];
         Game.NotesById = [];
         Game.noteId = 0;
@@ -7148,15 +7079,12 @@ Game.Launch = function () {
             Game.NotesById[this.id] = this;
             Game.Notes.unshift(this);
             if (Game.Notes.length > 50) Game.Notes.pop();
-            //Game.Notes.push(this);
-            //if (Game.Notes.length>50) Game.Notes.shift();
             Game.UpdateNotes();
         };
         Game.CloseNote = function (id) {
             let me = Game.NotesById[id];
             if (Game.tooltip.from && Game.tooltip.from.id.indexOf('note-') == 0) Game.tooltip.hide();
             Game.Notes.splice(Game.Notes.indexOf(me), 1);
-            //Game.NotesById.splice(Game.NotesById.indexOf(me),1);
             Game.NotesById[id] = null;
             Game.UpdateNotes();
         };
@@ -7243,14 +7171,14 @@ Game.Launch = function () {
             if (!noLog) Game.AddToLog('<b>' + title + '</b> | ' + desc);
         };
         Game.NotifyTooltip = function (content) {
-            //attaches a tooltip to the last spawned note
+            // attaches a tooltip to the last spawned note
             if (!Game.NotesById[Game.noteId - 1]) return false;
             let me = Game.NotesById[Game.noteId - 1];
             me.tooltip = content;
             Game.UpdateNotes();
         };
 
-        /*=====================================================================================
+        /* =====================================================================================
         PROMPT
         =======================================================================================*/
         Game.darkenL = l('darken');
@@ -7294,7 +7222,7 @@ Game.Launch = function () {
             Game.promptOptionsN = 0;
             for (let i = 0; i < options.length; i++) {
                 if (options[i] == 'br') {
-                    //just a linebreak
+                    // just a linebreak
                     opts += '<br>';
                 } else {
                     if (typeof options[i] == 'string') options[i] = [options[i], 'PlaySound(\'snd/tickOff.mp3\');Game.ClosePrompt();'];
@@ -7365,7 +7293,7 @@ Game.Launch = function () {
             }
         };
 
-        /*=====================================================================================
+        /* =====================================================================================
         MENUS
         =======================================================================================*/
         Game.cssClasses = [];
@@ -7507,25 +7435,22 @@ Game.Launch = function () {
             }
         };
         Game.sayTime = function (time, detail) {
-            //time is a value where one second is equal to Game.fps (30).
-            //detail skips days when >1, hours when >2, minutes when >3 and seconds when >4.
-            //if detail is -1, output something like "3 hours, 9 minutes, 48 seconds"
+            // time is a value where one second is equal to Game.fps (30).
+            // detail skips days when >1, hours when >2, minutes when >3 and seconds when >4.
+            // if detail is -1, output something like "3 hours, 9 minutes, 48 seconds"
             if (time <= 0) return '';
             let str = '';
             detail ||= 0;
             time = Math.floor(time);
             if (detail == -1) {
-                //let months=0;
                 let days = 0;
                 let hours = 0;
                 let minutes = 0;
                 let seconds = 0;
-                //if (time>=Game.fps*60*60*24*30) months=(Math.floor(time/(Game.fps*60*60*24*30)));
                 if (time >= Game.fps * 60 * 60 * 24) days = Math.floor(time / (Game.fps * 60 * 60 * 24));
                 if (time >= Game.fps * 60 * 60) hours = Math.floor(time / (Game.fps * 60 * 60));
                 if (time >= Game.fps * 60) minutes = Math.floor(time / (Game.fps * 60));
                 if (time >= Game.fps) seconds = Math.floor(time / Game.fps);
-                //days-=months*30;
                 hours -= days * 24;
                 minutes -= hours * 60 + days * 24 * 60;
                 seconds -= minutes * 60 + hours * 60 * 60 + days * 24 * 60 * 60;
@@ -7540,31 +7465,17 @@ Game.Launch = function () {
                     seconds = 0;
                 }
                 let bits = [];
-                //if (months>0) bits.push(Beautify(months)+' month'+(days==1?'':'s'));
                 if (days > 0) bits.push(loc('%1 day', LBeautify(days)));
                 if (hours > 0) bits.push(loc('%1 hour', LBeautify(hours)));
                 if (minutes > 0) bits.push(loc('%1 minute', LBeautify(minutes)));
                 if (seconds > 0) bits.push(loc('%1 second', LBeautify(seconds)));
                 if (bits.length == 0) str = loc('less than 1 second');
                 else str = bits.join(', ');
-                /*//if (months>0) bits.push(Beautify(months)+' month'+(days==1?'':'s'));
-                if (days>0) bits.push(Beautify(days)+' day'+(days==1?'':'s'));
-                if (hours>0) bits.push(Beautify(hours)+' hour'+(hours==1?'':'s'));
-                if (minutes>0) bits.push(Beautify(minutes)+' minute'+(minutes==1?'':'s'));
-                if (seconds>0) bits.push(Beautify(seconds)+' second'+(seconds==1?'':'s'));
-                if (bits.length==0) str='less than 1 second';
-                else str=bits.join(', ');*/
             } else {
-                /*if (time>=Game.fps*60*60*24*30*2 && detail<1) str=Beautify(Math.floor(time/(Game.fps*60*60*24*30)))+' months';
-				else if (time>=Game.fps*60*60*24*30 && detail<1) str='1 month';
-				else */ if (time >= Game.fps * 60 * 60 * 24 && detail < 2) str = loc('%1 day', LBeautify(Math.floor(time / (Game.fps * 60 * 60 * 24))));
-                //Beautify(Math.floor(time/(Game.fps*60*60*24)))+' days';
+                if (time >= Game.fps * 60 * 60 * 24 && detail < 2) str = loc('%1 day', LBeautify(Math.floor(time / (Game.fps * 60 * 60 * 24))));
                 else if (time >= Game.fps * 60 * 60 && detail < 3) str = loc('%1 hour', LBeautify(Math.floor(time / (Game.fps * 60 * 60))));
-                //Beautify(Math.floor(time/(Game.fps*60*60)))+' hours';
                 else if (time >= Game.fps * 60 && detail < 4) str = loc('%1 minute', LBeautify(Math.floor(time / (Game.fps * 60))));
-                //Beautify(Math.floor(time/(Game.fps*60)))+' minutes';
                 else if (time >= Game.fps && detail < 5) str = loc('%1 second', LBeautify(Math.floor(time / Game.fps)));
-                //Beautify(Math.floor(time/(Game.fps)))+' seconds';
                 else str = loc('less than 1 second');
             }
             return str;
@@ -7585,10 +7496,6 @@ Game.Launch = function () {
 
         Game.setVolume = function (what) {
             Game.volume = what;
-            /*for (let i in Sounds)
-            {
-                Sounds[i].volume=Game.volume;
-            }*/
         };
         Game.setVolumeMusic = function (what) {
             Game.volumeMusic = what;
@@ -7634,7 +7541,6 @@ Game.Launch = function () {
                     'click',
                     (function (lang) {
                         return function () {
-                            //lang!=locId)
                             PlaySound('snd/tick.mp3');
                             localStorageSet('CookieClickerLang', lang);
                             Game.toSave = true;
@@ -7662,7 +7568,6 @@ Game.Launch = function () {
             let str = '';
             if (Game.onMenu != '') {
                 str += '<div class="close menuClose" ' + Game.clickStr + '="Game.ShowMenu();">x</div>';
-                //str+='<div style="position:absolute;top:8px;right:8px;cursor:pointer;font-size:16px;" '+Game.clickStr+'="Game.ShowMenu();">X</div>';
             }
             if (Game.onMenu == 'prefs') {
                 str += '<div class="section">' + loc('Options') + '</div>';
@@ -7784,12 +7689,10 @@ Game.Launch = function () {
                     '<label>(' +
                     loc('notifications disappear much faster') +
                     ')</label><br>' +
-                    //Game.WritePrefButton('autoupdate','autoupdateButton','Offline mode OFF','Offline mode ON',0,1)+'<label>(disables update notifications)</label><br>'+
                     (Game.WritePrefButton('warn', 'warnButton', loc('Closing warning') + ON, loc('Closing warning') + OFF) +
                         '<label>(' +
                         loc('the game will ask you to confirm when you close the window') +
                         ')</label><br>') +
-                    //Game.WritePrefButton('focus','focusButton',loc("Defocus")+OFF,loc("Defocus")+ON,0,1)+'<label>('+loc("the game will be less resource-intensive when out of focus")+')</label><br>'+
                     Game.WritePrefButton(
                         'extraButtons',
                         'extraButtonsButton',
@@ -7827,7 +7730,6 @@ Game.Launch = function () {
                     loc('allows optimizations for screen readers; game will reload') +
                     ')</label><br>' +
                     '</div>' +
-                    //'<div class="listing">'+Game.WritePrefButton('autosave','autosaveButton','Autosave ON','Autosave OFF')+'</div>'+
                     `<div class="listing"><a class="option smallFancyButton" ${Game.clickStr}="Game.CheckModData();PlaySound('snd/tick.mp3');">${loc(
                         'Check mod data'
                     )}</a><label>(${loc('view and delete save data created by mods')})</label></div>` +
@@ -7837,7 +7739,6 @@ Game.Launch = function () {
 
                 str += '<div style="height:128px;"></div>';
             } else if (Game.onMenu == 'log') {
-                //str+=replaceAll('[bakeryName]',Game.bakeryName,Game.updateLog);
                 str += Game.updateLog;
                 if (!Game.HasAchiev('Olden days'))
                     str +=
@@ -7861,10 +7762,10 @@ Game.Launch = function () {
                 let prestigeUpgradesOwned = 0;
 
                 let list = [];
-                //sort the upgrades
+                // sort the upgrades
                 for (let i in Game.Upgrades) {
                     list.push(Game.Upgrades[i]);
-                } //clone first
+                } // clone first
                 let sortMap = function (a, b) {
                     if (a.order > b.order) return 1;
                     else if (a.order < b.order) return -1;
@@ -7897,7 +7798,7 @@ Game.Launch = function () {
 
                 list = [];
                 for (let i in Game.Achievements) {
-                    //sort the achievements
+                    // sort the achievements
                     list.push(Game.Achievements[i]);
                 }
                 sortMap = function (a, b) {
@@ -7909,7 +7810,6 @@ Game.Launch = function () {
 
                 for (let i in list) {
                     let me = list[i];
-                    //if (me.pool=='normal' || me.won>0) achievementsTotal++;
                     if (Game.CountsAsAchievementOwned(me.pool)) achievementsTotal++;
                     let pool = me.pool;
                     if (!achievements[pool]) achievements[pool] = '';
@@ -7997,7 +7897,6 @@ Game.Launch = function () {
                             dragonStr +=
                                 '<div ' +
                                 Game.getTooltip(
-                                    //'<div style="width:96px;height:96px;margin:4px auto;background:url(img/dragon.png?v='+Game.version+') '+(-level.pic*96)+'px 0px;"></div><div class="line"></div><div style="min-width:200px;text-align:center;margin-bottom:6px;">'+level.name+'</div>'
                                     '<div class="prompt" style="text-align:center;padding-bottom:6px;white-space:nowrap;margin:0px 32px;" id="tooltipDragon"><div style="width:96px;height:96px;margin:4px auto;background:url(img/dragon.png?v=' +
                                     Game.version +
                                     ') ' +
@@ -8054,8 +7953,6 @@ Game.Launch = function () {
                 date.setTime(Date.now() - Game.fullDate);
                 let fullDate = Game.sayTime((date.getTime() / 1000) * Game.fps, -1);
                 if (!Game.fullDate || !fullDate || fullDate.length < 1) fullDate = loc('a long while');
-                /*date.setTime(new Date().getTime()-Game.lastDate);
-                let lastDate=Game.sayTime(date.getTime()/1000*Game.fps,2);*/
 
                 let heavenlyMult = Game.GetHeavenlyMultiplier();
 
@@ -8163,7 +8060,7 @@ Game.Launch = function () {
                     loc('all time:') +
                     ' ' +
                     Beautify(Game.goldenClicks) +
-                    ')</small></div>' + //' <span class="hidden">(<b>Missed golden cookies :</b> '+Beautify(Game.missedGoldenClicks)+')</span></div>'+
+                    ')</small></div>' +
                     (dropMult != 1
                         ? '<div class="listing"><b>' + loc('Random drop multiplier:') + '</b> <small>x</small>' + Beautify(dropMult, 2) + '</div>'
                         : '') +
@@ -8218,7 +8115,6 @@ Game.Launch = function () {
                             Beautify(Game.lumpsTotal) +
                             '</div></div>'
                             : '') +
-                        //(Game.cookiesSucked>0?'<div class="listing warning"><b>Withered :</b> '+Beautify(Game.cookiesSucked)+' cookies</div>':'')+
                         (Game.reindeerClicked > 0
                             ? '<div class="listing"><b>' + loc('Reindeer found:') + '</b> ' + Beautify(Game.reindeerClicked) + '</div>'
                             : '') +
@@ -8343,7 +8239,7 @@ Game.Launch = function () {
         Game.ascendMeter = l('ascendMeter');
         Game.ascendNumber = l('ascendNumber');
 
-        /*=====================================================================================
+        /* =====================================================================================
         NEWS TICKER
         =======================================================================================*/
         Game.Ticker = '';
@@ -8357,7 +8253,7 @@ Game.Launch = function () {
             else if (Game.Ticker == '') Game.getNewTicker(true);
         };
         Game.getNewTicker = function (
-            manual //note : "manual" is true if the ticker was clicked, but may also be true on startup etc
+            manual // note : "manual" is true if the ticker was clicked, but may also be true on startup etc
         ) {
             let list = [];
 
@@ -8931,7 +8827,7 @@ Game.Launch = function () {
                         );
 
                     if (Math.random() < 0.001) {
-                        //apologies to Will Wright
+                        // apologies to Will Wright
                         list.push(
                             'You have been chosen. They will come soon.',
                             'They\'re coming soon. Maybe you should think twice about opening the door.',
@@ -9047,8 +8943,6 @@ Game.Launch = function () {
                                 '.',
                                 'News : cookie shortage strikes town, people forced to eat cupcakes; "just not the same", concedes mayor.',
                                 'News : "you gotta admit, all this cookie stuff is a bit ominous", says confused idiot.',
-                                //'News : scientists advise getting used to cookies suffusing every aspect of life; "this is the new normal", expert says.',
-                                //'News : doctors advise against wearing face masks when going outside. "You never know when you might need a cookie... a mask would just get in the way."',//these were written back when covid hadn't really done much damage yet but they just feel in poor taste now
                                 'News : is there life on Mars? Various chocolate bar manufacturers currently under investigation for bacterial contaminants.',
                                 'News : "so I guess that\'s a thing now", scientist comments on cookie particles now present in virtually all steel manufactured since cookie production ramped up worldwide.',
                                 'News : trace amounts of cookie particles detected in most living creatures, some of which adapting them as part of new and exotic metabolic processes.'
@@ -9268,7 +9162,6 @@ Game.Launch = function () {
                     );
             }
 
-            //if (Game.elderWrath>0 && (Game.pledges==0 || Math.random()<0.2))
             if (Game.elderWrath > 0 && ((Game.pledges == 0 && Game.resets == 0 && Math.random() < 0.3) || Math.random() < 0.03)) {
                 list = [];
                 if (Game.elderWrath == 1)
@@ -9394,7 +9287,7 @@ Game.Launch = function () {
                                 'freemium',
                                 'incentives',
                                 'grassroots',
-                                'web 3.0' /*this was before this whole crypto mess i'm so sorry*/,
+                                'web 3.0' /* this was before this whole crypto mess i'm so sorry */,
                                 'logistics',
                                 'leveraging',
                                 'branding',
@@ -9586,7 +9479,6 @@ Game.Launch = function () {
                     Game.TickerEffect = { type: 'fortune', sub: me };
 
                     if (me == 'fortuneGC') me = loc('Today is your lucky day!');
-                    /*<br>Click here for a golden cookie.';*/
                     else if (me == 'fortuneCPS') {
                         Math.seedrandom(Game.seed + '-fortune');
                         me =
@@ -9598,7 +9490,7 @@ Game.Launch = function () {
                             ' ' +
                             Math.floor(Math.random() * 100) +
                             ' ' +
-                            Math.floor(Math.random() * 100) /*+'<br>Click here to gain one hour of your CpS.'*/;
+                            Math.floor(Math.random() * 100);
                         Math.seedrandom();
                     } else {
                         if (EN) {
@@ -9705,7 +9597,7 @@ Game.Launch = function () {
         };
 
         Game.vanilla = 1;
-        /*=====================================================================================
+        /* =====================================================================================
         BUILDINGS
         =======================================================================================*/
         Game.last = 0;
@@ -9713,9 +9605,9 @@ Game.Launch = function () {
         Game.storeToRefresh = 1;
         Game.priceIncrease = 1.15;
         Game.buyBulk = 1;
-        Game.buyMode = 1; //1 for buy, -1 for sell
-        Game.buyBulkOld = Game.buyBulk; //used to undo changes from holding Shift or Ctrl
-        Game.buyBulkShortcut = 0; //are we pressing Shift or Ctrl?
+        Game.buyMode = 1; // 1 for buy, -1 for sell
+        Game.buyBulkOld = Game.buyBulk; // used to undo changes from holding Shift or Ctrl
+        Game.buyBulkShortcut = 0; // are we pressing Shift or Ctrl?
 
         Game.Objects = {};
         Game.ObjectsById = [];
@@ -9733,12 +9625,11 @@ Game.Launch = function () {
             this.single = commonName[0];
             this.plural = commonName[1];
             this.bsingle = this.single;
-            this.bplural = this.plural; //store untranslated as we use those too
+            this.bplural = this.plural; // store untranslated as we use those too
             this.actionName = commonName[2];
             this.extraName = commonName[3];
             this.extraPlural = commonName[4];
             this.desc = desc;
-            //if (EN)
             this.dname = loc(this.name);
             this.single = loc(this.single);
             this.plural = loc(this.plural);
@@ -9754,17 +9645,12 @@ Game.Launch = function () {
 
             this.n = this.id;
             if (this.n != 0) {
-                //new automated price and CpS curves
-                //this.baseCps=Math.ceil(((this.n*0.5)*Math.pow(this.n*1,this.n*0.9))*10)/10;
-                //this.baseCps=Math.ceil((Math.pow(this.n*1,this.n*0.5+2.35))*10)/10;//by a fortunate coincidence, this gives the 3rd, 4th and 5th buildings a CpS of 10, 69 and 420
-                this.baseCps = Math.ceil(Math.pow(this.n * 1, this.n * 0.5 + 2) * 10) / 10; //0.45 used to be 0.5
-                //this.baseCps=Math.ceil((Math.pow(this.n*1,this.n*0.45+2.10))*10)/10;
-                //clamp 14,467,199 to 14,000,000 (there's probably a more elegant way to do that)
+                // new automated price and CpS curves
+                this.baseCps = Math.ceil(Math.pow(this.n * 1, this.n * 0.5 + 2) * 10) / 10; // 0.45 used to be 0.5
                 let digits = Math.pow(10, Math.ceil(Math.log(Math.ceil(this.baseCps)) / Math.LN10)) / 100;
                 this.baseCps = Math.round(this.baseCps / digits) * digits;
 
                 this.basePrice = (this.n * 1 + 9 + (this.n < 5 ? 0 : Math.pow(this.n - 5, 1.75) * 5)) * Math.pow(10, this.n) * Math.max(1, this.n - 14);
-                //this.basePrice=(this.n*2.5+7.5)*Math.pow(10,this.n);
                 digits = Math.pow(10, Math.ceil(Math.log(Math.ceil(this.basePrice)) / Math.LN10)) / 100;
                 this.basePrice = Math.round(this.basePrice / digits) * digits;
                 if (this.id >= 16) this.basePrice *= 10;
@@ -9802,13 +9688,13 @@ Game.Launch = function () {
 
             this.eachFrame = 0;
 
-            this.minigameUrl = 0; //if this is defined, load the specified script if the building's level is at least 1
+            this.minigameUrl = 0; // if this is defined, load the specified script if the building's level is at least 1
             this.minigameName = 0;
             this.onMinigame = false;
             this.minigameLoaded = false;
 
             this.switchMinigame = function (
-                on //change whether we're on the building's minigame
+                on // change whether we're on the building's minigame
             ) {
                 if (!Game.isMinigameReady(this)) on = false;
                 if (on == -1) on = !this.onMinigame;
@@ -9835,7 +9721,7 @@ Game.Launch = function () {
                 return Math.ceil(price);
             };
             this.getSumPrice = function (
-                amount //return how much it would cost to buy [amount] more of this building
+                amount // return how much it would cost to buy [amount] more of this building
             ) {
                 let price = 0;
                 for (let i = Math.max(0, this.amount); i < Math.max(0, this.amount + amount); i++) {
@@ -9845,7 +9731,7 @@ Game.Launch = function () {
                 return Math.ceil(price);
             };
             this.getReverseSumPrice = function (
-                amount //return how much you'd get from selling [amount] of this building
+                amount // return how much you'd get from selling [amount] of this building
             ) {
                 let price = 0;
                 for (let i = Math.max(0, this.amount - amount); i < Math.max(0, this.amount); i++) {
@@ -9857,7 +9743,6 @@ Game.Launch = function () {
             };
             this.getSellMultiplier = function () {
                 let giveBack = 0.25;
-                //if (Game.hasAura('Earth Shatterer')) giveBack=0.5;
                 giveBack *= 1 + Game.auraMult('Earth Shatterer');
                 return giveBack;
             };
@@ -9903,7 +9788,6 @@ Game.Launch = function () {
                     // @ts-expect-error
                     this.refresh();
                 }
-                //if (moni>0 && amount>1) Game.Notify(this.name,'Bought <b>'+bought+'</b> for '+Beautify(moni)+' cookies','',2);
             };
             this.sell = function (amount, bypass) {
                 let success = 0;
@@ -9923,7 +9807,7 @@ Game.Launch = function () {
                         sold++;
                         moni += price;
                         Game.cookies += price;
-                        Game.cookiesEarned = Math.max(Game.cookies, Game.cookiesEarned); //this is to avoid players getting the cheater achievement when selling buildings that have a higher price than they used to
+                        Game.cookiesEarned = Math.max(Game.cookies, Game.cookiesEarned); // this is to avoid players getting the cheater achievement when selling buildings that have a higher price than they used to
                         // @ts-expect-error
                         this.amount--;
                         // @ts-expect-error
@@ -9973,13 +9857,11 @@ Game.Launch = function () {
                     // @ts-expect-error
                     this.refresh();
                 }
-                //if (moni>0) Game.Notify(this.name,'Sold <b>'+sold+'</b> for '+Beautify(moni)+' cookies','',2);
             };
             this.sacrifice = function (
-                amount //sell without getting back any money
+                amount // sell without getting back any money
             ) {
                 let success = 0;
-                //let moni=0;
                 let sold = 0;
                 // @ts-expect-error
                 if (amount == -1) amount = this.amount;
@@ -9991,9 +9873,6 @@ Game.Launch = function () {
                     // @ts-expect-error
                     if (this.amount > 0) {
                         sold++;
-                        //moni+=price;
-                        //Game.cookies+=price;
-                        //Game.cookiesEarned=Math.max(Game.cookies,Game.cookiesEarned);
                         // @ts-expect-error
                         this.amount--;
                         // @ts-expect-error
@@ -10012,10 +9891,9 @@ Game.Launch = function () {
                     // @ts-expect-error
                     this.refresh();
                 }
-                //if (moni>0) Game.Notify(this.name,'Sold <b>'+sold+'</b> for '+Beautify(moni)+' cookies','',2);
             };
             this.buyFree = function (
-                amount //unlike getFree, this still increases the price
+                amount // unlike getFree, this still increases the price
             ) {
                 for (let i = 0; i < amount; i++) {
                     if (Game.cookies >= price) {
@@ -10037,7 +9915,7 @@ Game.Launch = function () {
                 this.refresh();
             };
             this.getFree = function (
-                amount //get X of this building for free, with the price behaving as if you still didn't have them
+                amount // get X of this building for free, with the price behaving as if you still didn't have them
             ) {
                 // @ts-expect-error
                 this.amount += amount;
@@ -10054,7 +9932,7 @@ Game.Launch = function () {
                 this.refresh();
             };
             this.getFreeRanks = function (
-                amount //this building's price behaves as if you had X less of it
+                amount // this building's price behaves as if you had X less of it
             ) {
                 this.free += amount;
                 this.refresh();
@@ -10085,7 +9963,7 @@ Game.Launch = function () {
                 if ((Game.buyMode == 1 && Game.cookies >= price) || (Game.buyMode == -1 && this.amount > 0)) canBuy = true;
 
                 let synergiesStr = '';
-                //note : might not be entirely accurate, math may need checking
+                // note : might not be entirely accurate, math may need checking
                 if (this.amount > 0) {
                     let synergiesWith = {};
                     let synergyBoost = 0;
@@ -10270,7 +10148,7 @@ Game.Launch = function () {
                 };
             })(this);
 
-            this.refresh = function () //show/hide the building display based on its amount, and redraw it
+            this.refresh = function () // show/hide the building display based on its amount, and redraw it
             {
                 // @ts-expect-error
                 this.price = this.getPrice();
@@ -10300,16 +10178,9 @@ Game.Launch = function () {
                     // @ts-expect-error
                     l('mutedProduct' + this.id).style.display = 'none';
                 }
-                //if (!this.onMinigame && !this.muted) {}
-                //else this.pics=[];
             };
             this.rebuild = () => {
-                //let classes='product';
                 let price = this.bulkPrice;
-                /*if (Game.cookiesEarned>=me.basePrice || me.bought>0) {classes+=' unlocked';me.locked=0;} else {classes+=' locked';me.locked=1;}
-                if (Game.cookies>=price) classes+=' enabled'; else classes+=' disabled';
-                if (me.l.className.indexOf('toggledOff')!=-1) classes+=' toggledOff';
-                */
                 let icon = [0, this.icon];
                 let iconOff = [1, this.icon];
                 // @ts-expect-error
@@ -10331,9 +10202,7 @@ Game.Launch = function () {
                         desc = Game.foolObjects[this.name].desc;
                     }
                     displayName = name;
-                    //if (name.length>16) displayName='<span style="font-size:75%;">'+name+'</span>';
                 } else if (!EN) displayName = name;
-                //else if (!EN && name.length>16) displayName='<span style="font-size:75%;">'+name+'</span>';
                 icon = [icon[0] * 64, icon[1] * 64];
                 iconOff = [iconOff[0] * 64, iconOff[1] * 64];
 
@@ -10466,7 +10335,7 @@ Game.Launch = function () {
                 // @ts-expect-error
                 l('rows').innerHTML = l('rows').innerHTML + str;
 
-                //building canvas
+                // building canvas
                 this.pics = [];
 
                 this.toResize = true;
@@ -10485,19 +10354,18 @@ Game.Launch = function () {
                     }
                     // @ts-expect-error
                     let ctx = this.ctx;
-                    //clear
-                    //ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+                    // clear
                     ctx.globalAlpha = 1;
 
-                    //pic : a loaded picture or a function returning a loaded picture
-                    //bg : a loaded picture or a function returning a loaded picture - tiled as the background, 128x128
-                    //xV : the pictures will have a random horizontal shift by this many pixels
-                    //yV : the pictures will have a random vertical shift by this many pixels
-                    //w : how many pixels between each picture (or row of pictures)
-                    //x : horizontal offset
-                    //y : vertical offset (+32)
-                    //rows : if >1, arrange the pictures in rows containing this many pictures
-                    //frames : if present, slice the pic in [frames] horizontal slices and pick one at random
+                    // pic : a loaded picture or a function returning a loaded picture
+                    // bg : a loaded picture or a function returning a loaded picture - tiled as the background, 128x128
+                    // xV : the pictures will have a random horizontal shift by this many pixels
+                    // yV : the pictures will have a random vertical shift by this many pixels
+                    // w : how many pixels between each picture (or row of pictures)
+                    // x : horizontal offset
+                    // y : vertical offset (+32)
+                    // rows : if >1, arrange the pictures in rows containing this many pictures
+                    // frames : if present, slice the pic in [frames] horizontal slices and pick one at random
 
                     // @ts-expect-error
                     let pic = this.art.pic;
@@ -10523,15 +10391,6 @@ Game.Launch = function () {
                     // @ts-expect-error
                     if (typeof bg == 'string') ctx.fillPattern(Pic(this.art.bg), 0, 0, this.canvas.width, this.canvas.height, 128, 128);
                     else bg(this, ctx);
-                    /*
-                    ctx.globalAlpha=0.5;
-                    if (typeof(bg)=='string')//test
-                    {
-                        ctx.fillPattern(Pic(this.art.bg),-128+Game.T%128,0,this.canvas.width+128,this.canvas.height,128,128);
-                        ctx.fillPattern(Pic(this.art.bg),-128+Math.floor(Game.T/2)%128,-128+Math.floor(Game.T/2)%128,this.canvas.width+128,this.canvas.height+128,128,128);
-                    }
-                    ctx.globalAlpha=1;
-                    */
                     // @ts-expect-error
                     let maxI = Math.floor(this.canvas.width / (w / rows) + 1);
                     // @ts-expect-error
@@ -10543,11 +10402,8 @@ Game.Launch = function () {
                     let y = 0;
                     let added = 0;
                     if (i != iT) {
-                        //for (let iter=0;iter<3;iter++)
-                        //{
                         let prevFrame = 0;
                         while (i < iT) {
-                            //if (i<iT)
                             // @ts-expect-error
                             Math.seedrandom(Game.seed + ' ' + this.id + ' ' + i);
                             if (rows != 1) {
@@ -10559,7 +10415,6 @@ Game.Launch = function () {
                             }
                             let usedPic = typeof pic == 'string' ? pic : pic(this, i);
                             let frame = -1;
-                            //if (frames>1) frame=Math.floor(Math.random()*frames);
                             if (frames > 1) {
                                 frame = prevFrame + Math.floor(Math.random() * (frames - 1) + 1);
                                 frame = frame % frames;
@@ -10578,7 +10433,6 @@ Game.Launch = function () {
                             added++;
                         }
                         while (i > iT) {
-                            //else if (i>iT)
                             // @ts-expect-error
                             this.pics.sort(Game.sortSpritesById);
                             // @ts-expect-error
@@ -10586,7 +10440,6 @@ Game.Launch = function () {
                             i--;
                             added--;
                         }
-                        //}
                         // @ts-expect-error
                         this.pics.sort(Game.sortSprites);
                     }
@@ -10599,7 +10452,7 @@ Game.Launch = function () {
                     if (this.mouseOn) {
                         // @ts-expect-error
                         if (this.name == 'Grandma') {
-                            //mouse detection only fits grandma sprites for now
+                            // mouse detection only fits grandma sprites for now
                             let marginW = -18;
                             let marginH = -10;
                             for (let i = 0; i < len; i++) {
@@ -10646,9 +10499,9 @@ Game.Launch = function () {
                         if (selected == i && this.name == 'Grandma') {
                             ctx.font = '14px Merriweather';
                             ctx.textAlign = 'center';
-                            Math.seedrandom(Game.seed + ' ' + pic.id /*+' '+pic.id*/); //(Game.seed+' '+pic.id+' '+pic.x+' '+pic.y);
+                            Math.seedrandom(Game.seed + ' ' + pic.id);
                             // @ts-expect-error
-                            let years = (Date.now() - new Date(2013, 7, 8)) / (1000 * 60 * 60 * 24 * 365) + Math.random(); //the grandmas age with the game
+                            let years = (Date.now() - new Date(2013, 7, 8)) / (1000 * 60 * 60 * 24 * 365) + Math.random(); // the grandmas age with the game
                             let name = choose(Game.grandmaNames);
                             let custom = false;
                             if (Game.prefs.customGrandmas && Game.customGrandmaNames.length > 0 && Math.random() < 0.2) {
@@ -10678,7 +10531,6 @@ Game.Launch = function () {
 
                             ctx.drawImage(sprite, Math.floor(pic.x + Math.random() * 4 - 2), Math.floor(pic.y + Math.random() * 4 - 2));
                         }
-                        //else if (1) ctx.drawImage(sprite,0,0,sprite.width,sprite.height,pic.x,pic.y,sprite.width,sprite.height);
                         else if (pic.frame != -1)
                             ctx.drawImage(
                                 sprite,
@@ -10693,18 +10545,6 @@ Game.Launch = function () {
                             );
                         else ctx.drawImage(sprite, pic.x, pic.y);
                     }
-
-                    /*
-                    let picX=this.id;
-                    let picY=12;
-                    let w=1;
-                    let h=1;
-                    let w=Math.abs(Math.cos(Game.T*0.2+this.id*2-0.3))*0.2+0.8;
-                    let h=Math.abs(Math.sin(Game.T*0.2+this.id*2))*0.3+0.7;
-                    let x=64+Math.cos(Game.T*0.19+this.id*2)*8-24*w;
-                    let y=128-Math.abs(Math.pow(Math.sin(Game.T*0.2+this.id*2),5)*16)-48*h;
-                    ctx.drawImage(Pic('icons.png'),picX*48,picY*48,48,48,Math.floor(x),Math.floor(y),48*w,48*h);
-                    */
                 };
             }
 
@@ -10715,7 +10555,7 @@ Game.Launch = function () {
             return this;
         };
 
-        Game.DrawBuildings = function () //draw building displays with canvas
+        Game.DrawBuildings = function () // draw building displays with canvas
         {
             if (Game.drawT % 3 == 0) {
                 for (let i in Game.Objects) {
@@ -10743,7 +10583,6 @@ Game.Launch = function () {
             if (Game.Has('Faberge egg')) price *= 0.99;
             if (Game.Has('Divine discount')) price *= 0.99;
             if (Game.Has('Fortune #100')) price *= 0.99;
-            //if (Game.hasAura('Fierce Hoarder')) price*=0.98;
             price *= 1 - Game.auraMult('Fierce Hoarder') * 0.02;
             if (Game.hasBuff('Everything must go')) price *= 0.95;
             if (Game.hasBuff('Crafty pixies')) price *= 0.98;
@@ -10810,7 +10649,7 @@ Game.Launch = function () {
             Game.storeToRefresh = 1;
             if (id != -1) PlaySound('snd/tick.mp3');
         };
-        Game.BuildStore = function () //create the DOM for the store's buildings
+        Game.BuildStore = function () // create the DOM for the store's buildings
         {
             let str = '';
             str +=
@@ -10875,7 +10714,6 @@ Game.Launch = function () {
                     '"></div>' +
                     (Game.prefs.screenreader ? '<label class="srOnly" style="width:64px;left:-64px;" id="ariaReader-product-' + me.id + '"></label>' : '') +
                     '</div>' +
-                    /*'<div class="buySell"><div style="left:0px;" id="buttonBuy10-'+me.id+'">Buy 10</div><div style="left:100px;" id="buttonSell-'+me.id+'">Sell 1</div><div style="left:200px;" id="buttonSellAll-'+me.id+'">Sell all</div></div>'+*/
                     (Game.prefs.screenreader ? '</button>' : '</div>');
             }
             // @ts-expect-error
@@ -10883,16 +10721,11 @@ Game.Launch = function () {
 
             Game.storeBulkButton(-1);
 
-            /*let SellAllPrompt=function(id)
-            {
-                return function(id){Game.Prompt('<div class="block">Do you really want to sell your '+loc("%1 "+Game.ObjectsById[id].bsingle,LBeautify(Game.ObjectsById[id].amount))+'?</div>',[['Yes','Game.ObjectsById['+id+'].sell(-1);Game.ClosePrompt();'],['No','Game.ClosePrompt();']]);}(id);
-            }*/
-
             for (let i in Game.Objects) {
                 let me = Game.Objects[i];
                 me.l = l('product' + me.id);
 
-                //these are a bit messy but ah well
+                // these are a bit messy but ah well
                 if (!Game.touchEvents) {
                     AddEvent(
                         me.l,
@@ -10923,7 +10756,7 @@ Game.Launch = function () {
             Game.ObjectsById[what].buy();
         };
 
-        Game.RefreshStore = function () //refresh the store's buildings
+        Game.RefreshStore = function () // refresh the store's buildings
         {
             for (let i in Game.Objects) {
                 Game.Objects[i].refresh();
@@ -10941,14 +10774,14 @@ Game.Launch = function () {
         };
         Game.scriptBindings = [];
         Game.showedScriptLoadError = false;
-        Game.LoadMinigames = function () //load scripts for each minigame
+        Game.LoadMinigames = function () // load scripts for each minigame
         {
             for (let i in Game.Objects) {
                 let me = Game.Objects[i];
                 if (me.minigameUrl && me.level > 0 && !me.minigameLoaded && !me.minigameLoading && !l('minigameScript-' + me.id)) {
                     me.minigameLoading = true;
-                    //we're only loading the minigame scripts that aren't loaded yet and which have enough building level
-                    //we call this function on building level up and on load
+                    // we're only loading the minigame scripts that aren't loaded yet and which have enough building level
+                    // we call this function on building level up and on load
                     console.log('Loading script '+me.minigameUrl+'...');
                     setTimeout(
                         (function (me) {
@@ -10992,20 +10825,10 @@ Game.Launch = function () {
         };
 
         Game.magicCpS = function (what) {
-            /*
-            if (Game.Objects[what].amount>=250)
-            {
-                //this makes buildings give 1% more cookies for every building over 250.
-                //this turns out to be rather stupidly overpowered.
-                let n=Game.Objects[what].amount-250;
-                return 1+Math.pow(1.01,n);
-            }
-            else return 1;
-            */
             return 1;
         };
 
-        //define objects
+        // define objects
         new Game.Object(
             'Cursor',
             'cursor|cursors|clicked|[X] extra finger|[X] extra fingers',
@@ -11141,7 +10964,6 @@ Game.Launch = function () {
                 for (let i in Game.Objects) {
                     if (Game.Objects[i].name != 'Grandma') num += Game.Objects[i].amount;
                 }
-                //if (Game.hasAura('Elder Battalion')) mult*=1+0.01*num;
                 mult *= 1 + Game.auraMult('Elder Battalion') * 0.01 * num;
 
                 mult *= Game.magicCpS(me.name);
@@ -11306,7 +11128,7 @@ Game.Launch = function () {
                 if (this.amount >= Game.SpecialGrandmaUnlock && Game.Objects['Grandma'].amount > 0) Game.Unlock(this.grandma.name);
             }
         );
-        Game.last.displayName = '<span style="font-size:90%;letter-spacing:-1px;position:relative;bottom:2px;">Wizard tower</span>'; //shrink
+        Game.last.displayName = '<span style="font-size:90%;letter-spacing:-1px;position:relative;bottom:2px;">Wizard tower</span>'; // shrink
         Game.last.minigameUrl = 'minigameGrimoire.js';
         Game.last.minigameName = loc('Grimoire');
 
@@ -11349,7 +11171,7 @@ Game.Launch = function () {
                 if (this.amount >= Game.SpecialGrandmaUnlock && Game.Objects['Grandma'].amount > 0) Game.Unlock(this.grandma.name);
             }
         );
-        Game.last.displayName = '<span style="font-size:90%;letter-spacing:-1px;position:relative;bottom:2px;">Alchemy lab</span>'; //shrink
+        Game.last.displayName = '<span style="font-size:90%;letter-spacing:-1px;position:relative;bottom:2px;">Alchemy lab</span>'; // shrink
 
         new Game.Object(
             'Portal',
@@ -11390,7 +11212,7 @@ Game.Launch = function () {
                 if (this.amount >= Game.SpecialGrandmaUnlock && Game.Objects['Grandma'].amount > 0) Game.Unlock(this.grandma.name);
             }
         );
-        Game.last.displayName = '<span style="font-size:80%;letter-spacing:-1px;position:relative;bottom:3px;">Time machine</span>'; //shrink
+        Game.last.displayName = '<span style="font-size:80%;letter-spacing:-1px;position:relative;bottom:3px;">Time machine</span>'; // shrink
 
         new Game.Object(
             'Antimatter condenser',
@@ -11419,7 +11241,7 @@ Game.Launch = function () {
                 if (this.amount >= Game.SpecialGrandmaUnlock && Game.Objects['Grandma'].amount > 0) Game.Unlock(this.grandma.name);
             }
         );
-        Game.last.displayName = '<span style="font-size:65%;letter-spacing:-1px;position:relative;bottom:4px;">Antim. condenser</span>'; //shrink
+        Game.last.displayName = '<span style="font-size:65%;letter-spacing:-1px;position:relative;bottom:4px;">Antim. condenser</span>'; // shrink
 
         new Game.Object(
             'Prism',
@@ -11468,7 +11290,7 @@ Game.Launch = function () {
                 if (this.amount >= Game.SpecialGrandmaUnlock && Game.Objects['Grandma'].amount > 0) Game.Unlock(this.grandma.name);
             }
         );
-        Game.last.displayName = '<span style="font-size:85%;letter-spacing:-1px;position:relative;bottom:2px;">Chancemaker</span>'; //shrink
+        Game.last.displayName = '<span style="font-size:85%;letter-spacing:-1px;position:relative;bottom:2px;">Chancemaker</span>'; // shrink
 
         new Game.Object(
             'Fractal engine',
@@ -11497,7 +11319,7 @@ Game.Launch = function () {
                 if (this.amount >= Game.SpecialGrandmaUnlock && Game.Objects['Grandma'].amount > 0) Game.Unlock(this.grandma.name);
             }
         );
-        Game.last.displayName = '<span style="font-size:80%;letter-spacing:-1px;position:relative;bottom:4px;">Fractal engine</span>'; //shrink
+        Game.last.displayName = '<span style="font-size:80%;letter-spacing:-1px;position:relative;bottom:4px;">Fractal engine</span>'; // shrink
 
         new Game.Object(
             'Javascript console',
@@ -11527,7 +11349,7 @@ Game.Launch = function () {
                 if (this.amount >= Game.SpecialGrandmaUnlock && Game.Objects['Grandma'].amount > 0) Game.Unlock(this.grandma.name);
             }
         );
-        Game.last.displayName = '<span style="font-size:65%;letter-spacing:-1px;position:relative;bottom:4px;">Javascript console</span>'; //shrink
+        Game.last.displayName = '<span style="font-size:65%;letter-spacing:-1px;position:relative;bottom:4px;">Javascript console</span>'; // shrink
 
         new Game.Object(
             'Idleverse',
@@ -11690,7 +11512,6 @@ Game.Launch = function () {
             }
         };
 
-        //if (!EN)
         Game.foolObjects['Unknown'].name = loc('Investment');
         Game.foolObjects['Unknown'].desc = loc('You\'re not sure what this does, you just know it means profit.');
         for (let i in Game.Objects) {
@@ -11698,17 +11519,17 @@ Game.Launch = function () {
             Game.foolObjects[i].desc = loc(FindLocStringByPart(Game.Objects[i].name + ' business quote')) || Game.foolObjects[i].desc;
         }
 
-        //build store
+        // build store
         Game.BuildStore();
 
-        //build master bar
+        // build master bar
         str = '';
         str += '<div id="buildingsMute" class="shadowFilter" style="position:relative;z-index:100;padding:4px 16px 0px 64px;"></div>';
         str += '<div class="separatorBottom" style="position:absolute;bottom:-8px;z-index:0;"></div>';
         // @ts-expect-error
         l('buildingsMaster').innerHTML = str;
 
-        //build object displays
+        // build object displays
         let muteStr = '<div style="position:absolute;left:8px;bottom:12px;opacity:0.5;">' + loc('Muted:') + '</div>';
         for (let i in Game.Objects) {
             let me = Game.Objects[i];
@@ -11736,7 +11557,6 @@ Game.Launch = function () {
                     '].muted?\'snd/clickOff2.mp3\':\'snd/clickOn2.mp3\');" ' +
                     Game.getDynamicTooltip('Game.mutedBuildingTooltip(' + me.id + ')', 'this') +
                     '></div>';
-                //muteStr+='<div class="tinyProductIcon" id="mutedProduct'+me.id+'" style="display:none;background-position:-'+icon[0]+'px -'+icon[1]+'px;" '+Game.clickStr+'="Game.ObjectsById['+me.id+'].mute(0);PlaySound(Game.ObjectsById['+me.id+'].muted?\'snd/clickOff2.mp3\':\'snd/clickOn2.mp3\');" '+Game.getTooltip('<div style="width:150px;text-align:center;font-size:11px;"><b>Unmute '+me.plural+'</b><br>(Display this building)</div>')+'></div>';
 
                 AddEvent(
                     me.canvas,
@@ -11789,7 +11609,7 @@ Game.Launch = function () {
         // @ts-expect-error
         l('buildingsMute').innerHTML = muteStr;
 
-        /*=====================================================================================
+        /* =====================================================================================
         UPGRADES
         =======================================================================================*/
         Game.upgradesToRebuild = 1;
@@ -11805,17 +11625,15 @@ Game.Launch = function () {
             this.desc = desc;
             this.baseDesc = this.desc;
             this.basePrice = price;
-            this.priceLumps = 0; //note : doesn't do much on its own, you still need to handle the buying yourself
+            this.priceLumps = 0; // note : doesn't do much on its own, you still need to handle the buying yourself
             this.icon = icon;
             this.iconFunction = 0;
             this.buyFunction = buyFunction;
-            /*this.unlockFunction=unlockFunction;
-            this.unlocked=(this.unlockFunction?0:1);*/
             this.unlocked = 0;
             this.bought = 0;
             this.order = this.id;
             if (order) this.order = order + this.id * 0.001;
-            this.pool = ''; //can be '', cookie, toggle, debug, prestige, prestigeDecor, tech, or unused
+            this.pool = ''; // can be '', cookie, toggle, debug, prestige, prestigeDecor, tech, or unused
             if (pool) this.pool = pool;
             this.power = 0;
             if (power) this.power = power;
@@ -11825,7 +11643,7 @@ Game.Launch = function () {
             this.parents = [];
             this.type = 'upgrade';
             this.tier = 0;
-            this.buildingTie = 0; //of what building is this a tiered upgrade of ?
+            this.buildingTie = 0; // of what building is this a tiered upgrade of ?
 
             Game.last = this;
             Game.Upgrades[this.name] = this;
@@ -11851,7 +11669,6 @@ Game.Launch = function () {
                 if (this.kitten && Game.Has('Kitten wages')) price *= 0.9;
                 if (Game.hasBuff('Haggler\'s luck')) price *= 0.98;
                 if (Game.hasBuff('Haggler\'s misery')) price *= 1.02;
-                //if (Game.hasAura('Master of the Armory')) price*=0.98;
                 price *= 1 - Game.auraMult('Master of the Armory') * 0.02;
                 price *= Game.eff('upgradeCost');
                 if (this.pool == 'cookie' && Game.Has('Divine bakeries')) price /= 5;
@@ -11924,7 +11741,7 @@ Game.Launch = function () {
                                 // @ts-expect-error
                                 if (choices[i].selected) selected = i;
                             }
-                            Game.choiceSelectorChoices = choices; //this is a really dumb way of doing this i am so sorry
+                            Game.choiceSelectorChoices = choices; // this is a really dumb way of doing this i am so sorry
                             Game.choiceSelectorSelected = selected;
                             str += '<h4 id="choiceSelectedName">' + choices[selected].name + '</h4>' + '<div class="line"></div>';
 
@@ -12003,7 +11820,6 @@ Game.Launch = function () {
                         Game.BuildAscendTree(this);
                         PlaySound('snd/buy' + choose([1, 2, 3, 4]) + '.mp3', 0.75);
                         PlaySound('snd/shimmerClick.mp3');
-                        //PlaySound('snd/buyHeavenly.mp3');
                         success = 1;
                     }
                 }
@@ -12011,7 +11827,7 @@ Game.Launch = function () {
             if (this.bought && this.activateFunction) this.activateFunction();
             return success;
         };
-        Game.Upgrade.prototype.earn = function () //just win the upgrades without spending anything
+        Game.Upgrade.prototype.earn = function () // just win the upgrades without spending anything
         {
             this.unlocked = 1;
             this.bought = 1;
@@ -12020,7 +11836,7 @@ Game.Launch = function () {
             Game.recalculateGains = 1;
             if (Game.CountsAsUpgradeOwned(this.pool)) Game.UpgradesOwned++;
         };
-        Game.Upgrade.prototype.unearn = function () //remove the upgrade, but keep it unlocked
+        Game.Upgrade.prototype.unearn = function () // remove the upgrade, but keep it unlocked
         {
             this.bought = 0;
             Game.upgradesToRebuild = 1;
@@ -12038,7 +11854,7 @@ Game.Launch = function () {
             Game.recalculateGains = 1;
             if (Game.CountsAsUpgradeOwned(this.pool)) Game.UpgradesOwned--;
         };
-        Game.Upgrade.prototype.toggle = function () //cheating only
+        Game.Upgrade.prototype.toggle = function () // cheating only
         {
             if (!this.bought) {
                 this.bought = 1;
@@ -12081,7 +11897,6 @@ Game.Launch = function () {
                         Game.Upgrades[what].unlocked = 1;
                         Game.upgradesToRebuild = 1;
                         Game.recalculateGains = 1;
-                        /*Game.Notify('Upgrade unlocked','<div class="title" style="font-size:18px;margin-top:-2px;">'+Game.Upgrades[what].dname+'</div>',Game.Upgrades[what].icon,6);*/
                     }
                 }
             } else {
@@ -12115,7 +11930,7 @@ Game.Launch = function () {
             return Game.Upgrades[what] ? Game.Upgrades[what].unlocked : 0;
         };
 
-        Game.RebuildUpgrades = function () //recalculate the upgrades you can buy
+        Game.RebuildUpgrades = function () // recalculate the upgrades you can buy
         {
             Game.upgradesToRebuild = 0;
             let list = [];
@@ -12174,13 +11989,9 @@ Game.Launch = function () {
             else l('upgrades').classList.remove('hasMenu');
 
             for (let i in Game.UpgradesInStore) {
-                //if (!Game.UpgradesInStore[i]) break;
                 let me = Game.UpgradesInStore[i];
                 let str = Game.crate(me, 'store', 'Game.UpgradesById[' + me.id + '].click(event);', 'upgrade' + i);
 
-                /*let str='<div class="crate upgrade" '+Game.getTooltip(
-                '<div style="min-width:200px;"><div style="float:right;"><span class="price">'+Beautify(Math.round(me.getPrice()))+'</span></div><small>'+(me.pool=='toggle'?'[Togglable]':'[Upgrade]')+'</small><div class="name">'+me.dname+'</div><div class="line"></div><div class="description">'+me.desc+'</div></div>'
-                ,'store')+' '+Game.clickStr+'="Game.UpgradesById['+me.id+'].buy();" id="upgrade'+i+'" style="'+writeIcon(me.icon)+'"></div>';*/
                 if (me.pool == 'toggle') toggleStr += str;
                 else if (me.pool == 'tech') techStr += str;
                 else {
@@ -12211,8 +12022,8 @@ Game.Launch = function () {
             else l('vaultUpgrades').style.display = 'block';
         };
 
-        Game.UnlockAt = []; //this contains an array of every upgrade with a cookie requirement in the form of {cookies:(amount of cookies earned required),name:(name of upgrade or achievement to unlock)} (and possibly require:(name of upgrade of achievement to own))
-        //note : the cookie will not be added to the list if it contains locked:1 (use for seasonal cookies and such)
+        Game.UnlockAt = []; // this contains an array of every upgrade with a cookie requirement in the form of {cookies:(amount of cookies earned required),name:(name of upgrade or achievement to unlock)} (and possibly require:(name of upgrade of achievement to own))
+        // note : the cookie will not be added to the list if it contains locked:1 (use for seasonal cookies and such)
 
         let strCookieProductionMultiplierPlus = loc('Cookie production multiplier <b>+%1%</b>.', '[x]');
         let getStrCookieProductionMultiplierPlus = function (x) {
@@ -12243,9 +12054,9 @@ Game.Launch = function () {
             return upgrade;
         };
 
-        //tiered upgrades system
-        //each building has several upgrade tiers
-        //all upgrades in the same tier have the same color, unlock threshold and price multiplier
+        // tiered upgrades system
+        // each building has several upgrade tiers
+        // all upgrades in the same tier have the same color, unlock threshold and price multiplier
         Game.Tiers = {
             1: {
                 name: 'Plain',
@@ -12439,20 +12250,19 @@ Game.Launch = function () {
                 -gives +(0.1*building1)% cps to building2 and +(5*building2)% cps to building1
                 -if building2 is below building1 in worth, swap them
             */
-            //if (Game.Objects[building1].basePrice>Game.Objects[building2].basePrice) {let temp=building2;building2=building1;building1=temp;}
             let b1 = Game.Objects[building1];
             let b2 = Game.Objects[building2];
             if (b1.basePrice > b2.basePrice) {
                 b1 = Game.Objects[building2];
                 b2 = Game.Objects[building1];
-            } //swap
+            } // swap
 
             desc =
                 loc('%1 gain <b>+%2%</b> CpS per %3.', [cap(b1.plural), 5, b2.single]) +
                 '<br>' +
                 loc('%1 gain <b>+%2%</b> CpS per %3.', [cap(b2.plural), 0.1, b1.single]) +
                 (EN ? desc : '');
-            let upgrade = new Game.Upgrade(name, desc, (b1.basePrice * 10 + b2.basePrice * 1) * Game.Tiers[tier].price, Game.GetIcon(building1, tier)); //Math.sqrt(b1.basePrice*b2.basePrice)*Game.Tiers[tier].price
+            let upgrade = new Game.Upgrade(name, desc, (b1.basePrice * 10 + b2.basePrice * 1) * Game.Tiers[tier].price, Game.GetIcon(building1, tier));
             upgrade.tier = tier;
             upgrade.buildingTie1 = b1;
             upgrade.buildingTie2 = b2;
@@ -12461,7 +12271,6 @@ Game.Launch = function () {
             };
             Game.Objects[building1].synergies.push(upgrade);
             Game.Objects[building2].synergies.push(upgrade);
-            //Game.SetTier(building1,tier);
             return upgrade;
         };
         Game.GetTieredCpsMult = function (me) {
@@ -12469,7 +12278,7 @@ Game.Launch = function () {
             for (let i in me.tieredUpgrades) {
                 if (!Game.Tiers[me.tieredUpgrades[i].tier].special && Game.Has(me.tieredUpgrades[i].name)) {
                     let tierMult = 2;
-                    //unshackled
+                    // unshackled
                     if (Game.ascensionMode != 1 && Game.Has(me.unshackleUpgrade) && Game.Has(Game.Tiers[me.tieredUpgrades[i].tier].unshackleUpgrade))
                         tierMult += me.id == 1 ? 0.5 : (20 - me.id) * 0.1;
                     mult *= tierMult;
@@ -12508,9 +12317,9 @@ Game.Launch = function () {
         let pool = '';
         let power = 0;
 
-        //define upgrades
-        //WARNING : do NOT add new upgrades in between, this breaks the saves. Add them at the end !
-        let order = 100; //this is used to set the order in which the items are listed
+        // define upgrades
+        // WARNING : do NOT add new upgrades in between, this breaks the saves. Add them at the end !
+        let order = 100; // this is used to set the order in which the items are listed
         new Game.Upgrade('Reinforced index finger', loc('The mouse and cursors are <b>twice</b> as efficient.') + '<q>prod prod</q>', 100, [0, 0]);
         Game.MakeTiered(Game.last, 1, 0);
         new Game.Upgrade(
@@ -12836,7 +12645,6 @@ Game.Launch = function () {
             }
         );
         Game.last.pool = 'tech';
-        //Game.last.clickFunction=function(){return confirm('Warning : purchasing this will have unexpected, and potentially undesirable results!\nIt\'s all downhill from here. You have been warned!\nPurchase anyway?');};
         Game.RequiresConfirmation(
             Game.last,
             '<div class="block">' +
@@ -12944,7 +12752,7 @@ Game.Launch = function () {
         Game.MakeTiered(Game.last, 4, 11);
 
         order = 40000;
-        new Game.Upgrade('Ultrascience', loc('Research takes only <b>5 seconds</b>.') + '<q>YEAH, SCIENCE!</q>', 7, [9, 2]); //debug purposes only
+        new Game.Upgrade('Ultrascience', loc('Research takes only <b>5 seconds</b>.') + '<q>YEAH, SCIENCE!</q>', 7, [9, 2]); // debug purposes only
         Game.last.pool = 'debug';
 
         order = 10020;
@@ -12973,7 +12781,7 @@ Game.Launch = function () {
         Game.MakeTiered(Game.last, 9, 0);
 
         order = 40000;
-        new Game.Upgrade('Gold hoard', loc('Golden cookies appear <b>really often</b>.') + '<q>That\'s entirely too many.</q>', 7, [10, 14]); //debug purposes only
+        new Game.Upgrade('Gold hoard', loc('Golden cookies appear <b>really often</b>.') + '<q>That\'s entirely too many.</q>', 7, [10, 14]); // debug purposes only
         Game.last.pool = 'debug';
 
         order = 15000;
@@ -13053,7 +12861,7 @@ Game.Launch = function () {
             loc('Can toggle upgrades on and off at will in the stats menu.') + '<q>Can also come in handy to unsee things that can\'t be unseen.</q>',
             7,
             [4, 9]
-        ); //debug purposes only
+        ); // debug purposes only
         Game.last.pool = 'debug';
 
         order = 10020;
@@ -13245,7 +13053,7 @@ Game.Launch = function () {
             loc('You keep producing cookies even while the game is closed.') + '<q>It\'s the most beautiful thing I\'ve ever seen.</q>',
             7,
             [10, 0]
-        ); //debug purposes only
+        ); // debug purposes only
         Game.last.pool = 'debug';
 
         order = 10030;
@@ -13391,10 +13199,6 @@ Game.Launch = function () {
             }
             return num;
         };
-        /*for (let i in Game.halloweenDrops)
-        {
-            Game.Upgrades[Game.halloweenDrops[i]].descFunc=function(){return '<div style="text-align:center;">You currently own <b>'+Game.GetHowManyHalloweenDrops()+'/'+Game.halloweenDrops.length+'</b> halloween cookies.</div><div class="line"></div>'+this.ddesc;};
-        }*/
 
         order = 0;
         new Game.Upgrade(
@@ -13406,7 +13210,7 @@ Game.Launch = function () {
         Game.last.pool = 'prestige';
 
         order = 40000;
-        new Game.Upgrade('Wrinkler doormat', loc('Wrinklers spawn much more frequently.') + '<q>You\'re such a pushover.</q>', 7, [19, 8]); //debug purposes only
+        new Game.Upgrade('Wrinkler doormat', loc('Wrinklers spawn much more frequently.') + '<q>You\'re such a pushover.</q>', 7, [19, 8]); // debug purposes only
         Game.last.pool = 'debug';
 
         order = 10200;
@@ -13624,7 +13428,7 @@ Game.Launch = function () {
         );
 
         order = 40000;
-        new Game.Upgrade('Reindeer season', loc('Reindeer spawn much more frequently.') + '<q>Go, Cheater! Go, Hacker and Faker!</q>', 7, [12, 9]); //debug purposes only
+        new Game.Upgrade('Reindeer season', loc('Reindeer spawn much more frequently.') + '<q>Go, Cheater! Go, Hacker and Faker!</q>', 7, [12, 9]); // debug purposes only
         Game.last.pool = 'debug';
 
         order = 25000;
@@ -13753,7 +13557,7 @@ Game.Launch = function () {
         Game.GrandmaSynergy('Rainbow grandmas', 'A luminous grandma to sparkle into cookies.', 'Prism');
 
         order = 24000;
-        Game.seasonTriggerBasePrice = 1000000000; //1111111111;
+        Game.seasonTriggerBasePrice = 1000000000; // 1111111111;
         new Game.Upgrade(
             'Season switcher',
             loc('Allows you to <b>trigger seasonal events</b> at will, for a price.') + '<q>There will always be time.</q>',
@@ -13817,7 +13621,7 @@ Game.Launch = function () {
             for (let i in Game.seasons) {
                 Game.Unlock(Game.seasons[i].trigger);
             }
-        }); //debug purposes only
+        }); // debug purposes only
         Game.last.pool = 'debug';
 
         order = 20000;
@@ -13954,7 +13758,7 @@ Game.Launch = function () {
             '<q>It\'s magic. I ain\'t gotta explain sh<div style="display:inline-block;background:url(img/money.png);width:16px;height:16px;position:relative;top:4px;left:0px;margin:0px -2px;"></div>t.</q>',
             7,
             [17, 5]
-        ); //debug purposes only
+        ); // debug purposes only
         Game.last.pool = 'debug';
 
         order = 24000;
@@ -14198,7 +14002,7 @@ Game.Launch = function () {
             return num;
         };
         for (let i in Game.eggDrops) {
-            //scale egg prices to how many eggs you have
+            // scale egg prices to how many eggs you have
             Game.Upgrades[Game.eggDrops[i]].priceFunc = function () {
                 return Math.pow(2, Game.GetHowManyEggs()) * 999;
             };
@@ -14227,7 +14031,7 @@ Game.Launch = function () {
                 if (Math.random() < 0.1) drop = choose(Game.rareEggDrops);
                 else drop = choose(Game.eggDrops);
                 if (Game.Has(drop) || Game.HasUnlocked(drop)) {
-                    //reroll if we have it
+                    // reroll if we have it
                     if (Math.random() < 0.1) drop = choose(Game.rareEggDrops);
                     else drop = choose(Game.eggDrops);
                 }
@@ -14502,7 +14306,7 @@ Game.Launch = function () {
                     let fail = 0;
                     for (let ii in Game.permanentUpgrades) {
                         if (Game.permanentUpgrades[ii] == me.id) fail = 1;
-                    } //check if not already in another permaslot
+                    } // check if not already in another permaslot
                     if (!fail) list.push(me);
                 }
             }
@@ -15657,14 +15461,14 @@ Game.Launch = function () {
         Game.last.parents = ['Divine bakeries', 'Residual luck'];
 
         order = 40000;
-        new Game.Upgrade('Occult obstruction', loc('Cookie production <b>reduced to 0</b>.') + '<q>If symptoms persist, consult a doctor.</q>', 7, [15, 5]); //debug purposes only
+        new Game.Upgrade('Occult obstruction', loc('Cookie production <b>reduced to 0</b>.') + '<q>If symptoms persist, consult a doctor.</q>', 7, [15, 5]); // debug purposes only
         Game.last.pool = 'debug';
         new Game.Upgrade(
             'Glucose-charged air',
             loc('Sugar lumps coalesce <b>a whole lot faster</b>.') + '<q>Don\'t breathe too much or you\'ll get diabetes!</q>',
             7,
             [29, 16]
-        ); //debug purposes only
+        ); // debug purposes only
         Game.last.pool = 'debug';
 
         order = 10300;
@@ -15938,8 +15742,8 @@ Game.Launch = function () {
         order = 99999;
         // @ts-expect-error
         let years = Math.floor((Date.now() - new Date(2013, 7, 8)) / (1000 * 60 * 60 * 24 * 365));
-        //only updates on page load
-        //may behave strangely on leap years
+        // only updates on page load
+        // may behave strangely on leap years
         Game.NewUpgradeCookie({
             name: 'Birthday cookie',
             desc: '<q>-</q>',
@@ -16206,7 +16010,7 @@ Game.Launch = function () {
             loc('Garden plants grow every second.<br>Garden seeds are free to plant.<br>You can switch soils at any time.') + '<q>It\'s got electrolytes!</q>',
             7,
             [2, 16]
-        ); //debug purposes only
+        ); // debug purposes only
         Game.last.buyFunction = function () {
             if (Game.Objects['Farm'].minigameLoaded) {
                 Game.Objects['Farm'].minigame.computeStepT();
@@ -16402,7 +16206,7 @@ Game.Launch = function () {
 
         let gardenDrops = ['Elderwort biscuits', 'Bakeberry cookies', 'Duketater cookies', 'Green yeast digestives', 'Fern tea', 'Ichor syrup', 'Wheat slims'];
         for (let i in gardenDrops) {
-            //scale by CpS
+            // scale by CpS
             let it = Game.Upgrades[gardenDrops[i]];
             it.priceFunc = (function (cost) {
                 return function () {
@@ -16603,7 +16407,7 @@ Game.Launch = function () {
         });
 
         order = 10000;
-        //early cookies that unlock at the same time as coconut cookies; meant to boost early game a little bit
+        // early cookies that unlock at the same time as coconut cookies; meant to boost early game a little bit
         Game.NewUpgradeCookie({
             name: 'Almond cookies',
             desc: 'Sometimes you feel like one of these. Sometimes you don\'t.',
@@ -16803,7 +16607,6 @@ Game.Launch = function () {
             'Prism',
             'synergy1'
         );
-        //Game.SynergyUpgrade('Compounded odds','<q>When probabilities start cascading, "never in a billion lifetimes" starts looking terribly like "probably before Monday comes around".</q>','Fractal engine','Chancemaker','synergy1');
         Game.SynergyUpgrade('Mice clicking mice', '', 'Fractal engine', 'Cursor', 'synergy2');
         if (EN) {
             Game.last.descFunc = function () {
@@ -17120,7 +16923,6 @@ Game.Launch = function () {
             }
             let me = Game.Upgrades['Shimmering veil [on]'];
             me.bought = 1;
-            //Game.Upgrades[me.toggleInto].bought=false;
             Game.Lock(me.toggleInto);
             Game.Unlock(me.toggleInto);
             Game.Notify(loc('The shimmering veil disappears...'), '', [9, 10]);
@@ -17682,7 +17484,7 @@ Game.Launch = function () {
         Game.TieredUpgrade('Fortune #017', '<q>If things aren\'t working out for you, rewrite the rules.</q>', 'Javascript console', 'fortune');
 
         order = 19100;
-        //note : price for these capped to base price OR 1 day of unbuffed CpS
+        // note : price for these capped to base price OR 1 day of unbuffed CpS
         new Game.Upgrade(
             'Fortune #100',
             loc('All buildings and upgrades are <b>%1% cheaper</b>.', 1) +
@@ -17748,8 +17550,7 @@ Game.Launch = function () {
         Game.last.parents = ['Distilled essence of redoubled luck'];
 
         order = 40000;
-        new Game.Upgrade('A really good guide book', '<b>???</b><q>??????</q>', 7, [22, 12]); //debug purposes only
-        //new Game.Upgrade('A really good guide book','<b>All dungeon locations behave as if unlocked.</b><br><b>You may shift-click a dungeon location to teleport there.</b><q>It even tells you which hotels to avoid!</q>',7,[22,12]);//debug purposes only
+        new Game.Upgrade('A really good guide book', '<b>???</b><q>??????</q>', 7, [22, 12]); // debug purposes only
         Game.last.buyFunction = function () {
             if (Game.Objects['Factory'].minigameLoaded) {
                 Game.Objects['Factory'].minigame.computeMapBounds();
@@ -18637,7 +18438,7 @@ Game.Launch = function () {
             return upgrade;
         };
 
-        //"Unshackled [building name]"
+        // "Unshackled [building name]"
         Game.NewUnshackleBuilding({
             building: 'Cursor',
             q: 'These hands tell a story.'
@@ -18728,14 +18529,10 @@ Game.Launch = function () {
             tier.unshackleUpgrade = upgrade.name;
             upgrade.posX = 750 - Math.sin(obj.tier * 0.3 + 2.3) * 400;
             upgrade.posY = 200 + Math.cos(obj.tier * 0.3 + 2.3) * 400;
-            /*upgrade.parents=[obj.tier==1?'Label printer':Game.Tiers[obj.tier-1].unshackleUpgrade];
-            tier.unshackleUpgrade=upgrade.name;
-            upgrade.posX=-900+Math.sin(obj.tier*0.3+2.3)*300;
-            upgrade.posY=-130+Math.cos(obj.tier*0.3+2.3)*400;*/
             return upgrade;
         };
 
-        //"Unshackled [tier name]"
+        // "Unshackled [tier name]"
         Game.NewUnshackleUpgradeTier({
             tier: 1,
             q: 'While the absence of flavoring may seem underwhelming, it allows innate aromas to be expressed at their most unadulterated.'
@@ -18857,7 +18654,6 @@ Game.Launch = function () {
                 'pop2',
                 'pop3',
                 'press',
-                //'switch',
                 'buy1',
                 'buy2',
                 'buy3',
@@ -18883,9 +18679,7 @@ Game.Launch = function () {
                 'clickb7',
                 'charging',
                 'thud',
-                //'cookieBreak',
                 'cymbalRev',
-                //'cymbalCrash',
                 'smallCymbalCrash',
                 'choir',
                 'chime',
@@ -18923,9 +18717,8 @@ Game.Launch = function () {
                 'cashIn2',
                 'cashOut',
                 'upgrade'
-                //'levelPrestige',
             ],
-            tracks: [], //populated externally
+            tracks: [], // populated externally
             onSound: 0,
             onTrack: 0,
             trackLooped: true,
@@ -19037,7 +18830,7 @@ Game.Launch = function () {
                 }
                 else {
                     // @ts-expect-error
-                    /*Game.jukebox.setTrack(Game.jukebox.onTrack);*/ l('jukeboxMusicAuto').classList.add('off');
+                    l('jukeboxMusicAuto').classList.add('off');
                 }
             },
             pressMusicShuffle: function () {
@@ -19201,7 +18994,7 @@ Game.Launch = function () {
             price: Math.pow(10, 47)
         });
 
-        //end of upgrades
+        // end of upgrades
 
         Game.seasons = {
             christmas: {
@@ -19296,10 +19089,6 @@ Game.Launch = function () {
             }
             return num;
         };
-        /*for (let i in Game.santaDrops)
-        {
-            Game.Upgrades[Game.santaDrops[i]].descFunc=function(){return '<div style="text-align:center;">You currently own <b>'+Game.GetHowManySantaDrops()+'/'+Game.santaDrops.length+'</b> of Santa\'s gifts.</div><div class="line"></div>'+this.ddesc;};
-        }*/
 
         Game.seasonDrops = Game.heartDrops.concat(Game.halloweenDrops).concat(Game.easterEggs).concat(Game.santaDrops).concat(Game.reindeerDrops);
 
@@ -19389,8 +19178,6 @@ Game.Launch = function () {
                         else if (godLvl == 2) m *= 1.5;
                         else if (godLvl == 3) m *= 1.25;
                     }
-                    //return Game.seasonTriggerBasePrice*Math.pow(2,Game.seasonUses)*m;
-                    //return Game.cookiesPs*60*Math.pow(1.5,Game.seasonUses)*m;
                     return Game.seasonTriggerBasePrice + Game.unbuffedCps * 60 * Math.pow(1.5, Game.seasonUses) * m;
                 };
             }
@@ -19403,7 +19190,6 @@ Game.Launch = function () {
                 me.buyFunction = function () {
                     Game.seasonUses += 1;
                     Game.computeSeasonPrices();
-                    //Game.Lock(this.name);
                     for (let i in Game.seasons) {
                         let me = Game.Upgrades[Game.seasons[i].trigger];
                         if (me.name != this.name) {
@@ -19424,7 +19210,7 @@ Game.Launch = function () {
 
                 me.clickFunction = (function (me) {
                     return function () {
-                        //undo season
+                        // undo season
                         if (me.bought && Game.season && me == Game.seasons[Game.season].triggerUpgrade) {
                             me.lose();
                             Game.Notify(Game.seasons[Game.season].over, '', Game.seasons[Game.season].triggerUpgrade.icon);
@@ -19467,7 +19253,7 @@ Game.Launch = function () {
         };
         Game.computeSeasons();
 
-        //alert untiered building upgrades
+        // alert untiered building upgrades
         for (let i in Game.Upgrades) {
             let me = Game.Upgrades[i];
             if (me.order >= 200 && me.order < 2000 && !me.tier && me.name.indexOf('grandma') == -1 && me.pool != 'prestige')
@@ -19522,9 +19308,6 @@ Game.Launch = function () {
         for (let i in Game.Upgrades) {
             if (Game.Upgrades[i].pool == 'prestige') Game.Upgrades[i].order = Game.Upgrades[i].id;
         }
-
-        /*let oldPrestigePrices={"Chimera":5764801,"Synergies Vol. I":2525,"Synergies Vol. II":252525,"Label printer":9999};
-        for (let i in oldPrestigePrices){Game.Upgrades[i].basePrice=oldPrestigePrices[i];}*/
 
         Game.UpgradePositions = {
             141: [118, -42],
@@ -19627,7 +19410,7 @@ Game.Launch = function () {
             Game.UpgradesById[i].posY = Game.UpgradePositions[i][1];
         }
 
-        /*=====================================================================================
+        /* =====================================================================================
         ACHIEVEMENTS
         =======================================================================================*/
         Game.Achievements = {};
@@ -19691,7 +19474,7 @@ Game.Launch = function () {
                 }
             }
         };
-        Game.Achievement.prototype.toggle = function () //cheating only
+        Game.Achievement.prototype.toggle = function () // cheating only
         {
             if (!this.won) {
                 Game.Win(this.name);
@@ -19765,7 +19548,6 @@ Game.Launch = function () {
         Game.CpsAchievements = [];
         Game.CpsAchievement = function (name, q) {
             let threshold = Math.pow(10, Math.floor(Game.CpsAchievements.length * 1.2));
-            //if (Game.CpsAchievements.length==0) threshold=1;
             let achiev = new Game.Achievement(
                 name,
                 loc('Bake <b>%1</b> per second.', loc('%1 cookie', { n: threshold, b: toFixed(threshold) })) + (q ? '<q>' + q + '</q>' : ''),
@@ -19780,10 +19562,10 @@ Game.Launch = function () {
             return achiev;
         };
 
-        //define achievements
-        //WARNING : do NOT add new achievements in between, this breaks the saves. Add them at the end !
+        // define achievements
+        // WARNING : do NOT add new achievements in between, this breaks the saves. Add them at the end !
 
-        order = 0; //this is used to set the order in which the items are listed
+        order = 0; // this is used to set the order in which the items are listed
 
         Game.BankAchievement('Wake and bake');
         Game.BankAchievement('Making some dough');
@@ -19819,7 +19601,7 @@ Game.Launch = function () {
         new Game.Achievement('From scratch', loc('Ascend with <b>%1</b> baked.', loc('%1 cookie', LBeautify(1e12))) + '<q>It\'s been fun.</q>', [11, 6]);
 
         order = 11010;
-        new Game.Achievement('Neverclick', loc('Make <b>%1</b> by only having clicked <b>%2 times</b>.', [loc('%1 cookie', LBeautify(1e6)), 15]), [12, 0]); //Game.last.pool='shadow';
+        new Game.Achievement('Neverclick', loc('Make <b>%1</b> by only having clicked <b>%2 times</b>.', [loc('%1 cookie', LBeautify(1e6)), 15]), [12, 0]);
         order = 1000;
         new Game.Achievement('Clicktastic', loc('Make <b>%1</b> from clicking.', loc('%1 cookie', LBeautify(1e3))), [11, 0]);
         new Game.Achievement('Clickathlon', loc('Make <b>%1</b> from clicking.', loc('%1 cookie', LBeautify(1e5))), [11, 1]);
@@ -19959,7 +19741,7 @@ Game.Launch = function () {
         new Game.Achievement('Centennial', loc('Have at least <b>%1 of everything</b>.', 100), [6, 6]);
 
         order = 30500;
-        new Game.Achievement('Hardcore', loc('Get to <b>%1</b> baked with <b>no upgrades purchased</b>.', loc('%1 cookie', LBeautify(1e9))), [12, 6]); //Game.last.pool='shadow';
+        new Game.Achievement('Hardcore', loc('Get to <b>%1</b> baked with <b>no upgrades purchased</b>.', loc('%1 cookie', LBeautify(1e9))), [12, 6]);
 
         order = 30600;
         new Game.Achievement(
@@ -20152,7 +19934,7 @@ Game.Launch = function () {
         );
         Game.last.pool = 'shadow';
         new Game.Achievement('Third-party', loc('Use an <b>add-on</b>.') + '<q>Some find vanilla to be the most boring flavor.</q>', [16, 5]);
-        Game.last.pool = 'shadow'; //if you're making a mod, add a Game.Win('Third-party') somewhere in there!
+        Game.last.pool = 'shadow'; // if you're making a mod, add a Game.Win('Third-party') somewhere in there!
 
         order = 30050;
         new Game.Achievement(
@@ -20320,7 +20102,7 @@ Game.Launch = function () {
         Game.CpsAchievement('The Abakening');
         Game.CpsAchievement(
             'There\'s really no hard limit to how long these achievement names can be and to be quite honest I\'m rather curious to see how far we can go.<br>Adolphus W. Green (1844–1917) started as the Principal of the Groton School in 1864. By 1865, he became second assistant librarian at the New York Mercantile Library; from 1867 to 1869, he was promoted to full librarian. From 1869 to 1873, he worked for Evarts, Southmayd & Choate, a law firm co-founded by William M. Evarts, Charles Ferdinand Southmayd and Joseph Hodges Choate. He was admitted to the New York State Bar Association in 1873.<br>Anyway, how\'s your day been?'
-        ); //Game.last.shortName='There\'s really no hard limit to how long these achievement names can be and to be quite honest I\'m [...]';
+        );
         Game.CpsAchievement('Fast', 'Wow!');
 
         order = 7002;
@@ -20591,7 +20373,7 @@ Game.Launch = function () {
         order = 1800;
         Game.TieredAchievement('Invited to yesterday\'s party', '', 'Time machine', 9);
         order = 1900;
-        Game.TieredAchievement('Downsizing', '', 'Antimatter condenser', 9); //the trailer got me really hyped up but i've read some pretty bad reviews. is it watchable ? is it worth seeing ? i don't mind matt damon
+        Game.TieredAchievement('Downsizing', '', 'Antimatter condenser', 9); // the trailer got me really hyped up but i've read some pretty bad reviews. is it watchable ? is it worth seeing ? i don't mind matt damon
         order = 2000;
         Game.TieredAchievement('My eyes', '', 'Prism', 9);
         order = 2100;
@@ -20711,7 +20493,7 @@ Game.Launch = function () {
 
         order = 30250;
         new Game.Achievement('When the cookies ascend just right', loc('Ascend with exactly <b>%1</b>.', loc('%1 cookie', LBeautify(1e12))), [25, 7]);
-        Game.last.pool = 'shadow'; //this achievement is shadow because it is only achievable through blind luck or reading external guides; this may change in the future
+        Game.last.pool = 'shadow'; // this achievement is shadow because it is only achievable through blind luck or reading external guides; this may change in the future
 
         order = 1050;
         new Game.Achievement('With her finger and her thumb', loc('Have <b>%1</b>.', loc('%1 cursor', LBeautify(600))), [0, 16]);
@@ -20733,7 +20515,7 @@ Game.Launch = function () {
         order = 1500;
         Game.TieredAchievement('Only shooting stars', '', 'Shipment', 11);
         order = 1600;
-        Game.TieredAchievement('We could all use a little change', '', 'Alchemy lab', 11); //"all that glitters is gold" was already an achievement
+        Game.TieredAchievement('We could all use a little change', '', 'Alchemy lab', 11); // "all that glitters is gold" was already an achievement
         order = 1700;
         Game.TieredAchievement('Your brain gets smart but your head gets dumb', '', 'Portal', 11);
         order = 1800;
@@ -21122,7 +20904,7 @@ Game.Launch = function () {
         order = 6001;
         new Game.Achievement('All the stars in heaven', loc('Own <b>%1</b> heavenly upgrades.', 100), [30, 5]);
 
-        //end of achievements
+        // end of achievements
 
         for (let i in Game.Objects) {
             if (Game.Objects[i].levelAchiev10) {
@@ -21133,11 +20915,11 @@ Game.Launch = function () {
 
         LocalizeUpgradesAndAchievs();
 
-        /*=====================================================================================
+        /* =====================================================================================
         BUFFS
         =======================================================================================*/
 
-        Game.buffs = {}; //buffs currently in effect by name
+        Game.buffs = {}; // buffs currently in effect by name
         Game.buffsI = 0;
         Game.buffsL = l('buffs');
         Game.gainBuff = function (type, time, arg1, arg2, arg3) {
@@ -21157,23 +20939,23 @@ Game.Launch = function () {
                 icon: [0, 0]
             };
             if (Game.buffs[obj.name]) {
-                //if there is already a buff in effect with this name
+                // if there is already a buff in effect with this name
                 let buff = Game.buffs[obj.name];
-                if (obj.max) buff.time = Math.max(obj.time, buff.time); //new duration is max of old and new
-                if (obj.add) buff.time += obj.time; //new duration is old + new
-                if (!obj.max && !obj.add) buff.time = obj.time; //new duration is set to new
+                if (obj.max) buff.time = Math.max(obj.time, buff.time); // new duration is max of old and new
+                if (obj.add) buff.time += obj.time; // new duration is old + new
+                if (!obj.max && !obj.add) buff.time = obj.time; // new duration is set to new
                 buff.maxTime = buff.time;
-            } //create new buff
+            } // create new buff
             else {
                 for (let i in obj) {
-                    //paste parameters onto buff
+                    // paste parameters onto buff
                     buff[i] = obj[i];
                 }
                 buff.maxTime = buff.time;
                 Game.buffs[buff.name] = buff;
                 buff.id = Game.buffsI;
 
-                //create dom
+                // create dom
                 Game.buffsL.innerHTML =
                     Game.buffsL.innerHTML +
                     '<div id="buff' +
@@ -21203,12 +20985,12 @@ Game.Launch = function () {
             return buff;
         };
         Game.hasBuff = function (
-            what //returns 0 if there is no buff in effect with this name; else, returns it
+            what // returns 0 if there is no buff in effect with this name; else, returns it
         ) {
             if (!Game.buffs[what]) return 0;
             else return Game.buffs[what];
         };
-        Game.updateBuffs = function () //executed every logic frame
+        Game.updateBuffs = function () // executed every logic frame
         {
             for (let i in Game.buffs) {
                 let buff = Game.buffs[i];
@@ -21237,13 +21019,13 @@ Game.Launch = function () {
             }
         };
         Game.killBuff = function (
-            what //remove a buff by name
+            what // remove a buff by name
         ) {
             if (Game.buffs[what]) {
-                Game.buffs[what].time = 0; /*Game.buffs[what]=0;*/
+                Game.buffs[what].time = 0;
             }
         };
-        Game.killBuffs = function () //remove all buffs
+        Game.killBuffs = function () // remove all buffs
         {
             Game.buffsL.innerHTML = '';
             Game.buffs = {};
@@ -21251,12 +21033,12 @@ Game.Launch = function () {
             Game.storeToRefresh = 1;
         };
 
-        Game.buffTypes = []; //buff archetypes; only buffs declared from these can be saved and loaded
+        Game.buffTypes = []; // buff archetypes; only buffs declared from these can be saved and loaded
         Game.buffTypesByName = [];
         Game.buffTypesN = 0;
         Game.buffType = function (name, func) {
             this.name = name;
-            this.func = func; //this is a function that returns a buff object; it takes a "time" argument in seconds, and 3 more optional arguments at most, which will be saved and loaded as floats
+            this.func = func; // this is a function that returns a buff object; it takes a "time" argument in seconds, and 3 more optional arguments at most, which will be saved and loaded as floats
             this.id = Game.buffTypesN;
             this.vanilla = Game.vanilla;
             Game.buffTypesByName[this.name] = this;
@@ -21280,7 +21062,7 @@ Game.Launch = function () {
             multClick:3 - buff multiplies click power by this amount
         */
 
-        //base buffs
+        // base buffs
         new Game.buffType('frenzy', function (time, pow) {
             return {
                 name: 'Frenzy',
@@ -21424,7 +21206,6 @@ Game.Launch = function () {
                 desc: loc('You find %1% more golden cookies for the next %2.', [10, Game.sayTime(time * Game.fps, -1)]),
                 icon: [29, 16],
                 time: time * Game.fps
-                //add:true
             };
         });
         new Game.buffType('haggler luck', function (time, pow) {
@@ -21597,18 +21378,18 @@ Game.Launch = function () {
             };
         });
 
-        //end of buffs
+        // end of buffs
 
-        /*=====================================================================================
+        /* =====================================================================================
         GRANDMAPOCALYPSE
         =======================================================================================*/
         Game.UpdateGrandmapocalypse = function () {
             if (Game.Has('Elder Covenant') || Game.Objects['Grandma'].amount == 0) Game.elderWrath = 0;
             else if (Game.pledgeT > 0) {
-                //if the pledge is active, lower it
+                // if the pledge is active, lower it
                 Game.pledgeT--;
                 if (Game.pledgeT == 0) {
-                    //did we reach 0? make the pledge purchasable again
+                    // did we reach 0? make the pledge purchasable again
                     Game.Lock('Elder Pledge');
                     Game.Unlock('Elder Pledge');
                     Game.elderWrath = 1;
@@ -21618,14 +21399,14 @@ Game.Launch = function () {
                     Game.elderWrath = 1;
                 }
                 if (Math.random() < 0.001 && Game.elderWrath < Game.Has('One mind') + Game.Has('Communal brainsweep') + Game.Has('Elder Pact')) {
-                    Game.elderWrath++; //have we already pledged? make the elder wrath shift between different stages
+                    Game.elderWrath++; // have we already pledged? make the elder wrath shift between different stages
                 }
                 if (Game.Has('Elder Pact') && Game.Upgrades['Elder Pledge'].unlocked == 0) {
                     Game.Lock('Elder Pledge');
                     Game.Unlock('Elder Pledge');
                 }
             }
-            Game.elderWrathD += (Game.elderWrath + 1 - Game.elderWrathD) * 0.001; //slowly fade to the target wrath state
+            Game.elderWrathD += (Game.elderWrath + 1 - Game.elderWrathD) * 0.001; // slowly fade to the target wrath state
 
             if (Game.elderWrath != Game.elderWrathOld) {
                 if (Game.clicksThisSession > 0) {
@@ -21640,11 +21421,11 @@ Game.Launch = function () {
             Game.UpdateWrinklers();
         };
 
-        //wrinklers
+        // wrinklers
 
         function inRect(x, y, rect) {
-            //find out if the point x,y is in the rotated rectangle rect{w,h,r,o} (width,height,rotation in radians,y-origin) (needs to be normalized)
-            //I found this somewhere online I guess
+            // find out if the point x,y is in the rotated rectangle rect{w,h,r,o} (width,height,rotation in radians,y-origin) (needs to be normalized)
+            // I found this somewhere online I guess
             let dx = x + Math.sin(-rect.r) * -(rect.h / 2 - rect.o),
                 dy = y + Math.cos(-rect.r) * -(rect.h / 2 - rect.o);
             let h1 = Math.sqrt(dx * dx + dy * dy);
@@ -21725,7 +21506,7 @@ Game.Launch = function () {
             me.phase = 1;
             me.hp = Game.wrinklerHP;
             me.type = 0;
-            if (Math.random() < 0.0001) me.type = 1; //shiny wrinkler
+            if (Math.random() < 0.0001) me.type = 1; // shiny wrinkler
             return me;
         };
         Game.PopRandomWrinkler = function () {
@@ -21767,7 +21548,7 @@ Game.Launch = function () {
                     }
                     if (Game.Has('Wrinkler doormat')) chance = 0.1;
                     if (Math.random() < chance) {
-                        //respawn
+                        // respawn
                         Game.SpawnWrinkler(me);
                     }
                 }
@@ -21780,7 +21561,7 @@ Game.Launch = function () {
                     Game.recalculateGains = 1;
                 }
                 if (me.phase == 2) {
-                    me.sucked += (Game.cookiesPs / Game.fps) * Game.cpsSucked; //suck the cookies
+                    me.sucked += (Game.cookiesPs / Game.fps) * Game.cpsSucked; // suck the cookies
                 }
                 if (me.phase > 0) {
                     if (me.type == 0) {
@@ -21790,7 +21571,7 @@ Game.Launch = function () {
                         if (me.hp < Game.wrinklerHP * 3) me.hp += 0.04;
                         me.hp = Math.min(Game.wrinklerHP * 3, me.hp);
                     }
-                    let d = 128 * (2 - me.close); //*Game.BigCookieSize;
+                    let d = 128 * (2 - me.close);
                     if (Game.prefs.fancy) d += Math.cos(Game.T * 0.05 + parseInt(me.id)) * 4;
                     me.r = (me.id / max) * 360;
                     if (Game.prefs.fancy) me.r += Math.sin(Game.T * 0.05 + parseInt(me.id)) * 4;
@@ -21811,12 +21592,11 @@ Game.Launch = function () {
                     }
                     if (me.selected && onWrinkler == 0 && Game.CanClick) {
                         me.hurt = Math.max(me.hurt, 0.25);
-                        //me.close*=0.99;
                         if (Game.Click && Game.lastClickedEl == l('backgroundLeftCanvas')) {
                             if (Game.keys[17] && Game.sesame) {
                                 me.type = !me.type;
                                 PlaySound('snd/shimmerClick.mp3');
-                            } //ctrl-click on a wrinkler in god mode to toggle its shininess
+                            } // ctrl-click on a wrinkler in god mode to toggle its shininess
                             else {
                                 Game.playWrinklerSquishSound();
                                 me.hurt = 1;
@@ -21825,7 +21605,6 @@ Game.Launch = function () {
                                     let x = me.x + Math.sin((me.r * Math.PI) / 180) * 90;
                                     let y = me.y + Math.cos((me.r * Math.PI) / 180) * 90;
                                     for (let ii = 0; ii < 3; ii++) {
-                                        //Game.particleAdd(x+Math.random()*50-25,y+Math.random()*50-25,Math.random()*4-2,Math.random()*-2-2,1,1,2,'wrinklerBits.png');
                                         let part = Game.particleAdd(
                                             x,
                                             y,
@@ -21848,10 +21627,7 @@ Game.Launch = function () {
 
                 if (me.hurt > 0) {
                     me.hurt -= 5 / Game.fps;
-                    //me.close-=me.hurt*0.05;
-                    //me.x+=Math.random()*2-1;
-                    //me.y+=Math.random()*2-1;
-                    me.r += Math.sin(Game.T * 1) * me.hurt * 18; //Math.random()*2-1;
+                    me.r += Math.sin(Game.T * 1) * me.hurt * 18;
                 }
                 if (me.hp <= 0.5 && me.phase > 0) {
                     Game.playWrinklerSquishSound();
@@ -21864,8 +21640,8 @@ Game.Launch = function () {
                     me.hp = 3;
                     let toSuck = 1.1;
                     if (Game.Has('Sacrilegious corruption')) toSuck *= 1.05;
-                    if (me.type == 1) toSuck *= 3; //shiny wrinklers are an elusive, profitable breed
-                    me.sucked *= toSuck; //cookie dough does weird things inside wrinkler digestive tracts
+                    if (me.type == 1) toSuck *= 3; // shiny wrinklers are an elusive, profitable breed
+                    me.sucked *= toSuck; // cookie dough does weird things inside wrinkler digestive tracts
                     if (Game.Has('Wrinklerspawn')) me.sucked *= 1.05;
                     if (Game.hasGod) {
                         let godLvl = Game.hasGod('scorn');
@@ -21883,7 +21659,6 @@ Game.Launch = function () {
                         Game.Popup('<div style="font-size:80%;">' + loc('+%1!', loc('%1 cookie', LBeautify(me.sucked))) + '</div>', Game.mouseX, Game.mouseY);
 
                         if (Game.season == 'halloween') {
-                            //if (Math.random()<(Game.HasAchiev('Spooky cookies')?0.2:0.05))//halloween cookie drops
                             let failRate = 0.95;
                             if (Game.HasAchiev('Spooky cookies')) failRate = 0.8;
                             if (Game.Has('Starterror')) failRate *= 0.9;
@@ -21896,7 +21671,7 @@ Game.Launch = function () {
                             }
                             if (me.type == 1) failRate *= 0.9;
                             if (Math.random() > failRate) {
-                                //halloween cookie drops
+                                // halloween cookie drops
                                 let cookie = choose([
                                     'Skull cookies',
                                     'Ghost cookies',
@@ -21920,15 +21695,7 @@ Game.Launch = function () {
                     }
                     if (me.type == 1) Game.Win('Last Chance to See');
                     Game.Earn(me.sucked);
-                    /*if (Game.prefs.particles && !Game.WINKLERS)
-                    {
-                        let x=me.x+(Math.sin(me.r*Math.PI/180)*100);
-                        let y=me.y+(Math.cos(me.r*Math.PI/180)*100);
-                        for (let ii=0;ii<6;ii++)
-                        {
-                            Game.particleAdd(x+Math.random()*50-25,y+Math.random()*50-25,Math.random()*4-2,Math.random()*-2-2,1,1,2,'wrinklerBits.png');
-                        }
-                    }*/
+
                     if (Game.prefs.particles) {
                         let x = me.x + Math.sin((me.r * Math.PI) / 180) * 90;
                         let y = me.y + Math.cos((me.r * Math.PI) / 180) * 90;
@@ -21981,9 +21748,6 @@ Game.Launch = function () {
                         ctx.translate(0, -30);
                     }
                     ctx.rotate((-me.r * Math.PI) / 180);
-                    //let s=Math.min(1,me.sucked/(Game.cookiesPs*60))*0.75+0.25;//scale wrinklers as they eat
-                    //ctx.scale(Math.pow(s,1.5)*1.25,s);
-                    //ctx.fillRect(-50,-10,100,200);
                     let pic = Game.WINKLERS ? 'winkler.png' : 'wrinkler.png';
                     if (me.type == 1) pic = Game.WINKLERS ? 'shinyWinkler.png' : 'shinyWrinkler.png';
                     else if (Game.season == 'christmas') pic = Game.WINKLERS ? 'winterWinkler.png' : 'winterWrinkler.png';
@@ -22002,10 +21766,8 @@ Game.Launch = function () {
                             sw,
                             sh
                         );
-                    //ctx.drawImage(Pic(pic),-50,-10);
-                    //ctx.fillText(me.id+' : '+me.sucked,0,0);
                     if (me.type == 1 && Math.random() < 0.3 && Game.prefs.particles) {
-                        //sparkle
+                        // sparkle
                         ctx.globalAlpha = Math.random() * 0.65 + 0.1;
                         let s = Math.random() * 30 + 5;
                         ctx.globalCompositeOperation = 'lighter';
@@ -22030,12 +21792,7 @@ Game.Launch = function () {
                 let width = Math.ceil(Math.max(ctx.measureText(text).width, ctx.measureText(Beautify(selected.sucked)).width));
                 ctx.fillStyle = '#000';
                 ctx.globalAlpha = 0.65;
-                /*ctx.strokeStyle='#000';
-                ctx.lineWidth=8;
-                ctx.beginPath();
-                ctx.moveTo(x,y);
-                ctx.lineTo(Math.floor(selected.x),Math.floor(selected.y));
-                ctx.stroke();*/
+
                 let xO = x - width / 2 - 16;
                 let yO = y - 4;
                 // @ts-expect-error
@@ -22103,12 +21860,12 @@ Game.Launch = function () {
                             shinies--;
                         } else Game.wrinklers[i].sucked = amount / fullNumber;
                         number--;
-                    } //respawn
+                    } // respawn
                 }
             }
         };
 
-        /*=====================================================================================
+        /* =====================================================================================
         SPECIAL THINGS AND STUFF
         =======================================================================================*/
 
@@ -22153,7 +21910,6 @@ Game.Launch = function () {
                                 Game.ToggleSpecialMenu(0);
                                 PlaySound('snd/press.mp3');
                             }
-                            //PlaySound('snd/tick.mp3');
                         }
                     }
 
@@ -22185,7 +21941,7 @@ Game.Launch = function () {
             }
         }
         for (let i in Game.santaDrops) {
-            //scale christmas upgrade prices with santa level
+            // scale christmas upgrade prices with santa level
             Game.Upgrades[Game.santaDrops[i]].priceFunc = function () {
                 return Math.pow(3, Game.santaLevel) * 2525;
             };
@@ -22816,7 +22572,7 @@ Game.Launch = function () {
                             '></div>';
                     }
                     if (Game.dragonLevel >= 26) {
-                        //2nd aura slot; increased with last building (cortex baker)
+                        // 2nd aura slot; increased with last building (cortex baker)
                         let icon = Game.dragonAuras[Game.dragonAura2].pic;
                         str +=
                             '<div class="crate enabled" style="opacity:1;position:absolute;right:80px;top:-58px;' +
@@ -22940,7 +22696,7 @@ Game.Launch = function () {
             }
         };
 
-        /*=====================================================================================
+        /* =====================================================================================
         VISUAL EFFECTS
         =======================================================================================*/
 
@@ -23047,15 +22803,15 @@ Game.Launch = function () {
         }
         Game.Milk = Game.Milks[0];
 
-        Game.mousePointer = 0; //when 1, draw the mouse as a pointer on the left screen
+        Game.mousePointer = 0; // when 1, draw the mouse as a pointer on the left screen
 
         Game.cookieOriginX = 0;
         Game.cookieOriginY = 0;
         Game.DrawBackground = function () {
             Timer.clean();
-            //background
+            // background
             if (!Game.Background) {
-                //init some stuff
+                // init some stuff
                 // @ts-expect-error
                 Game.Background = l('backgroundCanvas').getContext('2d');
                 Game.Background.canvas.width = Game.Background.canvas.parentNode.offsetWidth;
@@ -23064,7 +22820,7 @@ Game.Launch = function () {
                 Game.LeftBackground = l('backgroundLeftCanvas').getContext('2d');
                 Game.LeftBackground.canvas.width = Game.LeftBackground.canvas.parentNode.offsetWidth;
                 Game.LeftBackground.canvas.height = Game.LeftBackground.canvas.parentNode.offsetHeight;
-                //preload ascend animation bits so they show up instantly
+                // preload ascend animation bits so they show up instantly
                 Game.LeftBackground.globalAlpha = 0;
                 Game.LeftBackground.drawImage(Pic('brokenCookie.png'), 0, 0);
                 Game.LeftBackground.drawImage(Pic('brokenCookieHalo.png'), 0, 0);
@@ -23082,7 +22838,7 @@ Game.Launch = function () {
 
             if (Game.OnAscend) {
                 Timer.clean();
-                //starry background on ascend screen
+                // starry background on ascend screen
                 let w = Game.Background.canvas.width;
                 let h = Game.Background.canvas.height;
                 let b = Game.ascendl.getBounds();
@@ -23093,10 +22849,9 @@ Game.Launch = function () {
                 Game.Background.fillPattern(Pic('starbg.jpg'), 0, 0, w, h, 1024 * s, 1024 * s, x + Game.AscendOffX * 0.25 * s, y + Game.AscendOffY * 0.25 * s);
                 Timer.track('star layer 1');
                 if (Game.prefs.fancy) {
-                    //additional star layer
+                    // additional star layer
                     Game.Background.globalAlpha = 0.5 * (0.5 + Math.sin(Game.T * 0.02) * 0.3);
                     let s = 2 * Game.AscendZoom * (1 + Math.sin(Game.T * 0.002) * 0.07);
-                    //Game.Background.globalCompositeOperation='lighter';
                     Game.Background.fillPattern(
                         Pic('starbg.jpg'),
                         0,
@@ -23108,12 +22863,11 @@ Game.Launch = function () {
                         x + Game.AscendOffX * 0.25 * s,
                         y + Game.AscendOffY * 0.25 * s
                     );
-                    //Game.Background.globalCompositeOperation='source-over';
                     Timer.track('star layer 2');
 
                     x = x + Game.AscendOffX * Game.AscendZoom;
                     y = y + Game.AscendOffY * Game.AscendZoom;
-                    //wispy nebula around the center
+                    // wispy nebula around the center
                     Game.Background.save();
                     Game.Background.globalAlpha = 0.5;
                     Game.Background.translate(x, y);
@@ -23126,9 +22880,6 @@ Game.Launch = function () {
                     Game.Background.drawImage(Pic('heavenRing2.jpg'), -s / 2, -s / 2, s, s);
                     Game.Background.restore();
                     Timer.track('nebula');
-
-                    //Game.Background.drawImage(Pic('shadedBorders.png'),0,0,w,h);
-                    //Timer.track('border');
                 }
             } else {
                 let goodBuff = 0;
@@ -23190,18 +22941,8 @@ Game.Launch = function () {
                 }
                 Timer.track('window background');
 
-                //clear
+                // clear
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                /*if (Game.AscendTimer<Game.AscendBreakpoint) ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-                else
-                {
-                    ctx.globalAlpha=0.05;
-                    ctx.fillStyle='#000';
-                    ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
-                    ctx.globalAlpha=1;
-                    OldCanvasDrawImage.apply(ctx,[ctx.canvas,Math.random()*4-2,Math.random()*4-2-4]);
-                    ctx.globalAlpha=1;
-                }*/
                 Timer.clean();
 
                 let showDragon = 0;
@@ -23212,7 +22953,7 @@ Game.Launch = function () {
 
                 if (Game.AscendTimer == 0) {
                     if (Game.prefs.particles) {
-                        //falling cookies
+                        // falling cookies
                         let pic = '';
                         let opacity = 1;
                         if (Game.elderWrathD <= 1.5 || Game.prefs.notScary) {
@@ -23228,7 +22969,7 @@ Game.Launch = function () {
                             ctx.fillPattern(Pic(pic), 0, 0, ctx.canvas.width, ctx.canvas.height + 512, 512, 512, 0, y);
                             ctx.globalAlpha = 1;
                         }
-                        //snow
+                        // snow
                         if (Game.season == 'christmas') {
                             let y = Math.floor(Game.T * 2.5) % 512;
                             ctx.globalAlpha = 0.75;
@@ -23237,7 +22978,7 @@ Game.Launch = function () {
                             ctx.globalCompositeOperation = 'source-over';
                             ctx.globalAlpha = 1;
                         }
-                        //hearts
+                        // hearts
                         if (Game.season == 'valentines') {
                             let y = Math.floor(Game.T * 2.5) % 512;
                             ctx.globalAlpha = 1;
@@ -23250,7 +22991,7 @@ Game.Launch = function () {
                         ctx.globalAlpha = 1;
                         Timer.track('particles');
 
-                        //big cookie shine
+                        // big cookie shine
                         let s = 512;
 
                         let x = Game.cookieOriginX;
@@ -23287,14 +23028,14 @@ Game.Launch = function () {
                         }
 
                         if (showDragon) {
-                            //big dragon
+                            // big dragon
                             let s = 300 * 2 * (1 + Math.sin(Game.T * 0.013) * 0.1);
                             let x = Game.cookieOriginX - s / 2;
                             let y = Game.cookieOriginY - s / (1.4 + 0.2 * Math.sin(Game.T * 0.01));
                             ctx.drawImage(Pic('dragonBG.png'), x, y, s, s);
                         }
 
-                        //big cookie
+                        // big cookie
                         {
                             ctx.globalAlpha = 1;
                             let s = 256 * Game.BigCookieSize;
@@ -23308,11 +23049,10 @@ Game.Launch = function () {
                                 let nestH = 161 * 0.98 * Game.BigCookieSize;
                                 ctx.drawImage(Pic('nest.png'), -nestW / 2, -nestH / 2 + 130, nestW, nestH);
                             }
-                            //ctx.rotate(((Game.startDate%360)/360)*Math.PI*2);
                             ctx.drawImage(Pic('perfectCookie.png'), -s / 2, -s / 2, s, s);
 
                             if (goodBuff && Game.prefs.particles) {
-                                //sparkle
+                                // sparkle
                                 ctx.globalCompositeOperation = 'lighter';
                                 for (let i = 0; i < 1; i++) {
                                     ctx.globalAlpha = Math.random() * 0.65 + 0.1;
@@ -23326,10 +23066,10 @@ Game.Launch = function () {
                             ctx.restore();
                             Timer.track('big cookie');
                         }
-                    } //no particles
+                    } // no particles
                     else {
                         let s, x, y;
-                        //big cookie shine
+                        // big cookie shine
                         s = 512;
                         x = Game.cookieOriginX - s / 2;
                         y = Game.cookieOriginY - s / 2;
@@ -23337,14 +23077,14 @@ Game.Launch = function () {
                         ctx.drawImage(Pic('shine.png'), x, y, s, s);
 
                         if (showDragon) {
-                            //big dragon
+                            // big dragon
                             s = 300 * 2 * (1 + Math.sin(Game.T * 0.013) * 0.1);
                             x = Game.cookieOriginX - s / 2;
                             y = Game.cookieOriginY - s / (1.4 + 0.2 * Math.sin(Game.T * 0.01));
                             ctx.drawImage(Pic('dragonBG.png'), x, y, s, s);
                         }
 
-                        //big cookie
+                        // big cookie
                         ctx.globalAlpha = 1;
                         s = 256 * Game.BigCookieSize;
                         x = Game.cookieOriginX - s / 2;
@@ -23353,7 +23093,7 @@ Game.Launch = function () {
                         ctx.drawImage(Pic('perfectCookie.png'), x, y, s, s);
                     }
 
-                    //cursors
+                    // cursors
                     if (Game.prefs.cursors) {
                         ctx.save();
                         ctx.translate(Game.cookieOriginX, Game.cookieOriginY);
@@ -23362,7 +23102,6 @@ Game.Launch = function () {
 
                         if (showDragon) ctx.globalAlpha = 0.25;
                         let amount = Game.Objects['Cursor'].amount;
-                        //let spe=-1;
                         for (let i = 0; i < amount; i++) {
                             let n = Math.floor(i / 50);
                             let w = 0;
@@ -23373,37 +23112,26 @@ Game.Launch = function () {
                             w *= -4;
                             if (fancy) w += Math.sin(((n + Game.T * 0.01) * Math.PI) / 2) * 4;
                             let x = 0;
-                            let y = 140 /* *Game.BigCookieSize*/ + n * 16 + w - 16;
+                            let y = 140 + n * 16 + w - 16;
 
-                            let rot = 7.2; //(1/50)*360
+                            let rot = 7.2;
                             if (i == 0 && fancy) rot -= Game.T * 0.1;
                             if (i % 50 == 0) rot += 7.2 / 2;
                             ctx.rotate((rot / 360) * Math.PI * 2);
                             ctx.drawImage(pic, 0, 0, 32, 32, x, y, 32, 32);
-                            //ctx.drawImage(pic,32*(i==spe),0,32,32,x,y,32,32);
-
-                            /*if (i==spe)
-                            {
-                                y+=16;
-                                x=Game.cookieOriginX+Math.sin(-((r-5)/360)*Math.PI*2)*y;
-                                y=Game.cookieOriginY+Math.cos(-((r-5)/360)*Math.PI*2)*y;
-                                if (Game.CanClick && ctx && Math.abs(Game.mouseX-x)<16 && Math.abs(Game.mouseY-y)<16) Game.mousePointer=1;
-                            }*/
                         }
                         ctx.restore();
                         Timer.track('cursors');
                     }
                 } else {
                     let tBase = Math.max(0, (Game.AscendTimer - Game.AscendBreakpoint) / (Game.AscendDuration - Game.AscendBreakpoint));
-                    //big crumbling cookie
-                    //let t=(3*Math.pow(tBase,2)-2*Math.pow(tBase,3));//S curve
+                    // big crumbling cookie
                     let t = Math.pow(tBase, 0.5);
 
                     let shake = 0;
                     if (Game.AscendTimer < Game.AscendBreakpoint) {
                         shake = Game.AscendTimer / Game.AscendBreakpoint;
                     }
-                    //else {shake=1-t;}
 
                     ctx.globalAlpha = 1;
 
@@ -23430,7 +23158,7 @@ Game.Launch = function () {
                         ctx.restore();
                     }
 
-                    s = 256; //*Game.BigCookieSize;
+                    s = 256;
 
                     ctx.save();
                     ctx.translate(x, y);
@@ -23449,18 +23177,7 @@ Game.Launch = function () {
                         9: 4
                     };
                     s *= t / 2 + 1;
-                    /*ctx.globalAlpha=(1-t)*0.33;
-                    for (let i=0;i<10;i++)
-                    {
-                        let d=(t-0.2)*(80+((i+2)%3)*40);
-                        ctx.drawImage(Pic('brokenCookie.png'),256*(chunks[i]),0,256,256,-s/2+Math.sin(-(((chunks[i]+4)%10)/10)*Math.PI*2)*d,-s/2+Math.cos(-(((chunks[i]+4)%10)/10)*Math.PI*2)*d,s,s);
-                    }
-                    ctx.globalAlpha=(1-t)*0.66;
-                    for (let i=0;i<10;i++)
-                    {
-                        let d=(t-0.1)*(80+((i+2)%3)*40);
-                        ctx.drawImage(Pic('brokenCookie.png'),256*(chunks[i]),0,256,256,-s/2+Math.sin(-(((chunks[i]+4)%10)/10)*Math.PI*2)*d,-s/2+Math.cos(-(((chunks[i]+4)%10)/10)*Math.PI*2)*d,s,s);
-                    }*/
+
                     ctx.globalAlpha = 1 - t;
                     for (let i = 0; i < 10; i++) {
                         let d = t * (80 + ((i + 2) % 3) * 40);
@@ -23485,7 +23202,7 @@ Game.Launch = function () {
 
                     ctx.restore();
 
-                    //flares
+                    // flares
                     let n = 9;
                     t = Game.AscendTimer / Game.AscendBreakpoint;
                     if (Game.AscendTimer < Game.AscendBreakpoint) {
@@ -23504,7 +23221,7 @@ Game.Launch = function () {
                         ctx.restore();
                     }
 
-                    //flash at breakpoint
+                    // flash at breakpoint
                     if (tBase < 0.1 && tBase > 0) {
                         ctx.globalAlpha = 1 - tBase / 0.1;
                         ctx.fillStyle = '#fff';
@@ -23519,12 +23236,12 @@ Game.Launch = function () {
                     }
                 }
 
-                //milk and milk accessories
+                // milk and milk accessories
                 if (Game.prefs.milk) {
                     let width = ctx.canvas.width;
                     let height = ctx.canvas.height;
-                    let x = Math.floor((Game.T * 2 - (Game.milkH - Game.milkHd) * 2000 + 480 * 2) % 480); //Math.floor((Game.T*2+Math.sin(Game.T*0.1)*2+Math.sin(Game.T*0.03)*2-(Game.milkH-Game.milkHd)*2000+480*2)%480);
-                    let y = Game.milkHd * height; //(((Game.milkHd)*ctx.canvas.height)*(1+0.05*(Math.sin(Game.T*0.017)/2+0.5)));
+                    let x = Math.floor((Game.T * 2 - (Game.milkH - Game.milkHd) * 2000 + 480 * 2) % 480);
+                    let y = Game.milkHd * height;
                     let a = 1;
                     if (Game.AscendTimer > 0) {
                         y *= 1 - Math.pow(Game.AscendTimer / Game.AscendBreakpoint, 2) * 2;
@@ -23535,7 +23252,7 @@ Game.Launch = function () {
                     }
 
                     if (Game.TOYS) {
-                        //golly
+                        // golly
                         if (!Game.Toy) {
                             Game.toys = [];
                             Game.toysType = choose([1, 2]);
@@ -23613,7 +23330,7 @@ Game.Launch = function () {
                         ctx.globalAlpha = 1;
                         for (let i in Game.toys) {
                             let me = Game.toys[i];
-                            //psst... not real physics
+                            // psst... not real physics
                             for (let ii in Game.toys) {
                                 let it = Game.toys[ii];
                                 if (it.id != me.id) {
@@ -23716,7 +23433,7 @@ Game.Launch = function () {
                     Game.particlesDraw(2);
                     Timer.track('text particles');
 
-                    //shiny border during frenzies etc
+                    // shiny border during frenzies etc
                     ctx.globalAlpha = 1;
                     let borders = 'shadedBordersSoft.png';
                     if (goodBuff) borders = 'shadedBordersGold.png';
@@ -23728,13 +23445,13 @@ Game.Launch = function () {
             }
         };
 
-        /*=====================================================================================
+        /* =====================================================================================
         INITIALIZATION END; GAME READY TO LAUNCH
         =======================================================================================*/
 
         Game.killShimmers();
 
-        //booooo
+        // booooo
         Game.RuinTheFun = function (silent) {
             Game.popups = 0;
             Game.SetAllUpgrades(1);
@@ -23820,7 +23537,7 @@ Game.Launch = function () {
             str += '<a class="option neato" ' + Game.clickStr + '="Game.cookies/=10;Game.cookiesEarned/=10;">/10</a><br>';
             str += '<a class="option neato" ' + Game.clickStr + '="Game.cookies*=1000;Game.cookiesEarned*=1000;">x1k</a>';
             str += '<a class="option neato" ' + Game.clickStr + '="Game.cookies/=1000;Game.cookiesEarned/=1000;">/1k</a><br>';
-            str += '<a class="option neato" ' + Game.clickStr + '="for (let i in Game.Objects){Game.Objects[i].buy(100);}">Buy 100 of all</a>'; //for (let n=0;n<100;n++){for (let i in Game.Objects){Game.Objects[i].buy(1);}}
+            str += '<a class="option neato" ' + Game.clickStr + '="for (let i in Game.Objects){Game.Objects[i].buy(100);}">Buy 100 of all</a>';
             str += '<a class="option neato" ' + Game.clickStr + '="for (let i in Game.Objects){Game.Objects[i].sell(100);}">Sell 100 of all</a><br>';
             str += '<a class="option neato" ' + Game.clickStr + '="Game.gainLumps(10);">+10 lumps</a>';
             str +=
@@ -23834,7 +23551,7 @@ Game.Launch = function () {
             str +=
                 '<a class="option neato" ' +
                 Game.clickStr +
-                '="Game.cookiesReset=(Game.heavenlyChips<100?0:Game.HowManyCookiesReset(Math.floor(Game.heavenlyChips*0.001)));Game.cookiesReset=Math.max(Game.cookiesReset,0);Game.EarnHeavenlyChips(0,true);if (Game.cookiesReset<=0){Game.heavenlyChips=0;}Game.recalculateGains=1;">HC /1k</a><br>'; //wee bit inaccurate
+                '="Game.cookiesReset=(Game.heavenlyChips<100?0:Game.HowManyCookiesReset(Math.floor(Game.heavenlyChips*0.001)));Game.cookiesReset=Math.max(Game.cookiesReset,0);Game.EarnHeavenlyChips(0,true);if (Game.cookiesReset<=0){Game.heavenlyChips=0;}Game.recalculateGains=1;">HC /1k</a><br>'; // wee bit inaccurate
             str += '<a class="option neato" ' + Game.clickStr + '="Game.cookiesEarned=0;Game.recalculateGains=1;">Reset cookies earned</a><br>';
             str += '<div class="line"></div>';
             str += '<a class="option warning" ' + Game.clickStr + '="Game.RuinTheFun(1);">Ruin The Fun</a>';
@@ -23852,7 +23569,7 @@ Game.Launch = function () {
             str += '<a class="option neato" ' + Game.clickStr + '="Game.SetAllAchievs(1);">All achievs</a><br>';
             str += '<a class="option neato" ' + Game.clickStr + '="Game.santaLevel=0;Game.dragonLevel=0;">Reset specials</a>';
             str += '<a class="option neato" ' + Game.clickStr + '="Game.MaxSpecials();">Max specials</a><br>';
-            str += '<a class="option neato" ' + Game.clickStr + '="Game.lumpRefill=0;/*Date.now()-Game.getLumpRefillMax();*/">Reset refills</a>';
+            str += '<a class="option neato" ' + Game.clickStr + '="Game.lumpRefill=0;">Reset refills</a>';
             str +=
                 '<a class="option neato" ' + Game.clickStr + '="Game.EditAscend();">' + (Game.DebuggingPrestige ? 'Exit Ascend Edit' : 'Ascend Edit') + '</a>';
             str += '<a class="option neato" ' + Game.clickStr + '="Game.DebugUpgradeCpS();">Debug upgrades CpS</a>';
@@ -23871,8 +23588,6 @@ Game.Launch = function () {
                     '\';">' +
                     Game.goldenCookieChoices[i * 2] +
                     '</a>';
-                //str+='<a class="option neato" '+Game.clickStr+'="Game.goldenCookie.force=\''+Game.goldenCookie.choices[i*2+1]+'\';Game.goldenCookie.spawn();">'+Game.goldenCookie.choices[i*2]+'</a>';
-                //str+='<a class="option neato" '+Game.clickStr+'="Game.goldenCookie.click(0,\''+Game.goldenCookie.choices[i*2+1]+'\');">'+Game.goldenCookie.choices[i*2]+'</a>';
             }
             str += '</div>';
 
@@ -23920,7 +23635,7 @@ Game.Launch = function () {
             Game.OpenSesame();
         };
 
-        //experimental debugging function that cycles through every owned upgrade, turns it off and on, and lists how much each upgrade is participating to CpS
+        // experimental debugging function that cycles through every owned upgrade, turns it off and on, and lists how much each upgrade is participating to CpS
         Game.debuggedUpgradeCpS = [];
         Game.debuggedUpgradeCpClick = [];
         Game.debugColors = ['#322', '#411', '#600', '#900', '#f30', '#f90', '#ff0', '#9f0', '#0f9', '#09f', '#90f'];
@@ -23935,7 +23650,6 @@ Game.Launch = function () {
                 if (me.bought) {
                     me.bought = 0;
                     Game.CalculateGains();
-                    //Game.debuggedUpgradeCpS[me.name]=CpS-Game.cookiesPs;
                     Game.debuggedUpgradeCpS[me.name] = CpS / (Game.cookiesPs || 1) - 1;
                     Game.debuggedUpgradeCpClick[me.name] = CpClick / (Game.computedMouseCps || 1) - 1;
                     me.bought = 1;
@@ -23944,16 +23658,16 @@ Game.Launch = function () {
             Game.CalculateGains();
         };
 
-        Game.vanilla = 0; //everything we create beyond this will be saved in mod structures
+        Game.vanilla = 0; // everything we create beyond this will be saved in mod structures
 
         Game.launchMods();
 
-        Game.runModHook('create'); //declare custom upgrades/achievs/buffs/buildings here!
+        Game.runModHook('create'); // declare custom upgrades/achievs/buffs/buildings here!
 
         BeautifyAll();
 
         if (!Game.LoadSave()) {
-            //try to load the save when we open the page. if this fails, try to brute-force it half a second later
+            // try to load the save when we open the page. if this fails, try to brute-force it half a second later
             setTimeout(function () {
                 let local = localStorageGet(Game.SaveTo);
                 Game.LoadSave(local);
@@ -24010,7 +23724,7 @@ Game.Launch = function () {
             l('storeTitle').childNodes[0].textContent = loc('Store');
         }
     };
-    /*=====================================================================================
+    /* =====================================================================================
     LOGIC
     =======================================================================================*/
     Game.Logic = function () {
@@ -24023,11 +23737,7 @@ Game.Launch = function () {
             Game.UpdateSpecial();
             Game.UpdateGrandmapocalypse();
 
-            //these are kinda fun
-            //if (Game.BigCookieState==2 && !Game.promptOn && Game.Scroll!=0) Game.ClickCookie();
-            //if (Game.BigCookieState==1 && !Game.promptOn) Game.ClickCookie();
-
-            //handle graphic stuff
+            // handle graphic stuff
             if (Game.prefs.wobbly) {
                 if (Game.BigCookieState == 1) Game.BigCookieSizeT = 0.98;
                 else if (Game.BigCookieState == 2) Game.BigCookieSizeT = 1.05;
@@ -24049,7 +23759,7 @@ Game.Launch = function () {
             else l('sectionLeft').style.cursor = 'auto';
             Game.mousePointer = 0;
 
-            //handle milk and milk accessories
+            // handle milk and milk accessories
             Game.milkProgress = Game.AchievementsOwned / 25;
             if (Game.milkProgress >= 0.5) Game.Unlock('Kitten helpers');
             if (Game.milkProgress >= 1) Game.Unlock('Kitten workers');
@@ -24072,7 +23782,7 @@ Game.Launch = function () {
 
             if (Game.autoclickerDetected > 0) Game.autoclickerDetected--;
 
-            //handle research
+            // handle research
             if (Game.researchT > 0) {
                 Game.researchT--;
             }
@@ -24089,7 +23799,7 @@ Game.Launch = function () {
                 Game.researchT = -1;
                 Game.recalculateGains = 1;
             }
-            //handle seasons
+            // handle seasons
             if (Game.seasonT > 0) {
                 Game.seasonT--;
             }
@@ -24103,7 +23813,7 @@ Game.Launch = function () {
                 Game.seasonT = -1;
             }
 
-            //press ctrl to bulk-buy 10, shift to bulk-buy 100
+            // press ctrl to bulk-buy 10, shift to bulk-buy 100
             if (!Game.promptOn) {
                 if ((Game.keys[16] || Game.keys[17]) && !Game.buyBulkShortcut) {
                     Game.buyBulkOld = Game.buyBulk;
@@ -24114,20 +23824,20 @@ Game.Launch = function () {
                 }
             }
             if (!Game.keys[16] && !Game.keys[17] && Game.buyBulkShortcut) {
-                //release
+                // release
                 Game.buyBulk = Game.buyBulkOld;
                 Game.buyBulkShortcut = 0;
                 Game.storeBulkButton(-1);
             }
 
-            //handle cookies
+            // handle cookies
             if (Game.recalculateGains) Game.CalculateGains();
-            Game.Earn(Game.cookiesPs / Game.fps); //add cookies per second
+            Game.Earn(Game.cookiesPs / Game.fps); // add cookies per second
 
-            //grow lumps
+            // grow lumps
             Game.doLumps();
 
-            //minigames
+            // minigames
             for (let i in Game.Objects) {
                 let me = Game.Objects[i];
                 if (Game.isMinigameReady(me) && me.minigame.logic && Game.ascensionMode != 1) me.minigame.logic();
@@ -24135,32 +23845,26 @@ Game.Launch = function () {
 
             if (Game.specialTab != '' && Game.T % (Game.fps * 3) == 0) Game.ToggleSpecialMenu(1);
 
-            //wrinklers
+            // wrinklers
             if (Game.cpsSucked > 0) {
                 Game.Dissolve((Game.cookiesPs / Game.fps) * Game.cpsSucked);
                 Game.cookiesSucked += (Game.cookiesPs / Game.fps) * Game.cpsSucked;
-                //should be using one of the following, but I'm not sure what I'm using this stat for anymore
-                //Game.cookiesSucked=Game.wrinklers.reduce(function(s,w){return s+w.sucked;},0);
-                //for (let i in Game.wrinklers) {Game.cookiesSucked+=Game.wrinklers[i].sucked;}
             }
-
-            //let cps=Game.cookiesPs+Game.cookies*0.01;//exponential cookies
-            //Game.Earn(cps/Game.fps);//add cookies per second
 
             for (let i in Game.Objects) {
                 let me = Game.Objects[i];
                 me.totalCookies += (me.storedTotalCps * Game.globalCpsMult) / Game.fps;
             }
-            if (Game.prefs.particles && Game.cookies && Game.T % Math.ceil(Game.fps / Math.min(10, Game.cookiesPs)) == 0) Game.particleAdd(); //cookie shower
+            if (Game.prefs.particles && Game.cookies && Game.T % Math.ceil(Game.fps / Math.min(10, Game.cookiesPs)) == 0) Game.particleAdd(); // cookie shower
 
-            if (Game.T % (Game.fps * 10) == 0) Game.recalculateGains = 1; //recalculate CpS every 10 seconds (for dynamic boosts such as Century egg)
+            if (Game.T % (Game.fps * 10) == 0) Game.recalculateGains = 1; // recalculate CpS every 10 seconds (for dynamic boosts such as Century egg)
 
-            /*=====================================================================================
+            /* =====================================================================================
             UNLOCKING STUFF
             =======================================================================================*/
-            if (Game.T % Game.fps == 0 && Math.random() < 1 / 1000000) Game.Win('Just plain lucky'); //1 chance in 1,000,000 every second achievement
+            if (Game.T % Game.fps == 0 && Math.random() < 1 / 1000000) Game.Win('Just plain lucky'); // 1 chance in 1,000,000 every second achievement
             if (Game.T % (Game.fps * 5) == 0 && Game.ObjectsById.length > 0) {
-                //check some achievements and upgrades
+                // check some achievements and upgrades
                 if (isNaN(Game.cookies)) {
                     Game.cookies = 0;
                     Game.cookiesEarned = 0;
@@ -24173,7 +23877,7 @@ Game.Launch = function () {
                 if (!Game.fullDate || Date.now() - Game.fullDate >= 365 * 24 * 60 * 60 * 1000) Game.Win('So much to do so much to see');
 
                 if (Game.cookiesEarned >= 1000000 && (Game.ascensionMode == 1 || Game.resets == 0)) {
-                    //challenge run or hasn't ascended yet
+                    // challenge run or hasn't ascended yet
                     // @ts-expect-error
                     if (timePlayed <= 1000 * 60 * 35) Game.Win('Speed baking I');
                     // @ts-expect-error
@@ -24483,7 +24187,7 @@ Game.Launch = function () {
             document.title = (Game.OnAscend ? (EN ? 'Ascending! ' : loc('Ascending') + ' | ') : '') + loc('%1 cookie', LBeautify(Game.cookies)) + ' - ' + title;
         }
         if (Game.T % 15 == 0) {
-            //written through the magic of "hope for the best" maths
+            // written through the magic of "hope for the best" maths
             let chipsOwned = Game.HowMuchPrestige(Game.cookiesReset);
             let ascendNowToOwn = Math.floor(Game.HowMuchPrestige(Game.cookiesReset + Game.cookiesEarned));
             let ascendNowToGet = ascendNowToOwn - Math.floor(chipsOwned);
@@ -24492,7 +24196,7 @@ Game.Launch = function () {
             let cookiesToNext = Game.HowManyCookiesReset(ascendNowToOwn + 1) - (Game.cookiesEarned + Game.cookiesReset);
             let percent = 1 - cookiesToNext / nextChipAt;
 
-            //fill the tooltip under the Legacy tab
+            // fill the tooltip under the Legacy tab
             let date = new Date();
             date.setTime(Date.now() - Game.startDate);
             let timeInSeconds = date.getTime() / 1000;
@@ -24516,7 +24220,7 @@ Game.Launch = function () {
                     Beautify(ascendNowToGet)
                 ]);
             if (cookiesToNext >= 0) {
-                //note: cookiesToNext can be negative at higher HC amounts due to precision loss. we simply hide it in such cases, as this usually only occurs when the gap is small and rapidly overcome anyway
+                // note: cookiesToNext can be negative at higher HC amounts due to precision loss. we simply hide it in such cases, as this usually only occurs when the gap is small and rapidly overcome anyway
                 str += '<div class="line"></div>';
                 str += loc('You need <b>%1 more cookies</b> for the next level.', Beautify(cookiesToNext)) + '<br>';
             }
@@ -24524,7 +24228,7 @@ Game.Launch = function () {
             l('ascendTooltip').innerHTML = str;
 
             if (ascendNowToGet > 0) {
-                //show number saying how many chips you'd get resetting now
+                // show number saying how many chips you'd get resetting now
                 Game.ascendNumber.textContent = '+' + SimpleBeautify(ascendNowToGet);
                 Game.ascendNumber.style.display = 'block';
             } else {
@@ -24532,16 +24236,12 @@ Game.Launch = function () {
             }
 
             if (ascendNowToGet > Game.ascendMeterLevel || Game.ascendMeterPercentT < Game.ascendMeterPercent) {
-                //reset the gauge and play a sound if we gained a potential level
+                // reset the gauge and play a sound if we gained a potential level
                 Game.ascendMeterPercent = 0;
-                //PlaySound('snd/levelPrestige.mp3');//a bit too annoying
             }
             Game.ascendMeterLevel = ascendNowToGet;
-            Game.ascendMeterPercentT = percent; //gauge that fills up as you near your next chip
-            //if (Game.ascendMeterPercentT<Game.ascendMeterPercent) {Game.ascendMeterPercent=0;PlaySound('snd/levelPrestige.mp3',0.5);}
-            //if (percent>=1) {Game.ascendMeter.className='';} else Game.ascendMeter.className='filling';
+            Game.ascendMeterPercentT = percent; // gauge that fills up as you near your next chip
         }
-        //Game.ascendMeter.style.right=Math.floor(Math.max(0,1-Game.ascendMeterPercent)*100)+'px';
         Game.ascendMeter.style.backgroundPosition = -Game.T * 0.5 - Game.ascendMeterPercent * 100 + 'px';
         Game.ascendMeter.style.transform = 'translate(' + Math.floor(-Math.max(0, 1 - Game.ascendMeterPercent) * 100) + '%,0px)';
         Game.ascendMeterPercent += (Game.ascendMeterPercentT - Game.ascendMeterPercent) * 0.1;
@@ -24569,7 +24269,7 @@ Game.Launch = function () {
         Game.CanClick = 1;
 
         if ((Game.toSave || (Game.T % (Game.fps * 60) == 0 && Game.T > Game.fps * 10 && Game.prefs.autosave)) && !Game.OnAscend) {
-            //check if we can save : no minigames are loading
+            // check if we can save : no minigames are loading
             let canSave = true;
             for (let i in Game.Objects) {
                 let me = Game.Objects[i];
@@ -24594,7 +24294,7 @@ Game.Launch = function () {
         Game.T++;
     };
 
-    /*=====================================================================================
+    /* =====================================================================================
     DRAW
     =======================================================================================*/
 
@@ -24605,7 +24305,7 @@ Game.Launch = function () {
         if (!Game.OnAscend) {
             let str = Beautify(Math.round(Game.cookiesd));
             if (Game.cookiesd >= 1000000) {
-                //dirty padding
+                // dirty padding
                 let spacePos = str.indexOf(' ');
                 let dotPos = str.indexOf('.');
                 let add = '';
@@ -24647,7 +24347,7 @@ Game.Launch = function () {
                 for (let i in Game.Objects) {
                     let me = Game.Objects[i];
 
-                    //make products full-opacity if we can buy them
+                    // make products full-opacity if we can buy them
                     let classes = 'product';
                     let price = me.bulkPrice;
                     if (Game.cookiesEarned >= me.basePrice || me.bought > 0) {
@@ -24665,17 +24365,17 @@ Game.Launch = function () {
                     me.l.className = classes;
                 }
 
-                //make upgrades full-opacity if we can buy them
+                // make upgrades full-opacity if we can buy them
                 let lastPrice = 0;
                 for (let i in Game.UpgradesInStore) {
                     let me = Game.UpgradesInStore[i];
                     if (!me.bought) {
                         let price = me.getPrice();
-                        let canBuy = me.canBuy(); //(Game.cookies>=price);
+                        let canBuy = me.canBuy();
                         // @ts-expect-error
                         let enabled = l('upgrade' + i).className.indexOf('enabled') > -1;
                         if ((canBuy && !enabled) || (!canBuy && enabled)) Game.upgradesToRebuild = 1;
-                        if (price < lastPrice) Game.storeToRefresh = 1; //is this upgrade less expensive than the previous one? trigger a refresh to sort it again
+                        if (price < lastPrice) Game.storeToRefresh = 1; // is this upgrade less expensive than the previous one? trigger a refresh to sort it again
                         lastPrice = price;
                     }
                     if (me.timerDisplay) {
@@ -24694,7 +24394,7 @@ Game.Launch = function () {
             Timer.track('store');
 
             if (Game.PARTY) {
-                //i was bored and felt like messing with CSS
+                // i was bored and felt like messing with CSS
                 let pulse = Math.pow((Game.T % 10) / 10, 0.5);
                 Game.l.style.filter = 'hue-rotate(' + ((Game.T * 5) % 360) + 'deg) brightness(' + (150 - 50 * pulse) + '%)';
                 Game.l.style.webkitFilter = 'hue-rotate(' + ((Game.T * 5) % 360) + 'deg) brightness(' + (150 - 50 * pulse) + '%)';
@@ -24723,10 +24423,9 @@ Game.Launch = function () {
         Game.runModHook('draw');
 
         Game.drawT++;
-        //if (Game.prefs.altDraw) requestAnimationFrame(Game.Draw);
     };
 
-    /*=====================================================================================
+    /* =====================================================================================
     MAIN LOOP
     =======================================================================================*/
     Game.Loop = function () {
@@ -24734,29 +24433,28 @@ Game.Launch = function () {
         Timer.say('START');
         Timer.track('browser stuff');
         Timer.say('LOGIC');
-        //update game logic !
+        // update game logic !
         Game.catchupLogic = 0;
         Game.Logic();
         Game.catchupLogic = 1;
 
         let time = Date.now();
 
-        //latency compensator
+        // latency compensator
         Game.accumulatedDelay += time - Game.time - 1000 / Game.fps;
         if (Game.prefs.timeout && time - Game.lastActivity >= 1000 * 60 * 5) {
             if (Game.accumulatedDelay > 1000 * 60 * 30)
-                Game.delayTimeouts += 3; //more than 30 minutes delay? computer probably asleep and not making cookies anyway
-            else if (Game.accumulatedDelay > 1000 * 5) Game.delayTimeouts++; //add to timeout counter when we skip 10 seconds worth of frames (and the player has been inactive for at least 5 minutes)
-            if (Game.delayTimeouts >= 3) Game.Timeout(); //trigger timeout when the timeout counter is 3+
+                Game.delayTimeouts += 3; // more than 30 minutes delay? computer probably asleep and not making cookies anyway
+            else if (Game.accumulatedDelay > 1000 * 5) Game.delayTimeouts++; // add to timeout counter when we skip 10 seconds worth of frames (and the player has been inactive for at least 5 minutes)
+            if (Game.delayTimeouts >= 3) Game.Timeout(); // trigger timeout when the timeout counter is 3+
         }
 
-        Game.accumulatedDelay = Math.min(Game.accumulatedDelay, 1000 * 5); //don't compensate over 5 seconds; if you do, something's probably very wrong
+        Game.accumulatedDelay = Math.min(Game.accumulatedDelay, 1000 * 5); // don't compensate over 5 seconds; if you do, something's probably very wrong
         Game.time = time;
 
-        //if (Game.accumulatedDelay>=Game.fps) console.log('delay:',Math.round(Game.accumulatedDelay/Game.fps));
         while (Game.accumulatedDelay > 0) {
             Game.Logic();
-            Game.accumulatedDelay -= 1000 / Game.fps; //as long as we're detecting latency (slower than target fps), execute logic (this makes drawing slower but makes the logic behave closer to correct target fps)
+            Game.accumulatedDelay -= 1000 / Game.fps; // as long as we're detecting latency (slower than target fps), execute logic (this makes drawing slower but makes the logic behave closer to correct target fps)
         }
         Game.catchupLogic = 0;
         Timer.track('logic');
@@ -24765,7 +24463,7 @@ Game.Launch = function () {
         if (Game.visible) Game.Draw();
 
         if (Game.sesame) {
-            //fps counter and graph
+            // fps counter and graph
             Game.previousFps = Game.currentFps;
             Game.currentFps = Game.getFps();
             let ctx = Game.fpsGraphCtx;
@@ -24798,7 +24496,7 @@ Game.Launch = function () {
     };
 };
 
-/*=====================================================================================
+/* =====================================================================================
 LAUNCH THIS THING
 =======================================================================================*/
 window.onload = function () {
@@ -24831,8 +24529,6 @@ window.onload = function () {
                                         Game.Init();
                                         if (firstLaunch) Game.showLangSelection(true);
                                     });
-                                    //try {Game.Load(Game.Init);}
-                                    //catch(err) {console.log('ERROR : '+err.message);}
                                 }
                             };
                             launch();
