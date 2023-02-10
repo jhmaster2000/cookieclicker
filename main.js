@@ -57,50 +57,6 @@ function cap(str) {
 }
 
 /**
- * @param {string | number} num
- */
-function romanize(num) {
-    if (isNaN(+num)) return NaN;
-    const digits = String(+num).split('');
-    const key = [
-        '',
-        'C',
-        'CC',
-        'CCC',
-        'CD',
-        'D',
-        'DC',
-        'DCC',
-        'DCCC',
-        'CM',
-        '',
-        'X',
-        'XX',
-        'XXX',
-        'XL',
-        'L',
-        'LX',
-        'LXX',
-        'LXXX',
-        'XC',
-        '',
-        'I',
-        'II',
-        'III',
-        'IV',
-        'V',
-        'VI',
-        'VII',
-        'VIII',
-        'IX'
-    ];
-    let roman = '';
-    let i = 3;
-    while (i--) roman = (key[+(digits.pop() ?? '') + i * 10] || '') + roman;
-    return Array(+digits.join('') + 1).join('M') + roman;
-}
-
-/**
  * @param {number} x
  */
 function randomFloor(x) {
@@ -7372,7 +7328,7 @@ Game.Launch = function () {
                             '<div ' +
                             Game.getTooltip(
                                 '<div class="prompt" style="text-align:center;padding-bottom:6px;white-space:nowrap;margin:0px;padding-bottom:96px;" id="tooltipMilk"><h3 style="margin:6px 32px 0px 32px;">' +
-                                (loc('Rank %1', romanize(i + 1)) + ' - ' + milk.name) +
+                                (loc('Rank %1', window.exports.roman(i + 1)) + ' - ' + milk.name) +
                                 '</h3><div style="opacity:0.75;font-size:9px;">(' +
                                 (i == 0 ? loc('starter milk') : loc('for %1 achievements', Beautify(i * 25))) +
                                 ')</div><div class="line"></div><div style="width:100%;height:96px;position:absolute;left:0px;bottom:0px;background:url(img/' +

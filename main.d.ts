@@ -24,3 +24,10 @@ declare interface CanvasRenderingContext2D {
 declare interface Math {
     seedrandom(seed?: string, useSharedCharcodeArrayForSeed?: boolean): string;
 }
+
+// TODO: replace this shit with ESM later
+interface Window {
+    exports: {
+        roman(num: number): string;
+    };
+}
