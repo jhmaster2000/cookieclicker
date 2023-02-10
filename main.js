@@ -23034,10 +23034,7 @@ Game.Launch = function () {
             }, 100);
 
         Game.ready = 1;
-        setTimeout(function () {
-            const detectAds = l('detectAds');
-            if (!detectAds || detectAds.clientHeight < 1) Game.addClass('noAds');
-        }, 500);
+        Game.addClass('noAds');
         l('offGameMessage', true).innerHTML = '';
         l('offGameMessageWrap', true).style.display = 'none';
         Game.Loop();
