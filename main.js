@@ -52,21 +52,6 @@ function choose(arr) {
 /**
  * @param {string} str
  */
-function escapeRegExp(str) {
-    return str.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
-}
-/**
- * @param {string} find
- * @param {string} replace
- * @param {string} str
- */
-function replaceAll(find, replace, str) {
-    return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
-}
-
-/**
- * @param {string} str
- */
 function cap(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -522,13 +507,13 @@ let parseLoc = function (str, params) {
             let plurIndex = locPlur(params[0].n);
             plurIndex = Math.min(str.length - 1, plurIndex);
             str = str[plurIndex];
-            str = replaceAll('%1', params[0].b, str);
+            str = str.replaceAll('%1', params[0].b);
         } else {
             // @ts-expect-error this IS pain
             let plurIndex = locPlur(params[0]);
             plurIndex = Math.min(str.length - 1, plurIndex);
             str = str[plurIndex];
-            str = replaceAll('%1', params[0], str);
+            str = str.replaceAll('%1', params[0]);
         }
     }
 
@@ -6722,7 +6707,7 @@ Game.Launch = function () {
                 quick = Math.min(6, quick);
                 if (!quick) quick = 6;
             }
-            desc = replaceAll('==CLOSETHIS()==', 'Game.CloseNote(' + Game.noteId + ');', desc);
+            desc = desc.replaceAll('==CLOSETHIS()==', `Game.CloseNote(${Game.noteId});`);
             if (Game.popups) new Game.Note(title, desc, pic, quick);
             if (!noLog) Game.AddToLog('<b>' + title + '</b> | ' + desc);
         };

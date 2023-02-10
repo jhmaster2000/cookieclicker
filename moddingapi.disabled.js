@@ -1,7 +1,7 @@
 
 (function () {
     //! stubs -- The modding API is low priority and will be restored later, this file is not currently loaded.
-    let Game = {}, loc, LoadScript, choose, tinyIcon, replaceAll, l;
+    let Game = {}, loc, LoadScript, choose, tinyIcon, l;
     /* =====================================================================================
     MODDING API
     =======================================================================================*/
@@ -124,13 +124,13 @@
     };
     Game.safeSaveString = function (str) {
         // look as long as it works
-        str = replaceAll('|', '[P]', str);
-        str = replaceAll(';', '[S]', str);
+        str = str.replaceAll('|', '[P]');
+        str = str.replaceAll(';', '[S]');
         return str;
     };
     Game.safeLoadString = function (str) {
-        str = replaceAll('[P]', '|', str);
-        str = replaceAll('[S]', ';', str);
+        str = str.replaceAll('[P]', '|');
+        str = str.replaceAll('[S]', ';');
         return str;
     };
     Game.saveModData = function () {
