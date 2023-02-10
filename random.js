@@ -1,4 +1,3 @@
-/* eslint-disable no-inner-declarations */
 {
     const sharedCharcodeArray = [];
     class RNG {
