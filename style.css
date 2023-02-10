@@ -3980,17 +3980,13 @@ SUPPORT
 	opacity: 1;
 }
 
-.ifNoAds {
-	display: none;
-}
-
-.noAds .ifNoAds {
+#game {
 	display: block;
 }
 
-.noAds #support,
-.noAds #smallSupport,
-.noAds .supportComment {
+#game #support,
+#game #smallSupport,
+#game .supportComment {
 	display: none;
 }
 
