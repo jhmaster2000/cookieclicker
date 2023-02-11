@@ -350,7 +350,7 @@ M.launch = function () {
                 M.magic -= cost;
                 M.magic = Math.max(0, M.magic);
 
-                let rect = l('grimoireSpell' + spell.id).getBoundingClientRect();
+                let rect = $('grimoireSpell' + spell.id, true).getBoundingClientRect();
                 Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24);
 
                 if (fail) PlaySound('snd/spellFail.mp3', 0.75);
@@ -471,15 +471,15 @@ M.launch = function () {
         str += '<div id="grimoireInfo"></div>';
         str += '</div>';
         div.innerHTML = str;
-        M.magicBarL = l('grimoireBar');
-        M.magicBarFullL = l('grimoireBarFull');
-        M.magicBarTextL = l('grimoireBarText');
-        M.lumpRefill = l('grimoireLumpRefill');
-        M.infoL = l('grimoireInfo');
+        M.magicBarL = $('grimoireBar');
+        M.magicBarFullL = $('grimoireBarFull');
+        M.magicBarTextL = $('grimoireBarText');
+        M.lumpRefill = $('grimoireLumpRefill');
+        M.infoL = $('grimoireInfo');
         for (let i in M.spells) {
             let me = M.spells[i];
             AddEvent(
-                l('grimoireSpell' + me.id),
+                $('grimoireSpell' + me.id),
                 'click',
                 (function (spell) {
                     return function () {
@@ -559,9 +559,9 @@ M.launch = function () {
             for (let i in M.spells) {
                 let me = M.spells[i];
                 let cost = M.getSpellCost(me);
-                l('grimoirePrice' + me.id).innerHTML = Beautify(cost);
-                if (M.magic < cost) l('grimoireSpell' + me.id).className = 'grimoireSpell titleFont';
-                else l('grimoireSpell' + me.id).className = 'grimoireSpell titleFont ready';
+                $('grimoirePrice' + me.id, true).innerHTML = Beautify(cost);
+                if (M.magic < cost) $('grimoireSpell' + me.id, true).className = 'grimoireSpell titleFont';
+                else $('grimoireSpell' + me.id, true).className = 'grimoireSpell titleFont ready';
             }
         }
     };
@@ -576,6 +576,6 @@ M.launch = function () {
         M.magicBarL.style.width = M.magicM * 3 + 'px';
         M.infoL.innerHTML = 'Spells cast : ' + Beautify(M.spellsCast) + ' (total : ' + Beautify(M.spellsCastTotal) + ')';
     };
-    M.init(l('rowSpecial' + M.parent.id));
+    M.init($('rowSpecial' + M.parent.id));
 };
 let M = 0;

@@ -589,8 +589,8 @@ M.launch = function () {
             }
             if (M.plantsUnlockedN >= M.plantsN) {
                 Game.Win('Keeper of the conservatory');
-                l('gardenTool-3').classList.remove('locked');
-            } else l('gardenTool-3').classList.add('locked');
+                $('gardenTool-3').classList.remove('locked');
+            } else $('gardenTool-3').classList.add('locked');
 
             return M.plantsUnlockedN;
         };
@@ -1044,7 +1044,7 @@ M.launch = function () {
                         M.computeEffs();
                         PlaySound('snd/freezeGarden.mp3');
                         this.classList.add('on');
-                        l('gardenContent').classList.add('gardenFrozen');
+                        $('gardenContent').classList.add('gardenFrozen');
 
                         for (let y = 0; y < 6; y++) {
                             for (let x = 0; x < 6; x++) {
@@ -1064,14 +1064,14 @@ M.launch = function () {
                         //M.nextFreeze=Date.now()+(Game.Has('Turbo-charged soil')?1:(1000*60*10));
                         M.computeEffs();
                         this.classList.remove('on');
-                        l('gardenContent').classList.remove('gardenFrozen');
+                        $('gardenContent').classList.remove('gardenFrozen');
                     }
                 },
                 isOn: function () {
                     if (M.freeze) {
-                        l('gardenContent').classList.add('gardenFrozen');
+                        $('gardenContent').classList.add('gardenFrozen');
                     } else {
-                        l('gardenContent').classList.remove('gardenFrozen');
+                        $('gardenContent').classList.remove('gardenFrozen');
                     }
                     return M.freeze;
                 }
@@ -1467,7 +1467,7 @@ M.launch = function () {
         };
 
         M.buildPanel = function () {
-            if (!l('gardenSeeds')) return false;
+            if (!$('gardenSeeds')) return false;
             let str = '';
             for (let i in M.plants) {
                 let me = M.plants[i];
@@ -1490,11 +1490,11 @@ M.launch = function () {
                     'px;"></div>';
                 str += '</div>';
             }
-            l('gardenSeeds').innerHTML = str;
+            $('gardenSeeds').innerHTML = str;
 
             for (let i in M.plants) {
                 let me = M.plants[i];
-                me.l = l('gardenSeed-' + me.id);
+                me.l = $('gardenSeed-' + me.id);
                 AddEvent(
                     me.l,
                     'click',
@@ -1553,13 +1553,13 @@ M.launch = function () {
                     'px;"></div>';
                 str += '</div>';
             }
-            l('gardenTools').innerHTML = str;
+            $('gardenTools').innerHTML = str;
 
             for (let i in M.tools) {
                 let me = M.tools[i];
-                AddEvent(l('gardenTool-' + me.id), 'click', me.func);
-                AddEvent(l('gardenTool-' + me.id), 'mouseover', M.hideCursor);
-                AddEvent(l('gardenTool-' + me.id), 'mouseout', M.showCursor);
+                AddEvent($('gardenTool-' + me.id), 'click', me.func);
+                AddEvent($('gardenTool-' + me.id), 'mouseover', M.hideCursor);
+                AddEvent($('gardenTool-' + me.id), 'mouseout', M.showCursor);
             }
 
             let str = '';
@@ -1584,12 +1584,12 @@ M.launch = function () {
                     'px;"></div>';
                 str += '</div>';
             }
-            l('gardenSoils').innerHTML = str;
+            $('gardenSoils').innerHTML = str;
 
             for (let i in M.soils) {
                 let me = M.soils[i];
                 AddEvent(
-                    l('gardenSoil-' + me.id),
+                    $('gardenSoil-' + me.id),
                     'click',
                     (function (me) {
                         return function () {
@@ -1604,24 +1604,24 @@ M.launch = function () {
                             for (let i in M.soils) {
                                 let it = M.soils[i];
                                 if (it.id == M.soil) {
-                                    l('gardenSoil-' + it.id).classList.add('on');
+                                    $('gardenSoil-' + it.id).classList.add('on');
                                 } else {
-                                    l('gardenSoil-' + it.id).classList.remove('on');
+                                    $('gardenSoil-' + it.id).classList.remove('on');
                                 }
                             }
                         };
                     })(me)
                 );
-                AddEvent(l('gardenSoil-' + me.id), 'mouseover', M.hideCursor);
-                AddEvent(l('gardenSoil-' + me.id), 'mouseout', M.showCursor);
+                AddEvent($('gardenSoil-' + me.id), 'mouseover', M.hideCursor);
+                AddEvent($('gardenSoil-' + me.id), 'mouseout', M.showCursor);
             }
 
-            M.cursorL = l('gardenCursor');
+            M.cursorL = $('gardenCursor');
         };
         M.buildPlot = function () {
             M.toRebuild = false;
-            if (!l('gardenPlot')) return false;
-            if (!l('gardenTile-0-0')) {
+            if (!$('gardenPlot')) return false;
+            if (!$('gardenTile-0-0')) {
                 let str = '';
                 for (let y = 0; y < 6; y++) {
                     for (let x = 0; x < 6; x++) {
@@ -1641,12 +1641,12 @@ M.launch = function () {
                         str += '</div>';
                     }
                 }
-                l('gardenPlot').innerHTML = str;
+                $('gardenPlot').innerHTML = str;
 
                 for (let y = 0; y < 6; y++) {
                     for (let x = 0; x < 6; x++) {
                         AddEvent(
-                            l('gardenTile-' + x + '-' + y),
+                            $('gardenTile-' + x + '-' + y),
                             'click',
                             (function (x, y) {
                                 return function () {
@@ -1661,8 +1661,8 @@ M.launch = function () {
             for (let y = 0; y < 6; y++) {
                 for (let x = 0; x < 6; x++) {
                     let tile = M.plot[y][x];
-                    let tileL = l('gardenTile-' + x + '-' + y);
-                    let iconL = l('gardenTileIcon-' + x + '-' + y);
+                    let tileL = $('gardenTile-' + x + '-' + y);
+                    let iconL = $('gardenTileIcon-' + x + '-' + y);
                     let me = 0;
                     if (tile[0] > 0) {
                         plants++;
@@ -1696,9 +1696,9 @@ M.launch = function () {
                 for (let i in M.plants) {
                     let it = M.plants[i];
                     if (it.id == M.seedSelected) {
-                        l('gardenSeed-' + it.id).classList.add('on');
+                        $('gardenSeed-' + it.id).classList.add('on');
                     } else {
-                        l('gardenSeed-' + it.id).classList.remove('on');
+                        $('gardenSeed-' + it.id).classList.remove('on');
                     }
                 }
             }
@@ -1945,7 +1945,7 @@ M.launch = function () {
         M.buildPlot();
         M.buildPanel();
 
-        M.lumpRefill = l('gardenLumpRefill');
+        M.lumpRefill = $('gardenLumpRefill');
         AddEvent(M.lumpRefill, 'click', function () {
             Game.refillLump(1, function () {
                 M.loopsMult = 3;
@@ -1955,7 +1955,7 @@ M.launch = function () {
                 PlaySound('snd/pop' + Math.floor(Math.random() * 3 + 1) + '.mp3', 0.75);
             });
         });
-        AddEvent(l('gardenSeedsUnlocked'), 'click', function () {
+        AddEvent($('gardenSeedsUnlocked'), 'click', function () {
             if (Game.sesame) {
                 if (Game.keys[16] && Game.keys[17]) {
                     //ctrl & shift, fill garden with random plants
@@ -1991,11 +1991,11 @@ M.launch = function () {
         //M.parent.switchMinigame(1);
     };
     M.onResize = function () {
-        let width = l('gardenContent').offsetWidth;
+        let width = $('gardenContent').offsetWidth;
         let panelW = Math.min(Math.max(width * 0.4, 320), width - 6 * M.tileSize) - 8;
         let fieldW = Math.max(Math.min(width * 0.6, width - panelW), 6 * M.tileSize) - 8;
-        l('gardenField').style.width = fieldW + 'px';
-        l('gardenPanel').style.width = panelW + 'px';
+        $('gardenField').style.width = fieldW + 'px';
+        $('gardenPanel').style.width = panelW + 'px';
     };
     M.onLevel = function () {
         M.buildPlot();
@@ -2162,7 +2162,7 @@ M.launch = function () {
                             let me = M.plantsById[tile[0] - 1];
                             if (tile[0] > 0) {
                                 //age
-                                tile[1] += randomFloor((me.ageTick + me.ageTickR * Math.random()) * M.plotBoost[y][x][0]);
+                                tile[1] += randomRound((me.ageTick + me.ageTickR * Math.random()) * M.plotBoost[y][x][0]);
                                 tile[1] = Math.max(tile[1], 0);
                                 if (me.immortal) tile[1] = Math.min(me.mature + 1, tile[1]);
                                 else if (tile[1] >= 100) {
@@ -2375,7 +2375,7 @@ M.launch = function () {
             if (!M.cursor || M.seedSelected < 0) {
                 M.cursorL.style.display = 'none';
             } else {
-                let box = l('gardenDrag').getBoundingClientRect();
+                let box = $('gardenDrag').getBoundingClientRect();
                 let x = Game.mouseX - box.left - 24;
                 let y = Game.mouseY - box.top;
                 let seed = M.plantsById[M.seedSelected];
@@ -2387,25 +2387,25 @@ M.launch = function () {
         }
         if (Game.drawT % 10 == 0) {
             M.lumpRefill.style.display = 'block';
-            if (M.freeze) l('gardenNextTick').innerHTML = 'Garden is frozen. Unfreeze to resume.';
-            else l('gardenNextTick').innerHTML = 'Next tick in ' + Game.sayTime(((M.nextStep - Date.now()) / 1000) * 30 + 30, -1) + '';
-            l('gardenStats').innerHTML = 'Mature plants harvested : ' + Beautify(M.harvests) + ' (total : ' + Beautify(M.harvestsTotal) + ')';
+            if (M.freeze) $('gardenNextTick').innerHTML = 'Garden is frozen. Unfreeze to resume.';
+            else $('gardenNextTick').innerHTML = 'Next tick in ' + Game.sayTime(((M.nextStep - Date.now()) / 1000) * 30 + 30, -1) + '';
+            $('gardenStats').innerHTML = 'Mature plants harvested : ' + Beautify(M.harvests) + ' (total : ' + Beautify(M.harvestsTotal) + ')';
             if (M.parent.level < M.plotLimits.length)
-                l('gardenPlotSize').innerHTML =
+                $('gardenPlotSize').innerHTML =
                     '<small>Plot size : ' +
                     Math.max(1, Math.min(M.plotLimits.length, M.parent.level)) +
                     '/' +
                     M.plotLimits.length +
                     '<br>(Upgrades with farm level)</small>';
-            else l('gardenPlotSize').innerHTML = '';
-            l('gardenSeedsUnlocked').innerHTML = 'Seeds<small> (' + M.plantsUnlockedN + '/' + M.plantsN + ')</small>';
+            else $('gardenPlotSize').innerHTML = '';
+            $('gardenSeedsUnlocked').innerHTML = 'Seeds<small> (' + M.plantsUnlockedN + '/' + M.plantsN + ')</small>';
             for (let i in M.soils) {
                 let me = M.soils[i];
-                if (M.parent.amount < me.req) l('gardenSoil-' + me.id).classList.add('disabled');
-                else l('gardenSoil-' + me.id).classList.remove('disabled');
+                if (M.parent.amount < me.req) $('gardenSoil-' + me.id).classList.add('disabled');
+                else $('gardenSoil-' + me.id).classList.remove('disabled');
             }
         }
     };
-    M.init(l('rowSpecial' + M.parent.id));
+    M.init($('rowSpecial' + M.parent.id));
 };
 let M = 0;

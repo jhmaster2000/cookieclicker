@@ -752,32 +752,32 @@ M.launch = function () {
                 -me.icon[1] * 48 +
                 'px;"></div>';
         }
-        l('bankGraphBox').innerHTML = str;
+        $('bankGraphBox', true).innerHTML = str;
 
         let div = document.createElement('canvas');
         div.id = 'bankGraph';
         div.style.marginLeft = '-14px';
         div.width = 64;
         div.height = 64;
-        l('bankGraphBox').appendChild(div);
+        $('bankGraphBox', true).appendChild(div);
         M.graph = div;
         M.graphCtx = M.graph.getContext('2d', { alpha: false });
 
-        AddEvent(l('bankGraphLines'), 'click', function () {
+        AddEvent($('bankGraphLines'), 'click', function () {
             if (M.graphLines == 0) M.graphLines = 1;
             else M.graphLines = 0;
             M.toRedraw = 2;
             PlaySound('snd/tick.mp3');
         });
-        AddEvent(l('bankGraphCols'), 'click', function () {
+        AddEvent($('bankGraphCols'), 'click', function () {
             if (M.graphCols == 0) M.graphCols = 1;
             else M.graphCols = 0;
             M.setCols();
             M.toRedraw = 2;
             PlaySound('snd/tick.mp3');
         });
-        if (l('bankCheatSpeed')) {
-            AddEvent(l('bankCheatSpeed'), 'click', function () {
+        if ($('bankCheatSpeed')) {
+            AddEvent($('bankCheatSpeed'), 'click', function () {
                 if (M.secondsPerTick == 60) M.secondsPerTick = 1 / 10;
                 else M.secondsPerTick = 60;
                 M.toRedraw = 2;
@@ -785,7 +785,7 @@ M.launch = function () {
             });
         }
 
-        AddEvent(l('bankOfficeUpgrade'), 'click', function (e) {
+        AddEvent($('bankOfficeUpgrade'), 'click', function (e) {
             let me = M.offices[M.officeLevel];
             if (me.cost && Game.Objects['Cursor'].amount >= me.cost[0] && Game.Objects['Cursor'].level >= me.cost[1]) {
                 Game.Objects['Cursor'].sacrifice(me.cost[0]);
@@ -795,7 +795,7 @@ M.launch = function () {
                 Game.SparkleOn(e.target);
             }
         });
-        AddEvent(l('bankBrokersBuy'), 'click', function (e) {
+        AddEvent($('bankBrokersBuy'), 'click', function (e) {
             if (M.brokers < M.getMaxBrokers() && Game.cookies >= M.getBrokerPrice()) {
                 Game.Spend(M.getBrokerPrice());
                 M.brokers += 1;
@@ -804,19 +804,19 @@ M.launch = function () {
             }
         });
 
-        AddEvent(l('bankLoan1'), 'click', function (e) {
+        AddEvent($('bankLoan1'), 'click', function (e) {
             if (M.takeLoan(1)) {
                 PlaySound('snd/cashIn2.mp3', 0.6);
                 Game.SparkleOn(e.target);
             }
         });
-        AddEvent(l('bankLoan2'), 'click', function (e) {
+        AddEvent($('bankLoan2'), 'click', function (e) {
             if (M.takeLoan(2)) {
                 PlaySound('snd/cashIn2.mp3', 0.6);
                 Game.SparkleOn(e.target);
             }
         });
-        AddEvent(l('bankLoan3'), 'click', function (e) {
+        AddEvent($('bankLoan3'), 'click', function (e) {
             if (M.takeLoan(3)) {
                 PlaySound('snd/cashIn2.mp3', 0.6);
                 Game.SparkleOn(e.target);
@@ -825,17 +825,17 @@ M.launch = function () {
 
         for (let i = 0; i < M.goodsById.length; i++) {
             let me = M.goodsById[i];
-            me.l = l('bankGood-' + me.id);
-            me.symbolNumL = l('bankGood-' + me.id + '-sym');
-            me.valL = l('bankGood-' + me.id + '-val');
-            me.stockBoxL = l('bankGood-' + me.id + '-stockBox');
-            me.stockL = l('bankGood-' + me.id + '-stock');
-            me.stockMaxL = l('bankGood-' + me.id + '-stockMax');
-            me.viewHideL = l('bankGood-' + me.id + '-viewHide');
-            me.graphIconL = l('bankGood-' + me.id + '-graphIcon');
+            me.l = $('bankGood-' + me.id);
+            me.symbolNumL = $('bankGood-' + me.id + '-sym');
+            me.valL = $('bankGood-' + me.id + '-val');
+            me.stockBoxL = $('bankGood-' + me.id + '-stockBox');
+            me.stockL = $('bankGood-' + me.id + '-stock');
+            me.stockMaxL = $('bankGood-' + me.id + '-stockMax');
+            me.viewHideL = $('bankGood-' + me.id + '-viewHide');
+            me.graphIconL = $('bankGood-' + me.id + '-graphIcon');
 
             AddEvent(
-                l('bankGood-' + i),
+                $('bankGood-' + i),
                 'mouseover',
                 (function (i) {
                     return function () {
@@ -847,7 +847,7 @@ M.launch = function () {
                 })(i)
             );
             AddEvent(
-                l('bankGood-' + i),
+                $('bankGood-' + i),
                 'mouseout',
                 (function (i) {
                     return function () {
@@ -860,7 +860,7 @@ M.launch = function () {
             );
 
             AddEvent(
-                l('bankGood-' + i + '-viewHide'),
+                $('bankGood-' + i + '-viewHide'),
                 'click',
                 (function (i) {
                     return function () {
@@ -886,7 +886,7 @@ M.launch = function () {
             );
 
             AddEvent(
-                l('bankGood-' + i + '_1'),
+                $('bankGood-' + i + '_1'),
                 'click',
                 (function (i) {
                     return function (e) {
@@ -895,7 +895,7 @@ M.launch = function () {
                 })(i)
             );
             AddEvent(
-                l('bankGood-' + i + '_-1'),
+                $('bankGood-' + i + '_-1'),
                 'click',
                 (function (i) {
                     return function (e) {
@@ -904,7 +904,7 @@ M.launch = function () {
                 })(i)
             );
             AddEvent(
-                l('bankGood-' + i + '_10'),
+                $('bankGood-' + i + '_10'),
                 'click',
                 (function (i) {
                     return function (e) {
@@ -913,7 +913,7 @@ M.launch = function () {
                 })(i)
             );
             AddEvent(
-                l('bankGood-' + i + '_-10'),
+                $('bankGood-' + i + '_-10'),
                 'click',
                 (function (i) {
                     return function (e) {
@@ -922,7 +922,7 @@ M.launch = function () {
                 })(i)
             );
             AddEvent(
-                l('bankGood-' + i + '_100'),
+                $('bankGood-' + i + '_100'),
                 'click',
                 (function (i) {
                     return function (e) {
@@ -931,7 +931,7 @@ M.launch = function () {
                 })(i)
             );
             AddEvent(
-                l('bankGood-' + i + '_-100'),
+                $('bankGood-' + i + '_-100'),
                 'click',
                 (function (i) {
                     return function (e) {
@@ -940,7 +940,7 @@ M.launch = function () {
                 })(i)
             );
             AddEvent(
-                l('bankGood-' + i + '_Max'),
+                $('bankGood-' + i + '_Max'),
                 'click',
                 (function (i) {
                     return function (e) {
@@ -949,7 +949,7 @@ M.launch = function () {
                 })(i)
             );
             AddEvent(
-                l('bankGood-' + i + '_-All'),
+                $('bankGood-' + i + '_-All'),
                 'click',
                 (function (i) {
                     return function (e) {
@@ -1026,8 +1026,8 @@ M.launch = function () {
         M.reset();
     };
     M.onResize = function () {
-        M.graph.width = l('bankContent').offsetWidth - 22;
-        M.graph.height = 300; //l('bankContent').offsetHeight;
+        M.graph.width = $('bankContent', true).offsetWidth - 22;
+        M.graph.height = 300;
         let ctx = M.graphCtx;
         ctx.fillStyle = '#fff';
         ctx.fillRect(0, 0, M.graph.width, M.graph.height);
@@ -1294,9 +1294,9 @@ M.launch = function () {
     M.setCols = function () {
         if (!M.colBases[M.graphCols]) M.graphCols = 0;
         M.cols = M.colBases[M.graphCols];
-        if (l('bankGraphBox')) {
-            l('bankGraphBox').style.backgroundColor = M.cols.bg;
-            l('bankGraphBox').style.color = M.cols.highlight;
+        if ($('bankGraphBox')) {
+            $('bankGraphBox', true).style.backgroundColor = M.cols.bg;
+            $('bankGraphBox', true).style.color = M.cols.highlight;
         }
         if (M.graph) M.graph.style.backgroundColor = M.cols.bg;
     };
@@ -1436,33 +1436,33 @@ M.launch = function () {
         }
         if (Game.drawT % 10 == 0) {
             let office = M.offices[M.officeLevel];
-            l('bankOfficeIcon').style.backgroundPosition = -office.icon[0] * 48 + 'px ' + -office.icon[1] * 48 + 'px';
-            l('bankOfficeName').innerHTML = office.name;
-            l('bankOfficeUpgrade').innerHTML = 'Upgrade (' + office.cost[0] + ' cursors)';
-            if (!office.cost) l('bankOfficeUpgrade').style.display = 'none';
+            $('bankOfficeIcon', true).style.backgroundPosition = -office.icon[0] * 48 + 'px ' + -office.icon[1] * 48 + 'px';
+            $('bankOfficeName', true).innerHTML = office.name;
+            $('bankOfficeUpgrade', true).innerHTML = 'Upgrade (' + office.cost[0] + ' cursors)';
+            if (!office.cost) $('bankOfficeUpgrade', true).style.display = 'none';
             else {
-                l('bankOfficeUpgrade').style.removeProperty('display');
+                $('bankOfficeUpgrade', true).style.removeProperty('display');
                 if (Game.Objects['Cursor'].amount >= office.cost[0] && Game.Objects['Cursor'].level >= office.cost[1])
-                    l('bankOfficeUpgrade').classList.remove('bankButtonOff');
-                else l('bankOfficeUpgrade').classList.add('bankButtonOff');
+                    $('bankOfficeUpgrade', true).classList.remove('bankButtonOff');
+                else $('bankOfficeUpgrade', true).classList.add('bankButtonOff');
             }
-            l('bankBrokersText').innerHTML = M.brokers == 0 ? 'no brokers' : M.brokers == 1 ? '1 broker' : M.brokers + ' brokers';
-            if (M.brokers < M.getMaxBrokers() && Game.cookies >= M.getBrokerPrice()) l('bankBrokersBuy').classList.remove('bankButtonOff');
-            else l('bankBrokersBuy').classList.add('bankButtonOff');
+            $('bankBrokersText', true).innerHTML = M.brokers == 0 ? 'no brokers' : M.brokers == 1 ? '1 broker' : M.brokers + ' brokers';
+            if (M.brokers < M.getMaxBrokers() && Game.cookies >= M.getBrokerPrice()) $('bankBrokersBuy', true).classList.remove('bankButtonOff');
+            else $('bankBrokersBuy', true).classList.add('bankButtonOff');
 
-            if (M.officeLevel <= 1) l('bankLoan1').style.display = 'none';
-            else l('bankLoan1').style.removeProperty('display');
-            if (M.officeLevel <= 3) l('bankLoan2').style.display = 'none';
-            else l('bankLoan2').style.removeProperty('display');
-            if (M.officeLevel <= 4) l('bankLoan3').style.display = 'none';
-            else l('bankLoan3').style.removeProperty('display');
+            if (M.officeLevel <= 1) $('bankLoan1', true).style.display = 'none';
+            else $('bankLoan1', true).style.removeProperty('display');
+            if (M.officeLevel <= 3) $('bankLoan2', true).style.display = 'none';
+            else $('bankLoan2', true).style.removeProperty('display');
+            if (M.officeLevel <= 4) $('bankLoan3', true).style.display = 'none';
+            else $('bankLoan3', true).style.removeProperty('display');
 
             for (let id = 1; id < 4; id++) {
-                if (Game.hasBuff('Loan ' + id) || Game.hasBuff('Loan ' + id + ' (interest)')) l('bankLoan' + id).classList.add('bankButtonOff');
-                else l('bankLoan' + id).classList.remove('bankButtonOff');
+                if (Game.hasBuff('Loan ' + id) || Game.hasBuff('Loan ' + id + ' (interest)')) $('bankLoan' + id, true).classList.add('bankButtonOff');
+                else $('bankLoan' + id, true).classList.remove('bankButtonOff');
             }
 
-            let it = l('bankBalance');
+            let it = $('bankBalance', true);
             it.innerHTML = (M.profit < 0 ? '-' : '') + '$' + Beautify(Math.abs(M.profit), 2);
             if (M.profit > 0) {
                 it.classList.add('bankSymbolUp');
@@ -1472,9 +1472,9 @@ M.launch = function () {
                 it.classList.remove('bankSymbolUp');
             }
 
-            l('bankNextTick').innerHTML = 'Next tick in ' + Game.sayTime(Game.fps * M.secondsPerTick - M.tickT + 30, -1) + '.';
+            $('bankNextTick', true).innerHTML = 'Next tick in ' + Game.sayTime(Game.fps * M.secondsPerTick - M.tickT + 30, -1) + '.';
         }
     };
-    M.init(l('rowSpecial' + M.parent.id));
+    M.init($('rowSpecial' + M.parent.id));
 };
 let M = 0;

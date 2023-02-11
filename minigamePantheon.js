@@ -254,26 +254,26 @@ M.launch = function () {
         M.dragging = false;
         M.dragGod = function (what) {
             M.dragging = what;
-            let div = l('templeGod' + what.id);
+            let div = $('templeGod' + what.id);
             let box = div.getBoundingClientRect();
-            let box2 = l('templeDrag').getBoundingClientRect();
+            let box2 = $('templeDrag', true).getBoundingClientRect();
             div.className = 'ready templeGod titleFont templeDragged';
-            l('templeDrag').appendChild(div);
+            $('templeDrag', true).appendChild(div);
             let x = box.left - box2.left;
             let y = box.top - box2.top;
             div.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-            l('templeGodPlaceholder' + M.dragging.id).style.display = 'inline-block';
+            $('templeGodPlaceholder' + M.dragging.id, true).style.display = 'inline-block';
             PlaySound('snd/tick.mp3');
         };
         M.dropGod = function () {
             if (!M.dragging) return;
-            let div = l('templeGod' + M.dragging.id);
+            let div = $('templeGod' + M.dragging.id);
             div.className = 'ready templeGod titleFont';
             div.style.transform = 'none';
             if (M.slotHovered != -1 && (M.swaps == 0 || M.dragging.slot == M.slotHovered)) {
                 //dropping on a slot but no swaps left, or slot is the same as the original
-                if (M.dragging.slot != -1) l('templeSlot' + M.dragging.slot).appendChild(div);
-                else l('templeGodPlaceholder' + M.dragging.id).parentNode.insertBefore(div, l('templeGodPlaceholder' + M.dragging.id));
+                if (M.dragging.slot != -1) $('templeSlot' + M.dragging.slot, true).appendChild(div);
+                else $('templeGodPlaceholder' + M.dragging.id, true).parentNode.insertBefore(div, $('templeGodPlaceholder' + M.dragging.id));
                 PlaySound('snd/sell1.mp3', 0.75);
             } else if (M.slotHovered != -1) {
                 //dropping on a slot
@@ -283,17 +283,17 @@ M.launch = function () {
                 let prev = M.slot[M.slotHovered]; //id of the god already in the slot
                 if (prev != -1) {
                     prev = M.godsById[prev];
-                    let prevDiv = l('templeGod' + prev.id);
+                    let prevDiv = $('templeGod' + prev.id);
                     if (M.dragging.slot != -1) {
                         //swap with god's previous slot
-                        l('templeSlot' + M.dragging.slot).appendChild(prevDiv);
+                        $('templeSlot' + M.dragging.slot, true).appendChild(prevDiv);
                     } //swap back to roster
                     else {
-                        let other = l('templeGodPlaceholder' + prev.id);
+                        let other = $('templeGodPlaceholder' + prev.id);
                         other.parentNode.insertBefore(prevDiv, other);
                     }
                 }
-                l('templeSlot' + M.slotHovered).appendChild(div);
+                $('templeSlot' + M.slotHovered, true).appendChild(div);
                 M.slotGod(M.dragging, M.slotHovered);
 
                 PlaySound('snd/tick.mp3');
@@ -303,7 +303,7 @@ M.launch = function () {
                 Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24);
             } //dropping back to roster
             else {
-                let other = l('templeGodPlaceholder' + M.dragging.id);
+                let other = $('templeGodPlaceholder' + M.dragging.id);
                 other.parentNode.insertBefore(div, other);
                 other.style.display = 'none';
                 M.slotGod(M.dragging, -1);
@@ -316,8 +316,8 @@ M.launch = function () {
         M.hoverSlot = function (what) {
             M.slotHovered = what;
             if (M.dragging) {
-                if (M.slotHovered == -1) l('templeGodPlaceholder' + M.dragging.id).style.display = 'inline-block';
-                else l('templeGodPlaceholder' + M.dragging.id).style.display = 'none';
+                if (M.slotHovered == -1) $('templeGodPlaceholder' + M.dragging.id, true).style.display = 'inline-block';
+                else $('templeGodPlaceholder' + M.dragging.id, true).style.display = 'none';
                 PlaySound('snd/clickb' + Math.floor(Math.random() * 7 + 1) + '.mp3', 0.75);
             }
         };
@@ -333,8 +333,8 @@ M.launch = function () {
         Game.forceUnslotGod = function (god) {
             let god = M.gods[god];
             if (god.slot == -1) return false;
-            let div = l('templeGod' + god.id);
-            let other = l('templeGodPlaceholder' + god.id);
+            let div = $('templeGod' + god.id);
+            let other = $('templeGodPlaceholder' + god.id);
             other.parentNode.insertBefore(div, other);
             other.style.display = 'none';
             M.slotGod(god, -1);
@@ -438,13 +438,13 @@ M.launch = function () {
         str += '</div>';
         str += '</div>';
         div.innerHTML = str;
-        M.swapsL = l('templeSwaps');
-        M.lumpRefill = l('templeLumpRefill');
+        M.swapsL = $('templeSwaps');
+        M.lumpRefill = $('templeLumpRefill');
 
         for (let i in M.gods) {
             let me = M.gods[i];
             AddEvent(
-                l('templeGodDrag' + me.id),
+                $('templeGodDrag' + me.id),
                 'mousedown',
                 (function (what) {
                     return function (e) {
@@ -455,7 +455,7 @@ M.launch = function () {
                 })(me)
             );
             AddEvent(
-                l('templeGodDrag' + me.id),
+                $('templeGodDrag' + me.id),
                 'mouseup',
                 (function (what) {
                     return function (e) {
@@ -469,7 +469,7 @@ M.launch = function () {
         for (let i in M.slot) {
             let me = M.slot[i];
             AddEvent(
-                l('templeSlot' + i),
+                $('templeSlot' + i),
                 'mouseover',
                 (function (what) {
                     return function () {
@@ -478,7 +478,7 @@ M.launch = function () {
                 })(i)
             );
             AddEvent(
-                l('templeSlot' + i),
+                $('templeSlot' + i),
                 'mouseout',
                 (function () {
                     return function (e) {
@@ -535,7 +535,7 @@ M.launch = function () {
             if (parseFloat(bit[ii]) != -1) {
                 let god = M.godsById[parseFloat(bit[ii])];
                 M.slotGod(god, ii);
-                l('templeSlot' + god.slot).appendChild(l('templeGod' + god.id));
+                $('templeSlot' + god.slot, true).appendChild($('templeGod' + god.id, true));
             }
         }
         M.swaps = parseFloat(spl[i++] || 3);
@@ -552,8 +552,8 @@ M.launch = function () {
         for (let i in M.gods) {
             let me = M.gods[i];
             me.slot = -1;
-            let other = l('templeGodPlaceholder' + me.id);
-            other.parentNode.insertBefore(l('templeGod' + me.id), other);
+            let other = $('templeGodPlaceholder' + me.id);
+            other.parentNode.insertBefore($('templeGod' + me.id), other);
             other.style.display = 'none';
         }
     };
@@ -572,16 +572,16 @@ M.launch = function () {
     M.draw = function () {
         //run each draw frame
         if (M.dragging) {
-            let box = l('templeDrag').getBoundingClientRect();
+            let box = $('templeDrag', true).getBoundingClientRect();
             let x = Game.mouseX - box.left - 60 / 2;
             let y = Game.mouseY - box.top;
             if (M.slotHovered != -1) {
                 //snap to slots
-                let box2 = l('templeSlot' + M.slotHovered).getBoundingClientRect();
+                let box2 = $('templeSlot' + M.slotHovered, true).getBoundingClientRect();
                 x = box2.left - box.left;
                 y = box2.top - box.top;
             }
-            l('templeGod' + M.dragging.id).style.transform = 'translate(' + x + 'px,' + y + 'px)';
+            $('templeGod' + M.dragging.id, true).style.transform = 'translate(' + x + 'px,' + y + 'px)';
         }
         let t = 1000 * 60 * 60;
         if (M.swaps == 0) t = 1000 * 60 * 60 * 16;
@@ -597,6 +597,6 @@ M.launch = function () {
             '</span>' +
             (M.swaps < 3 ? ' (next in ' + Game.sayTime((t2 / 1000 + 1) * Game.fps, -1) + ')' : '');
     };
-    M.init(l('rowSpecial' + M.parent.id));
+    M.init($('rowSpecial' + M.parent.id));
 };
 let M = 0;

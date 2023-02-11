@@ -35,9 +35,9 @@ const ASSERT_NOT_NULL = (v) => {
  * @param {asserted=} assertNotNull
  * @returns {asserted extends true ? HTMLElement : (HTMLElement | null)}
  */
-function l(what, assertNotNull) {
+function $(what, assertNotNull) {
     const el = document.getElementById(what);
-    if (assertNotNull && !el) throw new Error(`l() Assertion failed: Requested element ${what} was null.`);
+    if (assertNotNull && !el) throw new Error(`$() Assertion failed: Requested element ${what} was null.`);
     // @ts-expect-error --- Need proper TS to fix this one, but the external types work and that's what matters
     return el;
 }
@@ -59,7 +59,7 @@ function cap(str) {
 /**
  * @param {number} x
  */
-function randomFloor(x) {
+function randomRound(x) {
     if (x % 1 < Math.random()) return Math.floor(x);
     else return Math.ceil(x);
 }
@@ -1142,7 +1142,7 @@ Game.Launch = function () {
         'img/bunnies.png',
         'img/frostedReindeer.png'
     ];
-    let preloadImagesL = l('preloadImages', true);
+    let preloadImagesL = $('preloadImages', true);
     for (let i = 0; i < preloadImages.length; i++) {
         let img = document.createElement('img');
         img.src = preloadImages[i];
@@ -1743,7 +1743,7 @@ Game.Launch = function () {
         Game.Loader.Load(['filler.png']);
     };
     Game.ErrorFrame = function () {
-        l('offGameMessage', true).innerHTML =
+        $('offGameMessage', true).innerHTML =
             '<div class="title">Oops. Wrong address!</div>' +
             '<div>It looks like you\'re accessing Cookie Clicker from another URL than the official one.<br>' +
             'You can <a href="//orteil.dashnet.org/cookieclicker/" target="_blank">play Cookie Clicker over here</a>!<br>' +
@@ -1753,7 +1753,7 @@ Game.Launch = function () {
     Game.Timeout = function () {
         Game.WriteSave();
         Game.killShimmers();
-        l('offGameMessage', true).innerHTML =
+        $('offGameMessage', true).innerHTML =
             '<div class="title">' +
             (Game.Has('Twin Gates of Transcendence')
                 ? loc('Cookie Clicker is in sleep mode and generating offline cookies.')
@@ -1765,13 +1765,13 @@ Game.Launch = function () {
                 '(this happens when too many frames are skipped at once,<br>usually when the game has been running in the background for a while)<br>(you can turn this feature off in the settings menu)'
             ) +
             '</div>';
-        l('offGameMessageWrap', true).style.display = 'table';
+        $('offGameMessageWrap', true).style.display = 'table';
         Game.timedout = true;
         console.log('[=== Game timed out and has been put in sleep mode. Data was saved. ===]');
     };
     Game.Resume = function () {
-        l('offGameMessage', true).innerHTML = '';
-        l('offGameMessageWrap', true).style.display = 'none';
+        $('offGameMessage', true).innerHTML = '';
+        $('offGameMessageWrap', true).style.display = 'none';
         Game.timedout = false;
         Game.time = Date.now();
         Game.accumulatedDelay = 0;
@@ -1795,8 +1795,8 @@ Game.Launch = function () {
 
         Game.season = Game.baseSeason;
 
-        Game.l = l('game');
-        Game.wrapper = l('wrapper');
+        Game.l = $('game');
+        Game.wrapper = $('wrapper');
         Game.bounds = 0; // rectangle defining screen limits (right,left,bottom,top) updated every logic frame
 
         let TopBarOffset = 32;
@@ -1805,7 +1805,7 @@ Game.Launch = function () {
         if (Game.mobile === 1) Game.wrapper.className = 'mobile';
         Game.clickStr = Game.touchEvents ? 'ontouchend' : 'onclick';
 
-        l('versionNumber', true).innerHTML =
+        $('versionNumber', true).innerHTML =
             'v. ' +
             Game.version +
             `<div id="httpsSwitch" style="cursor:pointer;display:inline-block;background:url(img/${Game.https ? 'lockOn' : 'lockOff'
@@ -1813,10 +1813,10 @@ Game.Launch = function () {
             (Game.beta ? ' <span style="color:#ff0;">beta</span>' : '');
 
         if (Game.beta) {
-            let me = l('linkVersionBeta', true);
+            let me = $('linkVersionBeta', true);
             ASSERT_NOT_NULL(me.parentNode).removeChild(me);
         } else {
-            let me = l('linkVersionLive', true);
+            let me = $('linkVersionLive', true);
             ASSERT_NOT_NULL(me.parentNode).removeChild(me);
         }
 
@@ -2170,7 +2170,7 @@ Game.Launch = function () {
         Game.GetBakeryName = function () {
             return Game.RandomBakeryName();
         };
-        Game.bakeryNameL = l('bakeryName');
+        Game.bakeryNameL = $('bakeryName');
         Game.bakeryNameSet = function (what) {
             try {
                 let exp = new RegExp('[^\'\\-_0-9 \\p{L}]', 'gu');
@@ -2208,17 +2208,17 @@ Game.Launch = function () {
                 [
                     [
                         loc('Confirm'),
-                        'if (l(\'bakeryNameInput\').value.length>0) {Game.bakeryNameSet(l(\'bakeryNameInput\').value);Game.Win(\'What\\\'s in a name\');Game.ClosePrompt();}'
+                        'if ($(\'bakeryNameInput\').value.length>0) {Game.bakeryNameSet($(\'bakeryNameInput\').value);Game.Win(\'What\\\'s in a name\');Game.ClosePrompt();}'
                     ],
                     [loc('Random'), 'Game.bakeryNamePromptRandom();'],
                     loc('Cancel')
                 ]
             );
-            l('bakeryNameInput', true).focus();
-            l('bakeryNameInput', true).select();
+            $('bakeryNameInput', true).focus();
+            $('bakeryNameInput', true).select();
         };
         Game.bakeryNamePromptRandom = function () {
-            l('bakeryNameInput', true).value = Game.RandomBakeryName();
+            $('bakeryNameInput', true).value = Game.RandomBakeryName();
         };
         AddEvent(Game.bakeryNameL, 'click', Game.bakeryNamePrompt);
 
@@ -2233,8 +2233,8 @@ Game.Launch = function () {
             y: 0,
             origin: '',
             on: 0,
-            tt: l('tooltip'),
-            tta: l('tooltipAnchor'),
+            tt: $('tooltip'),
+            tta: $('tooltipAnchor'),
             shouldHide: 1,
             dynamic: 0,
             from: 0
@@ -2501,7 +2501,7 @@ Game.Launch = function () {
         Game.heralds = 0;
 
         Game.attachTooltip(
-            l('httpsSwitch'),
+            $('httpsSwitch'),
             '<div style="padding:8px;width:350px;text-align:center;font-size:11px;">' +
             loc(
                 'You are currently playing Cookie Clicker on the <b>%1</b> protocol.<br>The <b>%2</b> version uses a different save slot than this one.<br>Click this lock to reload the page and switch to the <b>%2</b> version!',
@@ -2510,73 +2510,73 @@ Game.Launch = function () {
             '</div>',
             'this'
         );
-        AddEvent(l('httpsSwitch'), 'click', function () {
+        AddEvent($('httpsSwitch'), 'click', function () {
             PlaySound('snd/pop' + Math.floor(Math.random() * 3 + 1) + '.mp3', 0.75);
             if (location.protocol == 'https:') location.href = 'http:' + window.location.href.substring(window.location.protocol.length);
             else if (location.protocol == 'http:') location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
         });
 
-        AddEvent(l('changeLanguage'), 'click', function () {
+        AddEvent($('changeLanguage'), 'click', function () {
             Game.showLangSelection();
         });
 
         Game.attachTooltip(
-            l('topbarOrteil'),
+            $('topbarOrteil'),
             '<div style="padding:8px;width:250px;text-align:center;">Back to Orteil\'s subdomain!<br>Lots of other games in there!</div>' +
             tinyIcon([17, 5], 'display:block;margin:-12px auto;'),
             'this'
         );
-        Game.attachTooltip(l('topbarDashnet'), '<div style="padding:8px;width:250px;text-align:center;">Back to our homepage!</div>', 'this');
+        Game.attachTooltip($('topbarDashnet'), '<div style="padding:8px;width:250px;text-align:center;">Back to our homepage!</div>', 'this');
         Game.attachTooltip(
-            l('topbarTwitter'),
+            $('topbarTwitter'),
             '<div style="padding:8px;width:250px;text-align:center;">Orteil\'s twitter, which frequently features game updates.</div>',
             'this'
         );
         Game.attachTooltip(
-            l('topbarTumblr'),
+            $('topbarTumblr'),
             '<div style="padding:8px;width:250px;text-align:center;">Orteil\'s tumblr, which frequently features game updates.</div>',
             'this'
         );
         Game.attachTooltip(
-            l('topbarDiscord'),
+            $('topbarDiscord'),
             '<div style="padding:8px;width:250px;text-align:center;">Our official discord server.<br>You can share tips and questions about Cookie Clicker and all our other games!</div>',
             'this'
         );
         Game.attachTooltip(
-            l('topbarPatreon'),
+            $('topbarPatreon'),
             '<div style="padding:8px;width:250px;text-align:center;">Support us on Patreon and help us keep updating Cookie Clicker!<br>There\'s neat rewards for patrons too!</div>',
             'this'
         );
         Game.attachTooltip(
-            l('topbarMerch'),
+            $('topbarMerch'),
             '<div style="padding:8px;width:250px;text-align:center;">Cookie Clicker shirts, hoodies and stickers!</div>',
             'this'
         );
         Game.attachTooltip(
-            l('topbarMobileCC'),
+            $('topbarMobileCC'),
             '<div style="padding:8px;width:250px;text-align:center;">Play Cookie Clicker on your phone!<br>(Android only; iOS version will be released later)</div>',
             'this'
         );
         Game.attachTooltip(
-            l('topbarSteamCC'),
+            $('topbarSteamCC'),
             '<div style="padding:8px;width:250px;text-align:center;">Get Cookie Clicker on Steam!<br>Featuring music by C418.</div>',
             'this'
         );
         Game.attachTooltip(
-            l('topbarRandomgen'),
+            $('topbarRandomgen'),
             '<div style="padding:8px;width:250px;text-align:center;">A thing we made that lets you write random generators.</div>',
             'this'
         );
         Game.attachTooltip(
-            l('topbarIGM'),
+            $('topbarIGM'),
             '<div style="padding:8px;width:250px;text-align:center;">A thing we made that lets you create your own idle games using a simple scripting language.</div>',
             'this'
         );
-        l('changeLanguage', true).innerHTML = loc('Change language');
-        l('links', true).childNodes[0].nodeValue = loc('Other versions');
+        $('changeLanguage', true).innerHTML = loc('Change language');
+        $('links', true).childNodes[0].nodeValue = loc('Other versions');
 
         Game.attachTooltip(
-            l('heralds'),
+            $('heralds'),
             function () {
                 let str = '';
 
@@ -2626,8 +2626,8 @@ Game.Launch = function () {
             },
             'this'
         );
-        l('heraldsAmount', true).textContent = '?';
-        l('heralds', true).style.display = 'inline-block';
+        $('heraldsAmount', true).textContent = '?';
+        $('heralds', true).style.display = 'inline-block';
 
         Game.useLocalStorage = 1;
 
@@ -2646,8 +2646,8 @@ Game.Launch = function () {
                 '</textarea></div>',
                 [loc('All done!')]
             );
-            l('textareaPrompt', true).focus();
-            l('textareaPrompt', true).select();
+            $('textareaPrompt', true).focus();
+            $('textareaPrompt', true).select();
         };
         Game.ImportSave = function (def) {
             Game.Prompt(
@@ -2661,12 +2661,12 @@ Game.Launch = function () {
                 [
                     [
                         loc('Load'),
-                        'if (l(\'textareaPrompt\').value.length==0){return false;}if (Game.ImportSaveCode(l(\'textareaPrompt\').value)){Game.ClosePrompt();}else{l(\'importError\').innerHTML=\'(\'+loc("Error importing save")+\')\';}'
+                        'if ($(\'textareaPrompt\').value.length==0){return false;}if (Game.ImportSaveCode($(\'textareaPrompt\').value)){Game.ClosePrompt();}else{$(\'importError\').innerHTML=\'(\'+loc("Error importing save")+\')\';}'
                     ],
                     loc('Nevermind')
                 ]
             );
-            l('textareaPrompt', true).focus();
+            $('textareaPrompt', true).focus();
         };
         Game.ImportSaveCode = function (save) {
             let out = false;
@@ -3456,7 +3456,7 @@ Game.Launch = function () {
                     }
                     if (prestigeUpgradesOwned >= 100) Game.Win('All the stars in heaven');
 
-                    if (version < Game.version) l('logButton', true).classList.add('hasUpdate');
+                    if (version < Game.version) $('logButton', true).classList.add('hasUpdate');
 
                     if (Game.season != '' && Game.season == Game.baseSeason) {
                         if (Game.season == 'valentines')
@@ -3666,13 +3666,13 @@ Game.Launch = function () {
                 } else if (!hard && me.minigame && me.minigame.reset) me.minigame.reset();
             }
 
-            l('toggleBox', true).style.display = 'none';
-            l('toggleBox', true).innerHTML = '';
+            $('toggleBox', true).style.display = 'none';
+            $('toggleBox', true).innerHTML = '';
             Game.choiceSelectorOn = -1;
             Game.ToggleSpecialMenu(0);
             Game.specialTab = '';
 
-            l('logButton', true).classList.remove('hasUpdate');
+            $('logButton', true).classList.remove('hasUpdate');
 
             //! Game.runModHook('reset', hard); -- see moddingapi.disabled.js
 
@@ -4043,7 +4043,7 @@ Game.Launch = function () {
             if (!mysterious) ariaText += 'Description: ' + desc + ' ';
 
             if (Game.prefs.screenreader) {
-                let ariaLabel = l('ariaReader-' + me.type + '-' + me.id);
+                let ariaLabel = $('ariaReader-' + me.type + '-' + me.id);
                 if (ariaLabel) ariaLabel.innerHTML = ariaText.replace(/(<([^>]+)>)/gi, ' ');
             }
 
@@ -4165,7 +4165,7 @@ Game.Launch = function () {
         Game.UpdateAscensionModePrompt = function () {
             let icon = Game.ascensionModes[Game.nextAscensionMode].icon;
             let name = Game.ascensionModes[Game.nextAscensionMode].dname;
-            l('ascendModeButton', true).innerHTML =
+            $('ascendModeButton', true).innerHTML =
                 '<div class="crate noFrame enabled" ' +
                 Game.clickStr +
                 '="Game.PickAscensionMode();" ' +
@@ -4205,9 +4205,9 @@ Game.Launch = function () {
                     Game.clickStr +
                     '="Game.nextAscensionMode=' +
                     i +
-                    ';Game.PickAscensionMode();PlaySound(\'snd/tick.mp3\');Game.choiceSelectorOn=-1;" onMouseOut="l(\'challengeSelectedName\').innerHTML=Game.ascensionModes[Game.nextAscensionMode].dname;l(\'challengeSelectedDesc\').innerHTML=Game.ascensionModes[Game.nextAscensionMode].desc;" onMouseOver="l(\'challengeSelectedName\').innerHTML=Game.ascensionModes[' +
+                    ';Game.PickAscensionMode();PlaySound(\'snd/tick.mp3\');Game.choiceSelectorOn=-1;" onMouseOut="$(\'challengeSelectedName\').innerHTML=Game.ascensionModes[Game.nextAscensionMode].dname;$(\'challengeSelectedDesc\').innerHTML=Game.ascensionModes[Game.nextAscensionMode].desc;" onMouseOver="$(\'challengeSelectedName\').innerHTML=Game.ascensionModes[' +
                     i +
-                    '].dname;l(\'challengeSelectedDesc\').innerHTML=Game.ascensionModes[' +
+                    '].dname;$(\'challengeSelectedDesc\').innerHTML=Game.ascensionModes[' +
                     i +
                     '].desc;"' +
                     '></div>';
@@ -4229,7 +4229,7 @@ Game.Launch = function () {
             );
         };
 
-        l('ascendOverlay', true).innerHTML =
+        $('ascendOverlay', true).innerHTML =
             '<div id="ascendBox">' +
             '<div id="ascendData1" class="ascendData smallFramed prompt" style="margin-top:8px;"><h3 id="ascendPrestige"></h3></div>' +
             '<div id="ascendData2" class="ascendData smallFramed prompt"><h3 id="ascendHCs"></h3></div>' +
@@ -4250,7 +4250,7 @@ Game.Launch = function () {
             '</div></div>';
 
         Game.attachTooltip(
-            l('ascendData1'),
+            $('ascendData1'),
             function () {
                 return (
                     '<div style="min-width:300px;text-align:center;font-size:11px;padding:8px;" id="tooltipAscendData1">(<b>' +
@@ -4263,7 +4263,7 @@ Game.Launch = function () {
             'bottom-right'
         );
         Game.attachTooltip(
-            l('ascendData2'),
+            $('ascendData2'),
             function () {
                 return (
                     '<div style="min-width:300px;text-align:center;font-size:11px;padding:8px;" id="tooltipAscendData2">(<b>' +
@@ -4278,15 +4278,15 @@ Game.Launch = function () {
 
         Game.UpdateAscensionModePrompt();
 
-        AddEvent(l('ascendButton'), 'click', function () {
+        AddEvent($('ascendButton'), 'click', function () {
             PlaySound('snd/tick.mp3');
             Game.Reincarnate();
         });
 
-        Game.ascendl = l('ascend');
-        Game.ascendContentl = l('ascendContent');
-        Game.ascendZoomablel = l('ascendZoomable');
-        Game.ascendUpgradesl = l('ascendUpgrades');
+        Game.ascendl = $('ascend');
+        Game.ascendContentl = $('ascendContent');
+        Game.ascendZoomablel = $('ascendZoomable');
+        Game.ascendUpgradesl = $('ascendUpgrades');
         Game.OnAscend = 0;
         Game.AscendTimer = 0; // how far we are into the ascend animation
         Game.AscendDuration = Game.fps * 5; // how long the ascend animation is
@@ -4388,8 +4388,8 @@ Game.Launch = function () {
                 // trigger the ascend animation
                 Game.AscendTimer = 1;
                 Game.killShimmers();
-                l('toggleBox', true).style.display = 'none';
-                l('toggleBox', true).innerHTML = '';
+                $('toggleBox', true).style.display = 'none';
+                $('toggleBox', true).innerHTML = '';
                 Game.choiceSelectorOn = -1;
                 Game.ToggleSpecialMenu(0);
                 Game.AscendOffX = 0;
@@ -4446,8 +4446,8 @@ Game.Launch = function () {
                         me.posY += (Game.mouseY - Game.AscendDragY) * (1 / Game.AscendZoomT);
                         let posX = me.posX;
                         let posY = me.posY;
-                        l('heavenlyUpgrade' + me.id, true).style.left = Math.floor(posX) + 'px';
-                        l('heavenlyUpgrade' + me.id, true).style.top = Math.floor(posY) + 'px';
+                        $('heavenlyUpgrade' + me.id, true).style.left = Math.floor(posX) + 'px';
+                        $('heavenlyUpgrade' + me.id, true).style.top = Math.floor(posY) + 'px';
                         for (let ii in me.parents) {
                             let origX = 0;
                             let origY = 0;
@@ -4461,7 +4461,7 @@ Game.Launch = function () {
                             if (targX <= origX) rot += 180;
                             let dist = Math.floor(Math.sqrt((targX - origX) * (targX - origX) + (targY - origY) * (targY - origY)));
 
-                            l('heavenlyLink' + me.id + '-' + ii, true).style.cssText =
+                            $('heavenlyLink' + me.id + '-' + ii, true).style.cssText =
                                 'width:' + dist + 'px;transform:rotate(' + rot + 'deg);left:' + origX + 'px;top:' + origY + 'px;';
                         }
                     }
@@ -4501,11 +4501,11 @@ Game.Launch = function () {
             }
 
             if (Game.T % 2 == 0) {
-                l('ascendPrestige', true).innerHTML = loc('Prestige level:') + '<br>' + SimpleBeautify(Game.prestige);
-                l('ascendHCs', true).innerHTML =
+                $('ascendPrestige', true).innerHTML = loc('Prestige level:') + '<br>' + SimpleBeautify(Game.prestige);
+                $('ascendHCs', true).innerHTML =
                     loc('Heavenly chips:') + '<br><span class="price heavenly">' + SimpleBeautify(Math.round(Game.heavenlyChipsDisplayed)) + '</span>';
-                if (Game.prestige > 0) l('ascendModeButton', true).style.display = 'block';
-                else l('ascendModeButton', true).style.display = 'none';
+                if (Game.prestige > 0) $('ascendModeButton', true).style.display = 'block';
+                else $('ascendModeButton', true).style.display = 'none';
             }
             Game.heavenlyChipsDisplayed += (Game.heavenlyChips - Game.heavenlyChipsDisplayed) * 0.4;
 
@@ -4516,7 +4516,7 @@ Game.Launch = function () {
                     if (me.placedByCode) continue;
                     str += me.id + ':[' + Math.floor(me.posX) + ',' + Math.floor(me.posY) + '],';
                 }
-                l('upgradePositions', true).value = 'Game.UpgradePositions={' + str + '};';
+                $('upgradePositions', true).value = 'Game.UpgradePositions={' + str + '};';
             }
         };
         Game.AscendRefocus = function () {
@@ -4528,8 +4528,8 @@ Game.Launch = function () {
         Game.SelectedHeavenlyUpgrade = 0;
         Game.PurchaseHeavenlyUpgrade = function (what) {
             if (Game.UpgradesById[what].buy()) {
-                if (l('heavenlyUpgrade' + what)) {
-                    let rect = l('heavenlyUpgrade' + what, true).getBounds();
+                if ($('heavenlyUpgrade' + what)) {
+                    let rect = $('heavenlyUpgrade' + what, true).getBounds();
                     Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24);
                 }
             }
@@ -4538,8 +4538,8 @@ Game.Launch = function () {
             let str = '';
             Game.heavenlyBounds = { left: 0, right: 0, top: 0, bottom: 0 };
 
-            if (Game.DebuggingPrestige) l('upgradePositions', true).style.display = 'block';
-            else l('upgradePositions', true).style.display = 'none';
+            if (Game.DebuggingPrestige) $('upgradePositions', true).style.display = 'block';
+            else $('upgradePositions', true).style.display = 'none';
 
             let toPop = [];
             for (let i in Game.PrestigeUpgrades) {
@@ -4662,7 +4662,7 @@ Game.Launch = function () {
                 for (let i in Game.PrestigeUpgrades) {
                     let me = Game.PrestigeUpgrades[i];
                     AddEvent(
-                        l('heavenlyUpgrade' + me.id),
+                        $('heavenlyUpgrade' + me.id),
                         'mousedown',
                         (function (me) {
                             return function () {
@@ -4703,7 +4703,7 @@ Game.Launch = function () {
                         })(me)
                     );
                     AddEvent(
-                        l('heavenlyUpgrade' + me.id),
+                        $('heavenlyUpgrade' + me.id),
                         'mouseup',
                         (function (me) {
                             return function () {
@@ -4728,8 +4728,8 @@ Game.Launch = function () {
         Game.lumpRipeAge = 1;
         Game.lumpOverripeAge = 1;
         Game.lumpCurrentType = 0;
-        l('comments', true).innerHTML =
-            l('comments', true).innerHTML +
+        $('comments', true).innerHTML =
+            $('comments', true).innerHTML +
             '<div id="lumps" onclick="Game.clickLump();" ' +
             Game.getDynamicTooltip('Game.lumpTooltip', 'bottom') +
             '><div id="lumpsIcon" class="usesIcon"></div><div id="lumpsIcon2" class="usesIcon"></div><div id="lumpsAmount">0</div></div>';
@@ -4849,8 +4849,8 @@ Game.Launch = function () {
             if (Game.lumpsTotal >= 365) Game.Win('Year\'s worth of cavities');
         };
         Game.clickLump = function () {
-            triggerAnim(l('lumpsIcon'), 'pucker');
-            triggerAnim(l('lumpsIcon2'), 'pucker');
+            triggerAnim($('lumpsIcon'), 'pucker');
+            triggerAnim($('lumpsIcon2'), 'pucker');
             if (!Game.canLumps()) return;
             let age = Date.now() - Game.lumpT;
             if (age < Game.lumpMatureAge) { /* empty */ } else if (age < Game.lumpRipeAge) {
@@ -4888,7 +4888,7 @@ Game.Launch = function () {
             else if (Game.lumpCurrentType == 4) Game.Win('Maillard reaction');
 
             if (!silent) {
-                let rect = l('lumpsIcon2', true).getBounds();
+                let rect = $('lumpsIcon2', true).getBounds();
                 Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24 + 32 - TopBarOffset);
                 if (total > 0)
                     Game.Popup(
@@ -4906,7 +4906,7 @@ Game.Launch = function () {
             let types = [0];
             let loop = 1;
             loop += Game.auraMult('Dragon\'s Curve');
-            loop = randomFloor(loop);
+            loop = randomRound(loop);
             for (let i = 0; i < loop; i++) {
                 if (Math.random() < (Game.Has('Sucralosia Inutilis') ? 0.15 : 0.1)) types.push(1); // bifurcated
                 if (Math.random() < 3 / 1000) types.push(2); // golden
@@ -5032,10 +5032,10 @@ Game.Launch = function () {
             if (phase >= 6) {
                 opacity = 1;
             }
-            l('lumpsIcon', true).style.backgroundPosition = -icon[0] * 48 + 'px ' + -icon[1] * 48 + 'px';
-            l('lumpsIcon2', true).style.backgroundPosition = -icon2[0] * 48 + 'px ' + -icon2[1] * 48 + 'px';
-            l('lumpsIcon2', true).style.opacity = String(opacity);
-            l('lumpsAmount', true).textContent = Beautify(Game.lumps);
+            $('lumpsIcon', true).style.backgroundPosition = -icon[0] * 48 + 'px ' + -icon[1] * 48 + 'px';
+            $('lumpsIcon2', true).style.backgroundPosition = -icon2[0] * 48 + 'px ' + -icon2[1] * 48 + 'px';
+            $('lumpsIcon2', true).style.opacity = String(opacity);
+            $('lumpsAmount', true).textContent = Beautify(Game.lumps);
         };
 
         /* =====================================================================================
@@ -5210,7 +5210,7 @@ Game.Launch = function () {
             Game.mouseMoved = 1;
             Game.lastActivity = Game.time;
         };
-        let bigCookie = l('bigCookie', true);
+        let bigCookie = $('bigCookie', true);
         if (Game.prefs.screenreader) {
             bigCookie.ariaLabelledby = 'bigCookieLabel';
             bigCookie.insertAdjacentHTML(
@@ -5583,7 +5583,7 @@ Game.Launch = function () {
         /* =====================================================================================
         SHIMMERS (GOLDEN COOKIES & SUCH)
         =======================================================================================*/
-        Game.shimmersL = l('shimmers');
+        Game.shimmersL = $('shimmers');
         Game.shimmers = []; // all shimmers currently on the screen
         Game.shimmersN = Math.floor(Math.random() * 10000);
         Game.shimmer = function (type, obj, noCount) {
@@ -6460,7 +6460,7 @@ Game.Launch = function () {
             str += '<div id="particle' + i + '" class="particle title"></div>';
         }
 
-        l('particles', true).innerHTML = str;
+        $('particles', true).innerHTML = str;
         Game.textParticlesUpdate = function () {
             for (let i in Game.textParticles) {
                 let me = Game.textParticles[i];
@@ -6514,7 +6514,7 @@ Game.Launch = function () {
             y = Math.max(Game.bounds.top + 32, y);
 
             let me = Game.textParticles[i];
-            if (!me.l) me.l = l('particle' + i);
+            if (!me.l) me.l = $('particle' + i);
             me.life = 0;
             me.x = x;
             me.y = y;
@@ -6523,7 +6523,7 @@ Game.Launch = function () {
             me.l.style.left = Math.floor(Game.textParticles[i].x - 200) + 'px';
             me.l.style.bottom = Math.floor(-Game.textParticles[i].y) + 'px';
             for (let ii in Game.textParticles) {
-                if (ii != i) (Game.textParticles[ii].l || l('particle' + ii)).style.zIndex = 100000000;
+                if (ii != i) (Game.textParticles[ii].l || $('particle' + ii)).style.zIndex = 100000000;
             }
             me.l.style.zIndex = 100000001;
             me.l.style.display = 'block';
@@ -6538,7 +6538,7 @@ Game.Launch = function () {
         };
 
         // display sparkles at a set position
-        Game.sparkles = l('sparkles');
+        Game.sparkles = $('sparkles');
         Game.sparklesT = 0;
         Game.sparklesFrames = 16;
         Game.SparkleAt = function (x, y) {
@@ -6562,7 +6562,7 @@ Game.Launch = function () {
         Game.Notes = [];
         Game.NotesById = [];
         Game.noteId = 0;
-        Game.noteL = l('notes');
+        Game.noteL = $('notes');
         Game.Note = function (title, desc, pic, quick) {
             this.title = title;
             this.desc = desc || '';
@@ -6633,7 +6633,7 @@ Game.Launch = function () {
                 me.l = 0;
                 if (Number(i) < 5) {
                     let me = Game.Notes[i];
-                    me.l = l('note-' + me.id);
+                    me.l = $('note-' + me.id);
                 }
             }
         };
@@ -6678,7 +6678,7 @@ Game.Launch = function () {
         /* =====================================================================================
         PROMPT
         =======================================================================================*/
-        Game.darkenL = l('darken');
+        Game.darkenL = $('darken');
         AddEvent(Game.darkenL, 'click', function () {
             if (Game.promptNoClose) { /* empty */ } else {
                 Game.Click = 0;
@@ -6686,9 +6686,9 @@ Game.Launch = function () {
                 Game.ClosePrompt();
             }
         });
-        Game.promptL = l('promptContent');
-        Game.promptAnchorL = l('promptAnchor');
-        Game.promptWrapL = l('prompt');
+        Game.promptL = $('promptContent');
+        Game.promptAnchorL = $('promptAnchor');
+        Game.promptWrapL = $('prompt');
         Game.promptConfirm = '';
         Game.promptOn = 0;
         Game.promptUpdateFunc = 0;
@@ -6749,8 +6749,8 @@ Game.Launch = function () {
             Game.promptOptionFocus = 0;
             Game.FocusPromptOption(0);
             Game.UpdatePrompt();
-            if (!Game.promptNoClose) l('promptClose', true).style.display = 'block';
-            else l('promptClose', true).style.display = 'none';
+            if (!Game.promptNoClose) $('promptClose', true).style.display = 'block';
+            else $('promptClose', true).style.display = 'none';
         };
         Game.ClosePrompt = function () {
             if (!Game.promptOn) return false;
@@ -6765,10 +6765,10 @@ Game.Launch = function () {
         Game.ConfirmPrompt = function () {
             if (
                 Game.promptOn &&
-                l('promptOption' + Game.promptOptionFocus) &&
-                l('promptOption' + Game.promptOptionFocus, true).style.display != 'none'
+                $('promptOption' + Game.promptOptionFocus) &&
+                $('promptOption' + Game.promptOptionFocus, true).style.display != 'none'
             )
-                FireEvent(l('promptOption' + Game.promptOptionFocus), 'click');
+                FireEvent($('promptOption' + Game.promptOptionFocus), 'click');
         };
         Game.FocusPromptOption = function (dir, tryN) {
             let id = Game.promptOptionFocus + dir;
@@ -6776,14 +6776,14 @@ Game.Launch = function () {
             if (id >= Game.promptOptionsN) id = 0;
             while (
                 id >= 0 && id < Game.promptOptionsN &&
-                (!l('promptOption' + id) || l('promptOption' + id, true).style.display === 'none')
+                (!$('promptOption' + id) || $('promptOption' + id, true).style.display === 'none')
             ) {
                 id += dir || 1;
             }
-            if (l('promptOption' + id) && l('promptOption' + id, true).style.display !== 'none') {
-                if (l('promptOption' + Game.promptOptionFocus)) l('promptOption' + Game.promptOptionFocus, true).classList.remove('focused');
+            if ($('promptOption' + id) && $('promptOption' + id, true).style.display !== 'none') {
+                if ($('promptOption' + Game.promptOptionFocus)) $('promptOption' + Game.promptOptionFocus, true).classList.remove('focused');
                 Game.promptOptionFocus = id;
-                if (l('promptOption' + Game.promptOptionFocus)) l('promptOption' + Game.promptOptionFocus, true).classList.add('focused');
+                if ($('promptOption' + Game.promptOptionFocus)) $('promptOption' + Game.promptOptionFocus, true).classList.add('focused');
             } else if (!tryN && dir != 0) {
                 Game.promptOptionFocus = id;
                 Game.FocusPromptOption(dir, 1);
@@ -6839,13 +6839,13 @@ Game.Launch = function () {
         };
         Game.Toggle = function (prefName, button, on, off, invert) {
             if (Game.prefs[prefName]) {
-                l(button, true).innerHTML = off;
+                $(button, true).innerHTML = off;
                 Game.prefs[prefName] = 0;
             } else {
-                l(button, true).innerHTML = on;
+                $(button, true).innerHTML = on;
                 Game.prefs[prefName] = 1;
             }
-            l(button, true).className = 'smallFancyButton prefButton option' + (Game.prefs[prefName] ^ invert ? '' : ' off');
+            $(button, true).className = 'smallFancyButton prefButton option' + (Game.prefs[prefName] ^ invert ? '' : ' off');
         };
         Game.ToggleFancy = function () {
             if (Game.prefs.fancy) Game.removeClass('noFancy');
@@ -6906,9 +6906,9 @@ Game.Launch = function () {
             }
             Game.onMenu = what;
 
-            l('prefsButton', true).className = Game.onMenu == 'prefs' ? 'panelButton selected' : 'panelButton';
-            l('statsButton', true).className = Game.onMenu == 'stats' ? 'panelButton selected' : 'panelButton';
-            l('logButton', true).className = Game.onMenu == 'log' ? 'panelButton selected' : 'panelButton';
+            $('prefsButton', true).className = Game.onMenu == 'prefs' ? 'panelButton selected' : 'panelButton';
+            $('statsButton', true).className = Game.onMenu == 'stats' ? 'panelButton selected' : 'panelButton';
+            $('logButton', true).className = Game.onMenu == 'log' ? 'panelButton selected' : 'panelButton';
 
             if (Game.onMenu == '') PlaySound('snd/clickOff2.mp3');
             else PlaySound('snd/clickOn2.mp3');
@@ -7019,7 +7019,7 @@ Game.Launch = function () {
             for (let i in Langs) {
                 let lang = Langs[i];
                 AddEvent(
-                    l('langSelect-' + i),
+                    $('langSelect-' + i),
                     'click',
                     (function (lang) {
                         return function () {
@@ -7031,12 +7031,12 @@ Game.Launch = function () {
                     })(i)
                 );
                 AddEvent(
-                    l('langSelect-' + i),
+                    $('langSelect-' + i),
                     'mouseover',
                     (function (lang) {
                         return function () {
                             PlaySound('snd/smallTick.mp3', 0.75);
-                            l('languageSelectHeader', true).innerHTML = Langs[lang].changeLanguage;
+                            $('languageSelectHeader', true).innerHTML = Langs[lang].changeLanguage;
                         };
                     })(i)
                 );
@@ -7115,7 +7115,7 @@ Game.Launch = function () {
                         function () {
                             return Game.volume;
                         },
-                        'Game.setVolume(Math.round(l(\'volumeSlider\').value));l(\'volumeSliderRightText\').innerHTML=Game.volume+\'%\';'
+                        'Game.setVolume(Math.round($(\'volumeSlider\').value));$(\'volumeSliderRightText\').innerHTML=Game.volume+\'%\';'
                     ) +
                     '<br>' +
                     Game.WritePrefButton('fancy', 'fancyButton', loc('Fancy graphics') + ON, loc('Fancy graphics') + OFF, 'Game.ToggleFancy();') +
@@ -7701,24 +7701,24 @@ Game.Launch = function () {
                     '</div>' +
                     '<div style="padding-bottom:128px;"></div>';
             }
-            l('menu', true).innerHTML = str;
+            $('menu', true).innerHTML = str;
         };
 
-        AddEvent(l('prefsButton'), 'click', function () {
+        AddEvent($('prefsButton'), 'click', function () {
             Game.ShowMenu('prefs');
         });
-        AddEvent(l('statsButton'), 'click', function () {
+        AddEvent($('statsButton'), 'click', function () {
             Game.ShowMenu('stats');
         });
-        AddEvent(l('logButton'), 'click', function () {
+        AddEvent($('logButton'), 'click', function () {
             Game.ShowMenu('log');
         });
-        AddEvent(l('legacyButton'), 'click', function () {
+        AddEvent($('legacyButton'), 'click', function () {
             PlaySound('snd/tick.mp3');
             Game.Ascend();
         });
-        Game.ascendMeter = l('ascendMeter');
-        Game.ascendNumber = l('ascendNumber');
+        Game.ascendMeter = $('ascendMeter');
+        Game.ascendNumber = $('ascendNumber');
 
         /* =====================================================================================
         NEWS TICKER
@@ -9024,8 +9024,8 @@ Game.Launch = function () {
             Game.TickerN++;
             Game.TickerDraw();
         };
-        Game.tickerL = l('commentsText1');
-        Game.tickerBelowL = l('commentsText2');
+        Game.tickerL = $('commentsText1');
+        Game.tickerBelowL = $('commentsText2');
         Game.tickerTooNarrow = 900;
         Game.TickerDraw = function () {
             let str = '';
@@ -9185,12 +9185,12 @@ Game.Launch = function () {
                 if (this.id != 0) {
                     if (this.onMinigame) {
                         // @ts-expect-error
-                        l('row' + this.id).classList.add('onMinigame');
+                        $('row' + this.id).classList.add('onMinigame');
                         // @ts-expect-error
                         if (this.minigame.onResize) this.minigame.onResize();
                     } else {
                         // @ts-expect-error
-                        l('row' + this.id).classList.remove('onMinigame');
+                        $('row' + this.id).classList.remove('onMinigame');
                     }
                 }
                 // @ts-expect-error
@@ -9258,7 +9258,7 @@ Game.Launch = function () {
                         if (this.buyFunction) this.buyFunction();
                         Game.recalculateGains = 1;
                         // @ts-expect-error
-                        if (this.amount == 1 && this.id != 0) l('row' + this.id).classList.add('enabled');
+                        if (this.amount == 1 && this.id != 0) $('row' + this.id).classList.add('enabled');
                         // @ts-expect-error
                         this.highest = Math.max(this.highest, this.amount);
                         Game.BuildingsOwned++;
@@ -9299,7 +9299,7 @@ Game.Launch = function () {
                         if (this.sellFunction) this.sellFunction();
                         Game.recalculateGains = 1;
                         // @ts-expect-error
-                        if (this.amount == 0 && this.id != 0) l('row' + this.id).classList.remove('enabled');
+                        if (this.amount == 0 && this.id != 0) $('row' + this.id).classList.remove('enabled');
                         Game.BuildingsOwned--;
                         success = 1;
                     }
@@ -9363,7 +9363,7 @@ Game.Launch = function () {
                         if (this.sellFunction) this.sellFunction();
                         Game.recalculateGains = 1;
                         // @ts-expect-error
-                        if (this.amount == 0 && this.id != 0) l('row' + this.id).classList.remove('enabled');
+                        if (this.amount == 0 && this.id != 0) $('row' + this.id).classList.remove('enabled');
                         Game.BuildingsOwned--;
                         success = 1;
                     }
@@ -9386,7 +9386,7 @@ Game.Launch = function () {
                         this.price = this.getPrice();
                         Game.recalculateGains = 1;
                         // @ts-expect-error
-                        if (this.amount == 1 && this.id != 0) l('row' + this.id).classList.add('enabled');
+                        if (this.amount == 1 && this.id != 0) $('row' + this.id).classList.add('enabled');
                         // @ts-expect-error
                         this.highest = Math.max(this.highest, this.amount);
                         Game.BuildingsOwned++;
@@ -9517,7 +9517,7 @@ Game.Launch = function () {
                     }
                     if (!this.locked) ariaText += desc;
 
-                    let ariaLabel = l('ariaReader-product-' + this.id);
+                    let ariaLabel = $('ariaReader-product-' + this.id);
                     if (ariaLabel) ariaLabel.innerHTML = ariaText.replace(/(<([^>]+)>)/gi, ' ');
                 }
 
@@ -9616,8 +9616,8 @@ Game.Launch = function () {
                             if (!free) PlaySound('snd/upgrade.mp3', 0.6);
                             Game.LoadMinigames();
                             me.refresh();
-                            if (l('productLevel' + me.id)) {
-                                const rect = l('productLevel' + me.id, true).getBounds();
+                            if ($('productLevel' + me.id)) {
+                                const rect = $('productLevel' + me.id, true).getBounds();
                                 Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24 + 32 - TopBarOffset);
                             }
                             // @ts-expect-error
@@ -9641,22 +9641,22 @@ Game.Launch = function () {
                 // @ts-expect-error
                 this.rebuild();
                 // @ts-expect-error
-                if (this.amount == 0 && this.id != 0) l('row' + this.id).classList.remove('enabled');
+                if (this.amount == 0 && this.id != 0) $('row' + this.id).classList.remove('enabled');
                 // @ts-expect-error
-                else if (this.amount > 0 && this.id != 0) l('row' + this.id).classList.add('enabled');
+                else if (this.amount > 0 && this.id != 0) $('row' + this.id).classList.add('enabled');
                 // @ts-expect-error
                 if (this.muted > 0 && this.id != 0) {
                     // @ts-expect-error
-                    l('row' + this.id).classList.add('muted');
+                    $('row' + this.id).classList.add('muted');
                     // @ts-expect-error
-                    l('mutedProduct' + this.id).style.display = 'inline-block';
+                    $('mutedProduct' + this.id).style.display = 'inline-block';
                 }
                 // @ts-expect-error
                 else if (this.id != 0) {
                     // @ts-expect-error
-                    l('row' + this.id).classList.remove('muted');
+                    $('row' + this.id).classList.remove('muted');
                     // @ts-expect-error
-                    l('mutedProduct' + this.id).style.display = 'none';
+                    $('mutedProduct' + this.id).style.display = 'none';
                 }
             };
             this.rebuild = () => {
@@ -9687,40 +9687,40 @@ Game.Launch = function () {
                 iconOff = [iconOff[0] * 64, iconOff[1] * 64];
 
                 // @ts-expect-error
-                l('productIcon' + this.id).style.backgroundPosition = '-' + icon[0] + 'px -' + icon[1] + 'px';
+                $('productIcon' + this.id).style.backgroundPosition = '-' + icon[0] + 'px -' + icon[1] + 'px';
                 // @ts-expect-error
-                l('productIconOff' + this.id).style.backgroundPosition = '-' + iconOff[0] + 'px -' + iconOff[1] + 'px';
+                $('productIconOff' + this.id).style.backgroundPosition = '-' + iconOff[0] + 'px -' + iconOff[1] + 'px';
                 // @ts-expect-error
-                l('productName' + this.id).innerHTML = displayName;
+                $('productName' + this.id).innerHTML = displayName;
                 // @ts-expect-error
-                if (name.length > 12 / Langs[locId].w && (Game.season == 'fools' || !EN)) l('productName' + this.id).classList.add('longProductName');
+                if (name.length > 12 / Langs[locId].w && (Game.season == 'fools' || !EN)) $('productName' + this.id).classList.add('longProductName');
                 // @ts-expect-error
-                else l('productName' + this.id).classList.remove('longProductName');
+                else $('productName' + this.id).classList.remove('longProductName');
                 // @ts-expect-error
-                l('productOwned' + this.id).textContent = this.amount ? this.amount : '';
+                $('productOwned' + this.id).textContent = this.amount ? this.amount : '';
                 // @ts-expect-error
-                l('productPrice' + this.id).textContent = Beautify(Math.round(price));
+                $('productPrice' + this.id).textContent = Beautify(Math.round(price));
                 // @ts-expect-error
-                l('productPriceMult' + this.id).textContent = Game.buyBulk > 1 ? 'x' + Game.buyBulk + ' ' : '';
+                $('productPriceMult' + this.id).textContent = Game.buyBulk > 1 ? 'x' + Game.buyBulk + ' ' : '';
                 // @ts-expect-error
-                l('productLevel' + this.id).textContent = 'lvl ' + Beautify(this.level);
+                $('productLevel' + this.id).textContent = 'lvl ' + Beautify(this.level);
                 if (Game.isMinigameReady(this) && Game.ascensionMode != 1) {
                     // @ts-expect-error
-                    l('productMinigameButton' + this.id).style.display = 'block';
+                    $('productMinigameButton' + this.id).style.display = 'block';
                     // @ts-expect-error
-                    if (!this.onMinigame) l('productMinigameButton' + this.id).textContent = loc('View %1', this.minigameName);
+                    if (!this.onMinigame) $('productMinigameButton' + this.id).textContent = loc('View %1', this.minigameName);
                     // @ts-expect-error
-                    else l('productMinigameButton' + this.id).textContent = loc('Close %1', this.minigameName);
+                    else $('productMinigameButton' + this.id).textContent = loc('Close %1', this.minigameName);
                 }
                 // @ts-expect-error
-                else l('productMinigameButton' + this.id).style.display = 'none';
+                else $('productMinigameButton' + this.id).style.display = 'none';
                 // @ts-expect-error
                 if (Game.isMinigameReady(this) && Game.ascensionMode != 1 && this.minigame.dragonBoostTooltip && Game.hasAura('Supreme Intellect')) {
                     // @ts-expect-error
-                    l('productDragonBoost' + this.id).style.display = 'block';
+                    $('productDragonBoost' + this.id).style.display = 'block';
                 }
                 // @ts-expect-error
-                else l('productDragonBoost' + this.id).style.display = 'none';
+                else $('productDragonBoost' + this.id).style.display = 'none';
             };
             this.muted = false;
             this.mute = function (val) {
@@ -9729,19 +9729,19 @@ Game.Launch = function () {
                 this.muted = val;
                 if (val) {
                     // @ts-expect-error
-                    l('productMute' + this.id).classList.add('on');
+                    $('productMute' + this.id).classList.add('on');
                     // @ts-expect-error
-                    l('row' + this.id).classList.add('muted');
+                    $('row' + this.id).classList.add('muted');
                     // @ts-expect-error
-                    l('mutedProduct' + this.id).style.display = 'inline-block';
+                    $('mutedProduct' + this.id).style.display = 'inline-block';
                 }
                 else {
                     // @ts-expect-error
-                    l('productMute' + this.id).classList.remove('on');
+                    $('productMute' + this.id).classList.remove('on');
                     // @ts-expect-error
-                    l('row' + this.id).classList.remove('muted');
+                    $('row' + this.id).classList.remove('muted');
                     // @ts-expect-error
-                    l('mutedProduct' + this.id).style.display = 'none';
+                    $('mutedProduct' + this.id).style.display = 'none';
                 }
             };
 
@@ -9806,12 +9806,12 @@ Game.Launch = function () {
                 -12 * 48 +
                 'px;transform:scale(0.5);margin:-20px -16px;"></div></div>';
             str += '</div>';
-            if (this.id == 0) l('sectionLeftExtra', true).innerHTML = l('sectionLeftExtra', true).innerHTML + str;
+            if (this.id == 0) $('sectionLeftExtra', true).innerHTML = $('sectionLeftExtra', true).innerHTML + str;
             else {
                 str += '<canvas class="rowCanvas" id="rowCanvas' + this.id + '"></canvas>';
                 str += '<div class="rowSpecial" id="rowSpecial' + this.id + '"></div>';
                 str += '</div>';
-                l('rows', true).innerHTML = l('rows', true).innerHTML + str;
+                $('rows', true).innerHTML = $('rows', true).innerHTML + str;
 
                 // building canvas
                 this.pics = [];
@@ -10085,26 +10085,26 @@ Game.Launch = function () {
 
             if (Game.buyMode === 1 && Game.buyBulk === -1) Game.buyBulk = 100;
 
-            if (Game.buyMode === 1) l('storeBulkBuy', true).className = 'storePreButton storeBulkMode selected';
-            else l('storeBulkBuy', true).className = 'storePreButton storeBulkMode';
-            if (Game.buyMode === -1) l('storeBulkSell', true).className = 'storePreButton storeBulkMode selected';
-            else l('storeBulkSell', true).className = 'storePreButton storeBulkMode';
+            if (Game.buyMode === 1) $('storeBulkBuy', true).className = 'storePreButton storeBulkMode selected';
+            else $('storeBulkBuy', true).className = 'storePreButton storeBulkMode';
+            if (Game.buyMode === -1) $('storeBulkSell', true).className = 'storePreButton storeBulkMode selected';
+            else $('storeBulkSell', true).className = 'storePreButton storeBulkMode';
 
-            if (Game.buyBulk === 1) l('storeBulk1', true).className = 'storePreButton storeBulkAmount selected';
-            else l('storeBulk1', true).className = 'storePreButton storeBulkAmount';
-            if (Game.buyBulk === 10) l('storeBulk10', true).className = 'storePreButton storeBulkAmount selected';
-            else l('storeBulk10', true).className = 'storePreButton storeBulkAmount';
-            if (Game.buyBulk === 100) l('storeBulk100', true).className = 'storePreButton storeBulkAmount selected';
-            else l('storeBulk100', true).className = 'storePreButton storeBulkAmount';
-            if (Game.buyBulk === -1) l('storeBulkMax', true).className = 'storePreButton storeBulkAmount selected';
-            else l('storeBulkMax', true).className = 'storePreButton storeBulkAmount';
+            if (Game.buyBulk === 1) $('storeBulk1', true).className = 'storePreButton storeBulkAmount selected';
+            else $('storeBulk1', true).className = 'storePreButton storeBulkAmount';
+            if (Game.buyBulk === 10) $('storeBulk10', true).className = 'storePreButton storeBulkAmount selected';
+            else $('storeBulk10', true).className = 'storePreButton storeBulkAmount';
+            if (Game.buyBulk === 100) $('storeBulk100', true).className = 'storePreButton storeBulkAmount selected';
+            else $('storeBulk100', true).className = 'storePreButton storeBulkAmount';
+            if (Game.buyBulk === -1) $('storeBulkMax', true).className = 'storePreButton storeBulkAmount selected';
+            else $('storeBulkMax', true).className = 'storePreButton storeBulkAmount';
 
             if (Game.buyMode === 1) {
-                l('storeBulkMax', true).style.visibility = 'hidden';
-                l('products', true).className = 'storeSection';
+                $('storeBulkMax', true).style.visibility = 'hidden';
+                $('products', true).className = 'storeSection';
             } else {
-                l('storeBulkMax', true).style.visibility = 'visible';
-                l('products', true).className = 'storeSection selling';
+                $('storeBulkMax', true).style.visibility = 'visible';
+                $('products', true).className = 'storeSection selling';
             }
 
             Game.storeToRefresh = 1;
@@ -10177,13 +10177,13 @@ Game.Launch = function () {
                     '</div>' +
                     (Game.prefs.screenreader ? '</button>' : '</div>');
             }
-            l('products', true).innerHTML = str;
+            $('products', true).innerHTML = str;
 
             Game.storeBulkButton(-1);
 
             for (let i in Game.Objects) {
                 let me = Game.Objects[i];
-                me.l = l('product' + me.id);
+                me.l = $('product' + me.id);
 
                 // these are a bit messy but ah well
                 if (!Game.touchEvents) {
@@ -10238,7 +10238,7 @@ Game.Launch = function () {
         {
             for (let i in Game.Objects) {
                 let me = Game.Objects[i];
-                if (me.minigameUrl && me.level > 0 && !me.minigameLoaded && !me.minigameLoading && !l('minigameScript-' + me.id)) {
+                if (me.minigameUrl && me.level > 0 && !me.minigameLoaded && !me.minigameLoading && !$('minigameScript-' + me.id)) {
                     me.minigameLoading = true;
                     // we're only loading the minigame scripts that aren't loaded yet and which have enough building level
                     // we call this function on building level up and on load
@@ -10986,7 +10986,7 @@ Game.Launch = function () {
         str = '';
         str += '<div id="buildingsMute" class="shadowFilter" style="position:relative;z-index:100;padding:4px 16px 0px 64px;"></div>';
         str += '<div class="separatorBottom" style="position:absolute;bottom:-8px;z-index:0;"></div>';
-        l('buildingsMaster', true).innerHTML = str;
+        $('buildingsMaster', true).innerHTML = str;
 
         // build object displays
         let muteStr = '<div style="position:absolute;left:8px;bottom:12px;opacity:0.5;">' + loc('Muted:') + '</div>';
@@ -10996,7 +10996,7 @@ Game.Launch = function () {
             if (locStrings[me.name + ' (short)']) me.displayName = loc(me.name + ' (short)');
 
             if (me.id > 0) {
-                me.canvas = l('rowCanvas' + me.id);
+                me.canvas = $('rowCanvas' + me.id);
                 me.ctx = me.canvas.getContext('2d', { alpha: false });
                 me.pics = [];
                 let icon = [0 * 64, me.icon * 64];
@@ -11065,7 +11065,7 @@ Game.Launch = function () {
                 );
             };
         };
-        l('buildingsMute', true).innerHTML = muteStr;
+        $('buildingsMute', true).innerHTML = muteStr;
 
         /* =====================================================================================
         UPGRADES
@@ -11179,8 +11179,8 @@ Game.Launch = function () {
             if (!cancelPurchase) {
                 if (this.choicesFunction) {
                     if (Game.choiceSelectorOn == this.id) {
-                        l('toggleBox', true).style.display = 'none';
-                        l('toggleBox', true).innerHTML = '';
+                        $('toggleBox', true).style.display = 'none';
+                        $('toggleBox', true).innerHTML = '';
                         Game.choiceSelectorOn = -1;
                         PlaySound('snd/tickOff.mp3');
                     } else {
@@ -11230,15 +11230,15 @@ Game.Launch = function () {
                                     id +
                                     ');Game.choiceSelectorOn=-1;Game.UpgradesById[' +
                                     this.id +
-                                    '].buy();" onMouseOut="l(\'choiceSelectedName\').innerHTML=Game.choiceSelectorChoices[Game.choiceSelectorSelected].name;" onMouseOver="l(\'choiceSelectedName\').innerHTML=Game.choiceSelectorChoices[' +
+                                    '].buy();" onMouseOut="$(\'choiceSelectedName\').innerHTML=Game.choiceSelectorChoices[Game.choiceSelectorSelected].name;" onMouseOver="$(\'choiceSelectedName\').innerHTML=Game.choiceSelectorChoices[' +
                                     i +
                                     '].name;"' +
                                     '></div>';
                             }
                         }
-                        l('toggleBox', true).innerHTML = str;
-                        l('toggleBox', true).style.display = 'block';
-                        l('toggleBox', true).focus();
+                        $('toggleBox', true).innerHTML = str;
+                        $('toggleBox', true).style.display = 'block';
+                        $('toggleBox', true).focus();
                         Game.tooltip.hide();
                         PlaySound('snd/tick.mp3');
                         success = 1;
@@ -11434,9 +11434,9 @@ Game.Launch = function () {
                     loc('Buy all upgrades') +
                     '</div>' +
                     '</div>';
-                l('upgrades', true).classList.add('hasMenu');
+                $('upgrades', true).classList.add('hasMenu');
             }
-            else l('upgrades', true).classList.remove('hasMenu');
+            else $('upgrades', true).classList.remove('hasMenu');
 
             for (let i in Game.UpgradesInStore) {
                 let me = Game.UpgradesInStore[i];
@@ -11450,16 +11450,16 @@ Game.Launch = function () {
                 }
             }
 
-            l('upgrades', true).innerHTML = storeStr;
-            l('toggleUpgrades', true).innerHTML = toggleStr;
-            if (toggleStr == '') l('toggleUpgrades', true).style.display = 'none';
-            else l('toggleUpgrades', true).style.display = 'block';
-            l('techUpgrades', true).innerHTML = techStr;
-            if (techStr == '') l('techUpgrades', true).style.display = 'none';
-            else l('techUpgrades', true).style.display = 'block';
-            l('vaultUpgrades', true).innerHTML = vaultStr;
-            if (vaultStr == '') l('vaultUpgrades', true).style.display = 'none';
-            else l('vaultUpgrades', true).style.display = 'block';
+            $('upgrades', true).innerHTML = storeStr;
+            $('toggleUpgrades', true).innerHTML = toggleStr;
+            if (toggleStr == '') $('toggleUpgrades', true).style.display = 'none';
+            else $('toggleUpgrades', true).style.display = 'block';
+            $('techUpgrades', true).innerHTML = techStr;
+            if (techStr == '') $('techUpgrades', true).style.display = 'none';
+            else $('techUpgrades', true).style.display = 'block';
+            $('vaultUpgrades', true).innerHTML = vaultStr;
+            if (vaultStr == '') $('vaultUpgrades', true).style.display = 'none';
+            else $('vaultUpgrades', true).style.display = 'block';
         };
 
         Game.UnlockAt = []; // this contains an array of every upgrade with a cookie requirement in the form of {cookies:(amount of cookies earned required),name:(name of upgrade or achievement to unlock)} (and possibly require:(name of upgrade of achievement to own))
@@ -13808,10 +13808,10 @@ Game.Launch = function () {
         Game.SelectingPermanentUpgrade = -1;
         Game.PutUpgradeInPermanentSlot = function (upgrade, slot) {
             Game.SelectingPermanentUpgrade = upgrade;
-            l('upgradeToSlotWrap', true).innerHTML = '';
-            l('upgradeToSlotWrap', true).style.display = upgrade == -1 ? 'none' : 'block';
-            l('upgradeToSlotNone', true).style.display = upgrade != -1 ? 'none' : 'block';
-            l('upgradeToSlotWrap', true).innerHTML = Game.crate(Game.UpgradesById[upgrade == -1 ? 0 : upgrade], '', '', 'upgradeToSlot');
+            $('upgradeToSlotWrap', true).innerHTML = '';
+            $('upgradeToSlotWrap', true).style.display = upgrade == -1 ? 'none' : 'block';
+            $('upgradeToSlotNone', true).style.display = upgrade != -1 ? 'none' : 'block';
+            $('upgradeToSlotWrap', true).innerHTML = Game.crate(Game.UpgradesById[upgrade == -1 ? 0 : upgrade], '', '', 'upgradeToSlot');
         };
 
         new Game.Upgrade(
@@ -18174,11 +18174,11 @@ Game.Launch = function () {
                 if (id >= Game.jukebox.sounds.length) id = 0;
                 else if (id < 0) id = Game.jukebox.sounds.length - 1;
                 Game.jukebox.onSound = id;
-                if (l('jukeboxOnSound')) {
-                    triggerAnim(l('jukeboxPlayer'), 'pucker');
-                    l('jukeboxOnSound', true).innerHTML = '&bull; ' + Game.jukebox.sounds[Game.jukebox.onSound] + ' &bull;';
-                    l('jukeboxOnSoundN', true).innerHTML = Game.jukebox.onSound + 1 + '/' + Game.jukebox.sounds.length;
-                    l('jukeboxSoundSelect', true).value = Game.jukebox.onSound;
+                if ($('jukeboxOnSound')) {
+                    triggerAnim($('jukeboxPlayer'), 'pucker');
+                    $('jukeboxOnSound', true).innerHTML = '&bull; ' + Game.jukebox.sounds[Game.jukebox.onSound] + ' &bull;';
+                    $('jukeboxOnSoundN', true).innerHTML = Game.jukebox.onSound + 1 + '/' + Game.jukebox.sounds.length;
+                    $('jukeboxSoundSelect', true).value = Game.jukebox.onSound;
                 }
                 PlaySound('snd/' + Game.jukebox.sounds[Game.jukebox.onSound] + '.mp3', 1);
             }
@@ -20239,7 +20239,7 @@ Game.Launch = function () {
 
         Game.buffs = {}; // buffs currently in effect by name
         Game.buffsI = 0;
-        Game.buffsL = l('buffs');
+        Game.buffsL = $('buffs');
         Game.gainBuff = function (type, time, arg1, arg2, arg3) {
             type = Game.buffTypesByName[type];
             let obj = type.func(time, arg1, arg2, arg3);
@@ -20294,7 +20294,7 @@ Game.Launch = function () {
                     writeIcon(buff.icon) +
                     '"></div>';
 
-                buff.l = l('buff' + buff.id);
+                buff.l = $('buff' + buff.id);
 
                 Game.buffsI++;
             }
@@ -20314,19 +20314,19 @@ Game.Launch = function () {
                 let buff = Game.buffs[i];
 
                 if (buff.time >= 0) {
-                    if (!l('buffPieTimer' + buff.id))
-                        l('buff' + buff.id, true).innerHTML = l('buff' + buff.id, true).innerHTML +
+                    if (!$('buffPieTimer' + buff.id))
+                        $('buff' + buff.id, true).innerHTML = $('buff' + buff.id, true).innerHTML +
                             '<div class="pieTimer" id="buffPieTimer' + buff.id + '"></div>';
                     let T = 1 - buff.time / buff.maxTime;
                     T = (T * 144) % 144;
-                    l('buffPieTimer' + buff.id, true)
+                    $('buffPieTimer' + buff.id, true)
                         .style.backgroundPosition = `${-Math.floor(T % 18) * 48}px ${-Math.floor(T / 18) * 48}px`;
                 }
                 buff.time--;
                 if (buff.time <= 0) {
-                    if (Game.onCrate == l('buff' + buff.id)) Game.tooltip.hide();
+                    if (Game.onCrate == $('buff' + buff.id)) Game.tooltip.hide();
                     if (buff.onDie) buff.onDie();
-                    Game.buffsL.removeChild(l('buff' + buff.id));
+                    Game.buffsL.removeChild($('buff' + buff.id));
                     if (Game.buffs[buff.name]) {
                         Game.buffs[buff.name] = 0;
                         delete Game.buffs[buff.name];
@@ -20906,7 +20906,7 @@ Game.Launch = function () {
                     }
                     if (me.selected && onWrinkler == 0 && Game.CanClick) {
                         me.hurt = Math.max(me.hurt, 0.25);
-                        if (Game.Click && Game.lastClickedEl == l('backgroundLeftCanvas')) {
+                        if (Game.Click && Game.lastClickedEl == $('backgroundLeftCanvas')) {
                             if (Game.keys[17] && Game.sesame) {
                                 me.type = !me.type;
                                 PlaySound('snd/shimmerClick.mp3');
@@ -21211,7 +21211,7 @@ Game.Launch = function () {
                         Game.specialTabHovered = Game.specialTabs[i];
                         Game.mousePointer = 1;
                         Game.CanClick = 0;
-                        if (Game.Click && Game.lastClickedEl == l('backgroundLeftCanvas')) {
+                        if (Game.Click && Game.lastClickedEl == $('backgroundLeftCanvas')) {
                             if (Game.specialTab != Game.specialTabs[i]) {
                                 Game.specialTab = Game.specialTabs[i];
                                 Game.ToggleSpecialMenu(1);
@@ -21284,8 +21284,8 @@ Game.Launch = function () {
 
                 Game.ToggleSpecialMenu(1);
 
-                if (l('specialPic')) {
-                    let rect = l('specialPic', true).getBounds();
+                if ($('specialPic')) {
+                    let rect = $('specialPic', true).getBounds();
                     Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2) + 32 - TopBarOffset;
                 }
 
@@ -21750,7 +21750,7 @@ Game.Launch = function () {
             Game.SelectDragonAura(slot, 1);
         };
         Game.DescribeDragonAura = function (aura) {
-            l('dragonAuraInfo', true).innerHTML =
+            $('dragonAuraInfo', true).innerHTML =
                 '<div style="min-width:200px;text-align:center;"><h4>' +
                 Game.dragonAuras[aura].dname +
                 '</h4>' +
@@ -21767,8 +21767,8 @@ Game.Launch = function () {
 
                 if (Game.dragonLevel >= Game.dragonLevels.length - 1) Game.Win('Here be dragon');
                 Game.ToggleSpecialMenu(1);
-                if (l('specialPic')) {
-                    let rect = l('specialPic', true).getBounds();
+                if ($('specialPic')) {
+                    let rect = $('specialPic', true).getBounds();
                     Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2) + 32 - TopBarOffset;
                 }
                 Game.recalculateGains = 1;
@@ -21778,8 +21778,8 @@ Game.Launch = function () {
 
         Game.lastClickedSpecialPic = 0;
         Game.ClickSpecialPic = function () {
-            if (Game.specialTab == 'dragon' && Game.dragonLevel >= 4 && Game.Has('Pet the dragon') && l('specialPic')) {
-                triggerAnim(l('specialPic'), 'pucker');
+            if (Game.specialTab == 'dragon' && Game.dragonLevel >= 4 && Game.Has('Pet the dragon') && $('specialPic')) {
+                triggerAnim($('specialPic'), 'pucker');
                 PlaySound('snd/click' + Math.floor(Math.random() * 7 + 1) + '.mp3', 0.5);
                 if (Date.now() - Game.lastClickedSpecialPic > 2000) PlaySound('snd/growl.mp3');
                 Game.lastClickedSpecialPic = Date.now();
@@ -21917,16 +21917,16 @@ Game.Launch = function () {
                     }
                 }
 
-                l('specialPopup', true).innerHTML = str;
+                $('specialPopup', true).innerHTML = str;
 
-                l('specialPopup', true).className = 'framed prompt onScreen';
+                $('specialPopup', true).className = 'framed prompt onScreen';
             } else {
                 if (Game.specialTab != '') {
                     Game.specialTab = '';
-                    l('specialPopup', true).className = 'framed prompt offScreen';
+                    $('specialPopup', true).className = 'framed prompt offScreen';
                     setTimeout(function () {
                         if (Game.specialTab == '') {
-                            l('specialPopup', true).innerHTML = '';
+                            $('specialPopup', true).innerHTML = '';
                         }
                     }, 1000 * 0.2);
                 }
@@ -22114,8 +22114,8 @@ Game.Launch = function () {
             // background
             if (!Game.Background) {
                 // init some stuff
-                const bgCanvasEl = /** @type {HTMLCanvasElement} */ (l('backgroundCanvas', true));
-                const bgLeftCanvasEl = /** @type {HTMLCanvasElement} */ (l('backgroundLeftCanvas', true));
+                const bgCanvasEl = /** @type {HTMLCanvasElement} */ ($('backgroundCanvas', true));
+                const bgLeftCanvasEl = /** @type {HTMLCanvasElement} */ ($('backgroundLeftCanvas', true));
                 Game.Background = bgCanvasEl.getContext('2d');
                 Game.Background.canvas.width = Game.Background.canvas.parentNode.offsetWidth;
                 Game.Background.canvas.height = Game.Background.canvas.parentNode.offsetHeight;
@@ -22192,7 +22192,7 @@ Game.Launch = function () {
                 }
 
                 if (Game.drawT % 5 == 0) {
-                    l('backgroundCanvas', true).style.background = 'transparent';
+                    $('backgroundCanvas', true).style.background = 'transparent';
                     Game.defaultBg = 'bgBlue';
                     Game.bgR = 0;
 
@@ -22591,7 +22591,7 @@ Game.Launch = function () {
                                     'px;height:' +
                                     this.s +
                                     'px;background:#999;position:absolute;left:0px;top:0px;z-index:10000000;transform:translate(-1000px,-1000px);';
-                                l('sectionLeft', true).appendChild(this.l);
+                                $('sectionLeft', true).appendChild(this.l);
                                 AddEvent(
                                     this.l,
                                     'mousedown',
@@ -22877,7 +22877,7 @@ Game.Launch = function () {
             str +=
                 '<a class="option neato" ' +
                 Game.clickStr +
-                '="Game.heralds=100;l(\'heraldsAmount\').textContent=Game.heralds;Game.externalDataLoaded=true;Game.recalculateGains=1;">Max heralds</a>';
+                '="Game.heralds=100;$(\'heraldsAmount\').textContent=Game.heralds;Game.externalDataLoaded=true;Game.recalculateGains=1;">Max heralds</a>';
             str += '<div class="line"></div>';
             for (let i = 0; i < Game.goldenCookieChoices.length / 2; i++) {
                 str +=
@@ -22891,9 +22891,9 @@ Game.Launch = function () {
             }
             str += '</div>';
 
-            l('devConsole', true).innerHTML = str;
+            $('devConsole', true).innerHTML = str;
 
-            if (!l('fpsGraph')) {
+            if (!$('fpsGraph')) {
                 let div = document.createElement('canvas');
                 div.id = 'fpsGraph';
                 div.width = 128;
@@ -22902,8 +22902,8 @@ Game.Launch = function () {
                 div.style.pointerEvents = 'none';
                 div.style.transformOrigin = '0% 0%';
                 div.style.transform = 'scale(0.75)';
-                const devConsoleParentNode = l('devConsole', true).parentNode;
-                if (devConsoleParentNode) devConsoleParentNode.insertBefore(div, l('devConsole', true).nextSibling);
+                const devConsoleParentNode = $('devConsole', true).parentNode;
+                if (devConsoleParentNode) devConsoleParentNode.insertBefore(div, $('devConsole', true).nextSibling);
                 Game.fpsGraph = div;
                 Game.fpsGraphCtx = Game.fpsGraph.getContext('2d', {
                     alpha: false
@@ -22913,7 +22913,7 @@ Game.Launch = function () {
                 ctx.fillRect(0, 0, 128, 64);
             }
 
-            l('debug', true).style.display = 'block';
+            $('debug', true).style.display = 'block';
             Game.sesame = 1;
             Game.Achievements['Cheated cookies taste awful'].won = 1;
         };
@@ -22975,8 +22975,8 @@ Game.Launch = function () {
             }, 100);
 
         Game.ready = 1;
-        l('offGameMessage', true).innerHTML = '';
-        l('offGameMessageWrap', true).style.display = 'none';
+        $('offGameMessage', true).innerHTML = '';
+        $('offGameMessageWrap', true).style.display = 'none';
         Game.Loop();
         Game.Draw();
 
@@ -22993,17 +22993,17 @@ Game.Launch = function () {
                     el.style.transform = 'scale(1,' + width + ')';
                 }
             };
-            ASSERT_NOT_NULL(l('prefsButton', true).firstChild).innerHTML = loc('Options');
-            ASSERT_NOT_NULL(l('statsButton', true).firstChild).innerHTML = loc('Stats');
-            ASSERT_NOT_NULL(l('logButton', true).firstChild).innerHTML = loc('Info');
-            ASSERT_NOT_NULL(l('legacyButton', true).firstChild).innerHTML = loc('Legacy');
-            adaptWidth(l('prefsButton'));
-            adaptWidth(l('statsButton'));
-            adaptWidth(l('logButton'));
-            adaptWidth(l('legacyButton'));
-            l('checkForUpdate', true).childNodes[0].textContent = loc('New update!');
-            l('buildingsTitle', true).childNodes[0].textContent = loc('Buildings');
-            l('storeTitle', true).childNodes[0].textContent = loc('Store');
+            ASSERT_NOT_NULL($('prefsButton', true).firstChild).innerHTML = loc('Options');
+            ASSERT_NOT_NULL($('statsButton', true).firstChild).innerHTML = loc('Stats');
+            ASSERT_NOT_NULL($('logButton', true).firstChild).innerHTML = loc('Info');
+            ASSERT_NOT_NULL($('legacyButton', true).firstChild).innerHTML = loc('Legacy');
+            adaptWidth($('prefsButton'));
+            adaptWidth($('statsButton'));
+            adaptWidth($('logButton'));
+            adaptWidth($('legacyButton'));
+            $('checkForUpdate', true).childNodes[0].textContent = loc('New update!');
+            $('buildingsTitle', true).childNodes[0].textContent = loc('Buildings');
+            $('storeTitle', true).childNodes[0].textContent = loc('Store');
         }
     };
     /* =====================================================================================
@@ -23035,8 +23035,8 @@ Game.Launch = function () {
             }
             Game.particlesUpdate();
 
-            if (Game.mousePointer) l('sectionLeft', true).style.cursor = 'pointer';
-            else l('sectionLeft', true).style.cursor = 'auto';
+            if (Game.mousePointer) $('sectionLeft', true).style.cursor = 'pointer';
+            else $('sectionLeft', true).style.cursor = 'auto';
             Game.mousePointer = 0;
 
             // handle milk and milk accessories
@@ -23501,7 +23501,7 @@ Game.Launch = function () {
                 str += '<div class="line"></div>';
                 str += loc('You need <b>%1 more cookies</b> for the next level.', Beautify(cookiesToNext)) + '<br>';
             }
-            l('ascendTooltip', true).innerHTML = str;
+            $('ascendTooltip', true).innerHTML = str;
 
             if (ascendNowToGet > 0) {
                 // show number saying how many chips you'd get resetting now
@@ -23608,7 +23608,7 @@ Game.Launch = function () {
                 ' ' +
                 Beautify(Game.cookiesPs * (1 - Game.cpsSucked), 1) +
                 '</div>';
-            l('cookies', true).innerHTML = str;
+            $('cookies', true).innerHTML = str;
             Timer.track('cookie amount');
 
             for (let i in Game.Objects) {
@@ -23647,7 +23647,7 @@ Game.Launch = function () {
                     if (!me.bought) {
                         let price = me.getPrice();
                         let canBuy = me.canBuy();
-                        let enabled = l('upgrade' + i, true).className.indexOf('enabled') > -1;
+                        let enabled = $('upgrade' + i, true).className.indexOf('enabled') > -1;
                         if ((canBuy && !enabled) || (!canBuy && enabled)) Game.upgradesToRebuild = 1;
                         if (price < lastPrice) Game.storeToRefresh = 1; // is this upgrade less expensive than the previous one? trigger a refresh to sort it again
                         lastPrice = price;
@@ -23655,13 +23655,13 @@ Game.Launch = function () {
                     if (me.timerDisplay) {
                         let T = me.timerDisplay();
                         if (T != -1) {
-                            if (!l('upgradePieTimer' + i))
-                                l('upgrade' + i, true)
+                            if (!$('upgradePieTimer' + i))
+                                $('upgrade' + i, true)
                                     .innerHTML = `${
-                                        l('upgrade' + i, true).innerHTML
+                                        $('upgrade' + i, true).innerHTML
                                     }<div class="pieTimer" id="upgradePieTimer${i}"></div>`;
                             T = (T * 144) % 144;
-                            l('upgradePieTimer' + i, true)
+                            $('upgradePieTimer' + i, true)
                                 .style.backgroundPosition = `${-Math.floor(T % 18) * 48}px ${-Math.floor(T / 18) * 48}px`;
                         }
                     }
@@ -23752,14 +23752,14 @@ Game.Launch = function () {
             ctx.lineTo(128, (1 - Game.currentFps / Game.fps) * 64);
             ctx.stroke();
 
-            l('fpsCounter', true).textContent = Game.currentFps + ' fps';
+            $('fpsCounter', true).textContent = Game.currentFps + ' fps';
             let str = '';
             for (let i in Timer.labels) {
                 str += Timer.labels[i];
             }
-            if (Game.debugTimersOn) l('debugLog', true).style.display = 'block';
-            else l('debugLog', true).style.display = 'none';
-            l('debugLog', true).innerHTML = str;
+            if (Game.debugTimersOn) $('debugLog', true).style.display = 'block';
+            else $('debugLog', true).style.display = 'none';
+            $('debugLog', true).innerHTML = str;
         }
         Timer.reset();
 
@@ -23816,13 +23816,13 @@ window.onload = function () {
                 let lang = Langs[i];
                 str += '<div class="langSelectButton title" id="langSelect-' + i + '">' + lang.name + '</div>';
             }
-            l('offGameMessage', true).innerHTML =
+            $('offGameMessage', true).innerHTML =
                 '<div class="title" id="languageSelectHeader">Language</div>' +
                 '<div class="line" style="max-width:300px;"></div>' + str;
             for (let i in Langs) {
                 let lang = Langs[i];
                 AddEvent(
-                    l('langSelect-' + i),
+                    $('langSelect-' + i),
                     'click',
                     (function (lang) {
                         return function () {
@@ -23831,12 +23831,12 @@ window.onload = function () {
                     })(i)
                 );
                 AddEvent(
-                    l('langSelect-' + i),
+                    $('langSelect-' + i),
                     'mouseover',
                     (function (lang) {
                         return function () {
                             PlaySound('snd/smallTick.mp3', 0.75);
-                            l('languageSelectHeader', true).innerHTML = Langs[lang].changeLanguage;
+                            $('languageSelectHeader', true).innerHTML = Langs[lang].changeLanguage;
                         };
                     })(i)
                 );
