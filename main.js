@@ -22397,10 +22397,10 @@ Game.Launch = function () {
                     el.style.transform = 'scale(1,' + width + ')';
                 }
             };
-            ASSERT_NOT_NULL($('prefsButton', true).firstChild).innerHTML = loc('Options');
-            ASSERT_NOT_NULL($('statsButton', true).firstChild).innerHTML = loc('Stats');
-            ASSERT_NOT_NULL($('logButton', true).firstChild).innerHTML = loc('Info');
-            ASSERT_NOT_NULL($('legacyButton', true).firstChild).innerHTML = loc('Legacy');
+            ASSERT_NOT_NULL($('prefsButton', true).firstElementChild).innerHTML = loc('Options');
+            ASSERT_NOT_NULL($('statsButton', true).firstElementChild).innerHTML = loc('Stats');
+            ASSERT_NOT_NULL($('logButton', true).firstElementChild).innerHTML = loc('Info');
+            ASSERT_NOT_NULL($('legacyButton', true).firstElementChild).innerHTML = loc('Legacy');
             adaptWidth($('prefsButton', true));
             adaptWidth($('statsButton', true));
             adaptWidth($('logButton', true));
