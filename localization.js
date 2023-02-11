@@ -141,7 +141,7 @@ let Langs = {
     loc('You have %1.','<b>'+loc('%1 apple',LBeautify(amount))+'</b>')
         ...you may nest localized strings, and use LBeautify() to pack Beautified values
 */
-let locBlink = true;
+let locBlink = false;
 let loc = function (
     /** @type {string} */ id,
     /** @type {{ n: Number, b: string | number } | number | string | any[] | undefined} */ params,
