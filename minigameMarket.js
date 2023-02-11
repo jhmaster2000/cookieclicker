@@ -1273,7 +1273,6 @@ M.launch = function () {
         for (let i = 0; i < M.goodsById.length; i++) {
             let me = M.goodsById[i];
             if (me.hidden) continue;
-            //if (me.id==0) me.vals[0]=50+50*Math.sin(Date.now()*0.0002+me.id);
             for (let ii = 0; ii < me.vals.length; ii++) {
                 maxVal = Math.max(maxVal, me.vals[ii]);
             }

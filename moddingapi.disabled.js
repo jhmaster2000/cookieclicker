@@ -107,7 +107,7 @@
             return;
         }
         if (typeof func !== 'function') return;
-        if (typeof Game.modHooks[hook] !== 'undefined' && Game.modHooks[hook].indexOf(func) != -1)
+        if (typeof Game.modHooks[hook] !== 'undefined' && Game.modHooks[hook].indexOf(func) !== -1)
             Game.modHooks[hook].splice(Game.modHooks[hook].indexOf(func), 1);
         else console.log('Error: a mod tried to remove a non-existent hook named "' + hook + '".');
     };

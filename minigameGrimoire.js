@@ -58,7 +58,6 @@ M.launch = function () {
                     if (!Game.hasBuff('Dragonflight')) choices.push('click frenzy');
                     if (Math.random() < 0.1) choices.push('cookie storm', 'cookie storm', 'blab');
                     if (Game.BuildingsOwned >= 10 && Math.random() < 0.25) choices.push('building special');
-                    //if (Math.random()<0.2) choices.push('clot','cursed finger','ruin cookies');
                     if (Math.random() < 0.15) choices = ['cookie storm drop'];
                     if (Math.random() < 0.0001) choices.push('free sugar lump');
                     newShimmer.force = choose(choices);

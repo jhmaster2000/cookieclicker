@@ -205,13 +205,13 @@ const Beautify = function (/** @type {number} */ val, /** @type {number=} */ flo
     let negative = val < 0;
     let decimal = '';
     let fixed = Number(val.toFixed(floats));
-    if (floats > 0 && Math.abs(val) < 1000 && Math.floor(fixed) != fixed) decimal = '.' + fixed.toString().split('.')[1];
+    if (floats > 0 && Math.abs(val) < 1000 && Math.floor(fixed) !== fixed) decimal = '.' + fixed.toString().split('.')[1];
     val = Math.floor(Math.abs(val));
     if (floats > 0 && fixed == val + 1) val++;
     let format = Game.prefs.format ? 2 : 1;
     let formatter = numberFormatters[format];
     let output =
-        val.toString().indexOf('e+') != -1 && format == 2
+        val.toString().indexOf('e+') !== -1 && format == 2
             ? val.toPrecision(3).toString()
             : formatter(val)
                 .toString()
