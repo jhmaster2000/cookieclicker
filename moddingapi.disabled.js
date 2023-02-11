@@ -1,7 +1,8 @@
+/* eslint-disable no-undef */
 
 (function () {
     //! stubs -- The modding API is low priority and will be restored later, this file is not currently loaded.
-    let Game = {}, loc, LoadScript, choose, tinyIcon, l;
+    let Game = {}, loc, LoadScript, choose, tinyIcon;
     /* =====================================================================================
     MODDING API
     =======================================================================================*/
