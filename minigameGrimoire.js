@@ -287,24 +287,6 @@ M.launch = function () {
             let towers = Math.max(M.parent.amount, 1);
             let lvl = Math.max(M.parent.level, 1);
             M.magicM = Math.floor(4 + Math.pow(towers, 0.6) + Math.log((towers + (lvl - 1) * 10) / 15 + 1) * 15);
-            //old formula :
-            /*
-            M.magicM=8+Math.min(M.parent.amount,M.parent.level*5)+Math.ceil(M.parent.amount/10);
-            if (M.magicM>200)
-            {
-                //diminishing returns starting at 200, being 5% as fast by 400
-                let x=M.magicM;
-                let top=x-200;
-                top/=200;
-                let top2=top;
-                top*=(1-top/2);
-                if (top2>=1) top=0.5;
-                top=top*0.95+top2*0.05;
-                top*=200;
-                x=top+200;
-                M.magicM=x;
-            }
-            */
             M.magic = Math.min(M.magicM, M.magic);
         };
 
@@ -317,7 +299,7 @@ M.launch = function () {
         };
 
         M.castSpell = function (spell, obj) {
-            let obj = obj || {};
+            obj ||= {};
             let out = 0;
             let cost = 0;
             let fail = false;

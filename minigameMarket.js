@@ -274,7 +274,7 @@ M.launch = function () {
             id,
             back //if back is 0 we get the current step; else get current step -back
         ) {
-            let back = back || 0;
+            back ||= 0;
             let me = M.goodsById[id];
             let val = 0;
             if (me.vals.length >= 2 + back) {

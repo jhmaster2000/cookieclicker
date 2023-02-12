@@ -268,13 +268,13 @@ CanvasRenderingContext2D.prototype.fillPattern = function (img, X, Y, W, H, iW, 
         offX ||= 0;
         offY ||= 0;
         if (offX < 0) {
-            offX = offX - Math.floor(offX / iW) * iW;
+            offX -= Math.floor(offX / iW) * iW;
         }
         if (offX > 0) {
             offX = (offX % iW) - iW;
         }
         if (offY < 0) {
-            offY = offY - Math.floor(offY / iH) * iH;
+            offY -= Math.floor(offY / iH) * iH;
         }
         if (offY > 0) {
             offY = (offY % iH) - iH;
@@ -1779,7 +1779,7 @@ Game.Launch = function () {
             this.on = 0;
         };
         Game.getTooltip = function (text, origin, isCrate) {
-            origin = origin ? origin : 'middle';
+            origin ||= 'middle';
             if (isCrate)
                 return (
                     'onMouseOut="Game.setOnCrate(0);Game.tooltip.shouldHide=1;" onMouseOver="if (!Game.mouseDown) {Game.setOnCrate(this);Game.tooltip.dynamic=0;Game.tooltip.draw(this,\'' +
@@ -1798,7 +1798,7 @@ Game.Launch = function () {
                 );
         };
         Game.getDynamicTooltip = function (func, origin, isCrate) {
-            origin = origin ? origin : 'middle';
+            origin ||= 'middle';
             if (isCrate)
                 return (
                     'onMouseOut="Game.setOnCrate(0);Game.tooltip.shouldHide=1;" onMouseOver="if (!Game.mouseDown) {Game.setOnCrate(this);Game.tooltip.dynamic=1;Game.tooltip.draw(this,' +
@@ -1828,7 +1828,7 @@ Game.Launch = function () {
                     };
                 })(str);
             }
-            origin = origin ? origin : 'middle';
+            origin ||= 'middle';
             AddEvent(
                 el,
                 'mouseover',
@@ -4478,7 +4478,7 @@ Game.Launch = function () {
                 num += Game.Objects[i].amount;
             }
             num -= Game.Objects['Cursor'].amount;
-            add = add * num;
+            add *= num;
             if (Game.Has('Plastic mouse')) add += Game.cookiesPs * 0.01;
             if (Game.Has('Iron mouse')) add += Game.cookiesPs * 0.01;
             if (Game.Has('Titanium mouse')) add += Game.cookiesPs * 0.01;
@@ -9299,7 +9299,7 @@ Game.Launch = function () {
                             let frame = -1;
                             if (frames > 1) {
                                 frame = prevFrame + Math.floor(Math.random() * (frames - 1) + 1);
-                                frame = frame % frames;
+                                frame %= frames;
                             }
                             prevFrame = frame;
                             // @ts-expect-error
@@ -9720,7 +9720,7 @@ Game.Launch = function () {
                 for (let i in Game.Objects) {
                     if (Game.Objects[i].name != 'Cursor') num += Game.Objects[i].amount;
                 }
-                add = add * num;
+                add *= num;
                 mult *= Game.GetTieredCpsMult(me);
                 mult *= Game.magicCpS('Cursor');
                 mult *= Game.eff('cursorCps');
@@ -22387,11 +22387,10 @@ Game.Launch = function () {
         if (!EN) {
             let adaptWidth = function (/** @type {HTMLElement} */ node) {
                 let el = /** @type {HTMLElement} */(ASSERT_NOT_NULL(node.firstElementChild));
-                let width = el.clientWidth;
+                let width = el.clientWidth / 95;
                 if (el.classList.contains('subButton')) {
-                    if (width / 95 > 1) el.style.padding = '6px 0px';
+                    if (width > 1) el.style.padding = '6px 0px';
                 }
-                width = width / 95;
                 if (width > 1) {
                     el.style.fontSize = (parseInt(window.getComputedStyle(el).fontSize) * 1) / width + 'px';
                     el.style.transform = 'scale(1,' + width + ')';
