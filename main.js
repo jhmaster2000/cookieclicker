@@ -17,46 +17,6 @@ http://orteil.dashnet.org
 let VERSION = 9.999;
 let BETA = 1;
 
-let grabProps = function (arr, prop) {
-    if (!arr) return [];
-    const arr2 = [];
-    for (let i = 0; i < arr.length; i++) {
-        arr2.push(arr[i][prop]);
-    }
-    return arr2;
-};
-
-CanvasRenderingContext2D.prototype.fillPattern = function (img, X, Y, W, H, iW, iH, offX, offY) {
-    // for when built-in patterns aren't enough
-    if (img.alt != 'blank') {
-        offX ||= 0;
-        offY ||= 0;
-        if (offX < 0) {
-            offX -= Math.floor(offX / iW) * iW;
-        }
-        if (offX > 0) {
-            offX = (offX % iW) - iW;
-        }
-        if (offY < 0) {
-            offY -= Math.floor(offY / iH) * iH;
-        }
-        if (offY > 0) {
-            offY = (offY % iH) - iH;
-        }
-        for (let y = offY; y < H; y += iH) {
-            for (let x = offX; x < W; x += iW) {
-                this.drawImage(img, X + x, Y + y, iW, iH);
-            }
-        }
-    }
-};
-
-let OldCanvasDrawImage = CanvasRenderingContext2D.prototype.drawImage;
-CanvasRenderingContext2D.prototype.drawImage = function () {
-    // only draw the image if it's loaded
-    if (arguments[0].alt != 'blank') OldCanvasDrawImage.apply(this, arguments);
-};
-
 if (!document.hasFocus)
     document.hasFocus = function () {
         return document.hidden;

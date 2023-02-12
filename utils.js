@@ -306,3 +306,38 @@ let getAchievementName = function (name) {
     if (found) return loc(found);
     else return name;
 };
+
+//!=====================!\\
+//! Prototype Pollution !\\
+//!=====================!\\
+
+CanvasRenderingContext2D.prototype.fillPattern = function (img, X, Y, W, H, iW, iH, offX, offY) {
+    // for when built-in patterns aren't enough
+    if (img.alt != 'blank') {
+        offX ||= 0;
+        offY ||= 0;
+        if (offX < 0) {
+            offX -= Math.floor(offX / iW) * iW;
+        }
+        if (offX > 0) {
+            offX = (offX % iW) - iW;
+        }
+        if (offY < 0) {
+            offY -= Math.floor(offY / iH) * iH;
+        }
+        if (offY > 0) {
+            offY = (offY % iH) - iH;
+        }
+        for (let y = offY; y < H; y += iH) {
+            for (let x = offX; x < W; x += iW) {
+                this.drawImage(img, X + x, Y + y, iW, iH);
+            }
+        }
+    }
+};
+
+const OldCanvasDrawImage = CanvasRenderingContext2D.prototype.drawImage;
+CanvasRenderingContext2D.prototype.drawImage = function () {
+    // only draw the image if it's loaded
+    if (arguments[0].alt != 'blank') OldCanvasDrawImage.apply(this, arguments);
+};
