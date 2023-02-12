@@ -17,13 +17,6 @@ http://orteil.dashnet.org
 let VERSION = 9.999;
 let BETA = 1;
 
-function bind(scope, fn) {
-    // use : bind(this,function(){this.x++;}) - returns a function where "this" refers to the scoped this
-    return function () {
-        fn.apply(scope, arguments);
-    };
-}
-
 let grabProps = function (arr, prop) {
     if (!arr) return [];
     const arr2 = [];
@@ -143,7 +136,7 @@ let Loader = function () // asset-loading system
                 if (assets[i].indexOf('/') != -1) img.src = assets[i];
                 else img.src = this.domain + assets[i];
                 img.alt = assets[i];
-                img.onload = bind(this, this.onLoad);
+                img.onload = this.onLoad.bind(this);
                 this.assets[assets[i]] = img;
                 this.assetsLoading.push(assets[i]);
             }
@@ -155,7 +148,7 @@ let Loader = function () // asset-loading system
         if (newer.indexOf('/') != -1) img.src = newer;
         else img.src = this.domain + newer;
         img.alt = newer;
-        img.onload = bind(this, this.onLoad);
+        img.onload = this.onLoad.bind(this);
         this.assets[old] = img;
     };
     this.onLoad = function (e) {
