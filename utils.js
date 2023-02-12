@@ -102,7 +102,7 @@ const localStorageGet = function (key) {
     /** @type number | string | null */
     let local = 0;
     try {
-        local = window.localStorage.getItem(key);
+        local = localStorage.getItem(key);
     } catch (exception) {
         /* empty */
     }
@@ -112,7 +112,7 @@ const localStorageSet = function (key, str) {
     /** @type number | void */
     let local = 0;
     try {
-        local = window.localStorage.setItem(key, str);
+        local = localStorage.setItem(key, str);
     } catch (exception) {
         /* empty */
     }

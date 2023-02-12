@@ -14,8 +14,8 @@ Spoilers ahead.
 http://orteil.dashnet.org
 */
 
-let VERSION = 9.999;
-let BETA = 1;
+const VERSION = 9.999;
+const BETA = 1;
 
 if (!document.hasFocus)
     document.hasFocus = function () {
@@ -245,7 +245,7 @@ let Game = {};
 Game.version = VERSION;
 Game.loadedFromVersion = VERSION;
 Game.beta = BETA;
-if (window.location.href.indexOf('/beta') > -1) Game.beta = 1;
+if (location.href.indexOf('/beta') > -1) Game.beta = 1;
 Game.https = location.protocol !== 'https:' ? false : true;
 Game.SaveTo = 'CookieClickerGame';
 if (Game.beta) Game.SaveTo = 'CookieClickerGameBeta';
@@ -1640,8 +1640,8 @@ Game.Launch = function () {
         );
         AddEvent($('httpsSwitch'), 'click', function () {
             PlaySound('snd/pop' + Math.floor(Math.random() * 3 + 1) + '.mp3', 0.75);
-            if (location.protocol == 'https:') location.href = 'http:' + window.location.href.substring(window.location.protocol.length);
-            else if (location.protocol == 'http:') location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+            if (location.protocol == 'https:') location.href = 'http:' + location.href.substring(location.protocol.length);
+            else if (location.protocol == 'http:') location.href = 'https:' + location.href.substring(location.protocol.length);
         });
 
         AddEvent($('changeLanguage'), 'click', function () {
