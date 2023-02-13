@@ -763,13 +763,13 @@ M.launch = function () {
         M.graph = div;
         M.graphCtx = M.graph.getContext('2d', { alpha: false });
 
-        AddEvent($('bankGraphLines'), 'click', function () {
+        $('bankGraphLines').addEventListener('click', function () {
             if (M.graphLines == 0) M.graphLines = 1;
             else M.graphLines = 0;
             M.toRedraw = 2;
             PlaySound('snd/tick.mp3');
         });
-        AddEvent($('bankGraphCols'), 'click', function () {
+        $('bankGraphCols').addEventListener('click', function () {
             if (M.graphCols == 0) M.graphCols = 1;
             else M.graphCols = 0;
             M.setCols();
@@ -777,7 +777,7 @@ M.launch = function () {
             PlaySound('snd/tick.mp3');
         });
         if ($('bankCheatSpeed')) {
-            AddEvent($('bankCheatSpeed'), 'click', function () {
+            $('bankCheatSpeed', true).addEventListener('click', function () {
                 if (M.secondsPerTick == 60) M.secondsPerTick = 1 / 10;
                 else M.secondsPerTick = 60;
                 M.toRedraw = 2;
@@ -785,7 +785,7 @@ M.launch = function () {
             });
         }
 
-        AddEvent($('bankOfficeUpgrade'), 'click', function (e) {
+        $('bankOfficeUpgrade', true).addEventListener('click', function (e) {
             let me = M.offices[M.officeLevel];
             if (me.cost && Game.Objects['Cursor'].amount >= me.cost[0] && Game.Objects['Cursor'].level >= me.cost[1]) {
                 Game.Objects['Cursor'].sacrifice(me.cost[0]);
@@ -795,7 +795,7 @@ M.launch = function () {
                 Game.SparkleOn(e.target);
             }
         });
-        AddEvent($('bankBrokersBuy'), 'click', function (e) {
+        $('bankBrokersBuy', true).addEventListener('click', function (e) {
             if (M.brokers < M.getMaxBrokers() && Game.cookies >= M.getBrokerPrice()) {
                 Game.Spend(M.getBrokerPrice());
                 M.brokers += 1;
@@ -804,19 +804,19 @@ M.launch = function () {
             }
         });
 
-        AddEvent($('bankLoan1'), 'click', function (e) {
+        $('bankLoan1', true).addEventListener('click', function (e) {
             if (M.takeLoan(1)) {
                 PlaySound('snd/cashIn2.mp3', 0.6);
                 Game.SparkleOn(e.target);
             }
         });
-        AddEvent($('bankLoan2'), 'click', function (e) {
+        $('bankLoan2', true).addEventListener('click', function (e) {
             if (M.takeLoan(2)) {
                 PlaySound('snd/cashIn2.mp3', 0.6);
                 Game.SparkleOn(e.target);
             }
         });
-        AddEvent($('bankLoan3'), 'click', function (e) {
+        $('bankLoan3', true).addEventListener('click', function (e) {
             if (M.takeLoan(3)) {
                 PlaySound('snd/cashIn2.mp3', 0.6);
                 Game.SparkleOn(e.target);
@@ -834,8 +834,7 @@ M.launch = function () {
             me.viewHideL = $('bankGood-' + me.id + '-viewHide');
             me.graphIconL = $('bankGood-' + me.id + '-graphIcon');
 
-            AddEvent(
-                $('bankGood-' + i),
+            $('bankGood-' + i, true).addEventListener(
                 'mouseover',
                 (function (i) {
                     return function () {
@@ -846,8 +845,7 @@ M.launch = function () {
                     };
                 })(i)
             );
-            AddEvent(
-                $('bankGood-' + i),
+            $('bankGood-' + i, true).addEventListener(
                 'mouseout',
                 (function (i) {
                     return function () {
@@ -859,8 +857,7 @@ M.launch = function () {
                 })(i)
             );
 
-            AddEvent(
-                $('bankGood-' + i + '-viewHide'),
+            $('bankGood-' + i + '-viewHide', true).addEventListener(
                 'click',
                 (function (i) {
                     return function () {
@@ -885,8 +882,7 @@ M.launch = function () {
                 })(i)
             );
 
-            AddEvent(
-                $('bankGood-' + i + '_1'),
+            $('bankGood-' + i + '_1', true).addEventListener(
                 'click',
                 (function (i) {
                     return function (e) {
@@ -894,8 +890,7 @@ M.launch = function () {
                     };
                 })(i)
             );
-            AddEvent(
-                $('bankGood-' + i + '_-1'),
+            $('bankGood-' + i + '_-1', true).addEventListener(
                 'click',
                 (function (i) {
                     return function (e) {
@@ -903,8 +898,7 @@ M.launch = function () {
                     };
                 })(i)
             );
-            AddEvent(
-                $('bankGood-' + i + '_10'),
+            $('bankGood-' + i + '_10', true).addEventListener(
                 'click',
                 (function (i) {
                     return function (e) {
@@ -912,8 +906,7 @@ M.launch = function () {
                     };
                 })(i)
             );
-            AddEvent(
-                $('bankGood-' + i + '_-10'),
+            $('bankGood-' + i + '_-10', true).addEventListener(
                 'click',
                 (function (i) {
                     return function (e) {
@@ -921,8 +914,7 @@ M.launch = function () {
                     };
                 })(i)
             );
-            AddEvent(
-                $('bankGood-' + i + '_100'),
+            $('bankGood-' + i + '_100', true).addEventListener(
                 'click',
                 (function (i) {
                     return function (e) {
@@ -930,8 +922,7 @@ M.launch = function () {
                     };
                 })(i)
             );
-            AddEvent(
-                $('bankGood-' + i + '_-100'),
+            $('bankGood-' + i + '_-100', true).addEventListener(
                 'click',
                 (function (i) {
                     return function (e) {
@@ -939,8 +930,7 @@ M.launch = function () {
                     };
                 })(i)
             );
-            AddEvent(
-                $('bankGood-' + i + '_Max'),
+            $('bankGood-' + i + '_Max', true).addEventListener(
                 'click',
                 (function (i) {
                     return function (e) {
@@ -948,8 +938,7 @@ M.launch = function () {
                     };
                 })(i)
             );
-            AddEvent(
-                $('bankGood-' + i + '_-All'),
+            $('bankGood-' + i + '_-All', true).addEventListener(
                 'click',
                 (function (i) {
                     return function (e) {
@@ -959,7 +948,7 @@ M.launch = function () {
             );
         }
 
-        AddEvent(M.graph, 'mousemove', function (e) {
+        M.graph.addEventListener('mousemove', function (e) {
             //get which graph line the mouse is over
             let x = e.layerX;
             let y = e.layerY;
@@ -1014,7 +1003,7 @@ M.launch = function () {
                 M.toRedraw = 2;
             }
         });
-        AddEvent(M.graph, 'mouseout', function () {
+        M.graph.addEventListener('mouseout', function () {
             M.graph.style.cursor = 'auto';
             if (M.hoverOnGood != -1) {
                 M.hoverOnGood = -1;

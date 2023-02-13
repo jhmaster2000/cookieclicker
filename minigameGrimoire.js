@@ -459,8 +459,7 @@ M.launch = function () {
         M.infoL = $('grimoireInfo');
         for (let i in M.spells) {
             let me = M.spells[i];
-            AddEvent(
-                $('grimoireSpell' + me.id),
+            $('grimoireSpell' + me.id, true).addEventListener(
                 'click',
                 (function (spell) {
                     return function () {
@@ -480,7 +479,7 @@ M.launch = function () {
                 '</div>'
             );
         };
-        AddEvent(M.lumpRefill, 'click', function () {
+        M.lumpRefill.addEventListener('click', function () {
             if (M.magic < M.magicM) {
                 Game.refillLump(1, function () {
                     M.magic += 100;

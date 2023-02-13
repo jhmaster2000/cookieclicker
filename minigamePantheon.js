@@ -443,8 +443,7 @@ M.launch = function () {
 
         for (let i in M.gods) {
             let me = M.gods[i];
-            AddEvent(
-                $('templeGodDrag' + me.id),
+            $('templeGodDrag' + me.id, true).addEventListener(
                 'mousedown',
                 (function (what) {
                     return function (e) {
@@ -454,8 +453,7 @@ M.launch = function () {
                     };
                 })(me)
             );
-            AddEvent(
-                $('templeGodDrag' + me.id),
+            $('templeGodDrag' + me.id, true).addEventListener(
                 'mouseup',
                 (function (what) {
                     return function (e) {
@@ -467,9 +465,7 @@ M.launch = function () {
             );
         }
         for (let i in M.slot) {
-            let me = M.slot[i];
-            AddEvent(
-                $('templeSlot' + i),
+            $('templeSlot' + i, true).addEventListener(
                 'mouseover',
                 (function (what) {
                     return function () {
@@ -477,8 +473,7 @@ M.launch = function () {
                     };
                 })(i)
             );
-            AddEvent(
-                $('templeSlot' + i),
+            $('templeSlot' + i, true).addEventListener(
                 'mouseout',
                 (function () {
                     return function (e) {
@@ -490,7 +485,7 @@ M.launch = function () {
             );
         }
 
-        AddEvent(document, 'mouseup', M.dropGod);
+        document.addEventListener('mouseup', M.dropGod);
 
         M.refillTooltip = function () {
             return (
@@ -501,7 +496,7 @@ M.launch = function () {
                 '</div>'
             );
         };
-        AddEvent(M.lumpRefill, 'click', function () {
+        M.lumpRefill.addEventListener('click', function () {
             if (M.swaps < 3) {
                 Game.refillLump(1, function () {
                     M.swaps = 3;

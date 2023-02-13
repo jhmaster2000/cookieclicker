@@ -1495,8 +1495,7 @@ M.launch = function () {
             for (let i in M.plants) {
                 let me = M.plants[i];
                 me.l = $('gardenSeed-' + me.id);
-                AddEvent(
-                    me.l,
+                me.l.addEventListener(
                     'click',
                     (function (me) {
                         return function () {
@@ -1524,8 +1523,8 @@ M.launch = function () {
                         };
                     })(me)
                 );
-                AddEvent(me.l, 'mouseover', M.hideCursor);
-                AddEvent(me.l, 'mouseout', M.showCursor);
+                me.l.addEventListener('mouseover', M.hideCursor);
+                me.l.addEventListener('mouseout', M.showCursor);
                 if (me.unlocked) me.l.classList.remove('locked');
             }
 
@@ -1557,9 +1556,9 @@ M.launch = function () {
 
             for (let i in M.tools) {
                 let me = M.tools[i];
-                AddEvent($('gardenTool-' + me.id), 'click', me.func);
-                AddEvent($('gardenTool-' + me.id), 'mouseover', M.hideCursor);
-                AddEvent($('gardenTool-' + me.id), 'mouseout', M.showCursor);
+                $('gardenTool-' + me.id, true).addEventListener('click', me.func);
+                $('gardenTool-' + me.id, true).addEventListener('mouseover', M.hideCursor);
+                $('gardenTool-' + me.id, true).addEventListener('mouseout', M.showCursor);
             }
 
             let str = '';
@@ -1588,8 +1587,7 @@ M.launch = function () {
 
             for (let i in M.soils) {
                 let me = M.soils[i];
-                AddEvent(
-                    $('gardenSoil-' + me.id),
+                $('gardenSoil-' + me.id, true).addEventListener(
                     'click',
                     (function (me) {
                         return function () {
@@ -1612,8 +1610,8 @@ M.launch = function () {
                         };
                     })(me)
                 );
-                AddEvent($('gardenSoil-' + me.id), 'mouseover', M.hideCursor);
-                AddEvent($('gardenSoil-' + me.id), 'mouseout', M.showCursor);
+                $('gardenSoil-' + me.id, true).addEventListener('mouseover', M.hideCursor);
+                $('gardenSoil-' + me.id, true).addEventListener('mouseout', M.showCursor);
             }
 
             M.cursorL = $('gardenCursor');
@@ -1645,8 +1643,7 @@ M.launch = function () {
 
                 for (let y = 0; y < 6; y++) {
                     for (let x = 0; x < 6; x++) {
-                        AddEvent(
-                            $('gardenTile-' + x + '-' + y),
+                        $('gardenTile-' + x + '-' + y, true).addEventListener(
                             'click',
                             (function (x, y) {
                                 return function () {
@@ -1946,7 +1943,7 @@ M.launch = function () {
         M.buildPanel();
 
         M.lumpRefill = $('gardenLumpRefill');
-        AddEvent(M.lumpRefill, 'click', function () {
+        M.lumpRefill.addEventListener('click', function () {
             Game.refillLump(1, function () {
                 M.loopsMult = 3;
                 M.nextSoil = Date.now();
@@ -1955,7 +1952,7 @@ M.launch = function () {
                 PlaySound('snd/pop' + Math.floor(Math.random() * 3 + 1) + '.mp3', 0.75);
             });
         });
-        AddEvent($('gardenSeedsUnlocked'), 'click', function () {
+        $('gardenSeedsUnlocked', true).addEventListener('click', function () {
             if (Game.sesame) {
                 if (Game.keys[16] && Game.keys[17]) {
                     //ctrl & shift, fill garden with random plants

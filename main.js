@@ -17,24 +17,19 @@ http://orteil.dashnet.org
 const VERSION = 9.999;
 const BETA = 1;
 
-if (!document.hasFocus)
-    document.hasFocus = function () {
-        return document.hidden;
-    }; // for Opera
+const KeyCode = {
+    TAB: 9,
+    ENTER: 13,
+    SHIFT: 16,
+    CTRL: 17,
+    ESCAPE: 27,
+    LETTER_O: 79,
+    LETTER_P: 80,
+    LETTER_Q: 81,
+    LETTER_R: 82,
+    LETTER_S: 83,
+};
 
-function AddEvent(el, ev, func) {
-    if (el.addEventListener) {
-        el.addEventListener(ev, func, false);
-        return [el, ev, func];
-    } else if (el.attachEvent) {
-        let func2 = function () {
-            func.call(el);
-        };
-        el.attachEvent('on' + ev, func2);
-        return [el, ev, func2];
-    }
-    return false;
-}
 function RemoveEvent(evObj) {
     // ie. RemoveEvent(myListener);
     if (!evObj) return false;
@@ -278,10 +273,10 @@ Game.Launch = function () {
     }
 
     Game.visible = true;
-    AddEvent(document, 'visibilitychange', function (e) {
+    document.addEventListener('visibilitychange', function (e) {
         if (document.visibilityState === 'hidden') Game.visible = false;
         else Game.visible = true;
-    });
+    }, false);
 
     if (!EN) {
         // code-patching the CSS for localization feels like it should be against the law, and yet
@@ -1348,7 +1343,7 @@ Game.Launch = function () {
         Game.bakeryNamePromptRandom = function () {
             $('bakeryNameInput', true).value = Game.RandomBakeryName();
         };
-        AddEvent(Game.bakeryNameL, 'click', Game.bakeryNamePrompt);
+        Game.bakeryNameL.addEventListener('click', Game.bakeryNamePrompt, false);
 
         Game.bakeryNameSet(Game.GetBakeryName());
 
@@ -1553,8 +1548,7 @@ Game.Launch = function () {
                 })(str);
             }
             origin ||= 'middle';
-            AddEvent(
-                el,
+            el.addEventListener(
                 'mouseover',
                 (function (func, el, origin) {
                     return function () {
@@ -1563,8 +1557,7 @@ Game.Launch = function () {
                     };
                 })(func, el, origin)
             );
-            AddEvent(
-                el,
+            el.addEventListener(
                 'mouseout',
                 (function () {
                     return function () {
@@ -1638,13 +1631,13 @@ Game.Launch = function () {
             '</div>',
             'this'
         );
-        AddEvent($('httpsSwitch'), 'click', function () {
+        $('httpsSwitch', true).addEventListener('click', function () {
             PlaySound('snd/pop' + Math.floor(Math.random() * 3 + 1) + '.mp3', 0.75);
             if (location.protocol == 'https:') location.href = 'http:' + location.href.substring(location.protocol.length);
             else if (location.protocol == 'http:') location.href = 'https:' + location.href.substring(location.protocol.length);
         });
 
-        AddEvent($('changeLanguage'), 'click', function () {
+        $('changeLanguage', true).addEventListener('click', function () {
             Game.showLangSelection();
         });
 
@@ -3406,7 +3399,7 @@ Game.Launch = function () {
 
         Game.UpdateAscensionModePrompt();
 
-        AddEvent($('ascendButton'), 'click', function () {
+        $('ascendButton', true).addEventListener('click', function () {
             PlaySound('snd/tick.mp3');
             Game.Reincarnate();
         });
@@ -3789,8 +3782,7 @@ Game.Launch = function () {
             if (Game.DebuggingPrestige) {
                 for (let i in Game.PrestigeUpgrades) {
                     let me = Game.PrestigeUpgrades[i];
-                    AddEvent(
-                        $('heavenlyUpgrade' + me.id),
+                    $('heavenlyUpgrade' + me.id, true).addEventListener(
                         'mousedown',
                         (function (me) {
                             return function () {
@@ -3830,8 +3822,7 @@ Game.Launch = function () {
                             };
                         })(me)
                     );
-                    AddEvent(
-                        $('heavenlyUpgrade' + me.id),
+                    $('heavenlyUpgrade' + me.id, true).addEventListener(
                         'mouseup',
                         (function (me) {
                             return function () {
@@ -4354,78 +4345,75 @@ Game.Launch = function () {
         Game.Scroll = 0;
         Game.mouseDown = 0;
         if (!Game.touchEvents) {
-            AddEvent(bigCookie, 'click', Game.ClickCookie);
-            AddEvent(bigCookie, 'mousedown', function (event) {
+            bigCookie.addEventListener('click', Game.ClickCookie);
+            bigCookie.addEventListener('mousedown', function (event) {
                 Game.BigCookieState = 1;
-                if (Game.prefs.cookiesound) {
-                    Game.playCookieClickSound();
-                }
+                if (Game.prefs.cookiesound) Game.playCookieClickSound();
                 if (event) event.preventDefault();
             });
-            AddEvent(bigCookie, 'mouseup', function (event) {
+            bigCookie.addEventListener('mouseup', function (event) {
                 Game.BigCookieState = 2;
                 if (event) event.preventDefault();
             });
-            AddEvent(bigCookie, 'mouseout', function (event) {
+            bigCookie.addEventListener('mouseout', function () {
                 Game.BigCookieState = 0;
             });
-            AddEvent(bigCookie, 'mouseover', function (event) {
+            bigCookie.addEventListener('mouseover', function () {
                 Game.BigCookieState = 2;
             });
-            AddEvent(document, 'mousemove', Game.GetMouseCoords);
-            AddEvent(document, 'mousedown', function (event) {
+            document.addEventListener('mousemove', Game.GetMouseCoords);
+            document.addEventListener('mousedown', function (event) {
                 Game.lastActivity = Game.time;
                 Game.mouseDown = 1;
                 Game.clickFrom = event.target;
             });
-            AddEvent(document, 'mouseup', function (event) {
+            document.addEventListener('mouseup', function () {
                 Game.lastActivity = Game.time;
                 Game.mouseDown = 0;
                 Game.clickFrom = 0;
             });
-            AddEvent(document, 'click', function (event) {
+            document.addEventListener('click', function (event) {
                 Game.lastActivity = Game.time;
                 Game.Click = 1;
                 Game.lastClickedEl = event.target;
                 Game.clickFrom = 0;
             });
             Game.handleScroll = function (e) {
-                if (!e) e = event;
                 Game.Scroll = e.detail < 0 || e.wheelDelta > 0 ? 1 : -1;
                 Game.lastActivity = Game.time;
             };
-            AddEvent(document, 'DOMMouseScroll', Game.handleScroll);
-            AddEvent(document, 'mousewheel', Game.handleScroll);
+            document.addEventListener('DOMMouseScroll', Game.handleScroll);
+            document.addEventListener('mousewheel', Game.handleScroll);
         } else {
             // touch events
-            AddEvent(bigCookie, 'touchend', Game.ClickCookie);
-            AddEvent(bigCookie, 'touchstart', function (event) {
+            bigCookie.addEventListener('touchend', Game.ClickCookie);
+            bigCookie.addEventListener('touchstart', function (event) {
                 Game.BigCookieState = 1;
                 if (event) event.preventDefault();
             });
-            AddEvent(bigCookie, 'touchend', function (event) {
+            bigCookie.addEventListener('touchend', function (event) {
                 Game.BigCookieState = 0;
                 if (event) event.preventDefault();
             });
-            AddEvent(document, 'mousemove', Game.GetMouseCoords);
-            AddEvent(document, 'touchstart', function (event) {
+            document.addEventListener('mousemove', Game.GetMouseCoords);
+            document.addEventListener('touchstart', function (event) {
                 Game.lastActivity = Game.time;
                 Game.mouseDown = 1;
             });
-            AddEvent(document, 'touchend', function (event) {
+            document.addEventListener('touchend', function (event) {
                 Game.lastActivity = Game.time;
                 Game.mouseDown = 0;
             });
-            AddEvent(document, 'touchend', function (event) {
+            document.addEventListener('touchend', function (event) {
                 Game.lastActivity = Game.time;
                 Game.Click = 1;
             });
         }
 
         Game.keys = [];
-        AddEvent(window, 'keyup', function (e) {
+        window.addEventListener('keyup', function (e) {
             Game.lastActivity = Game.time;
-            if (e.keyCode == 27) {
+            if (e.keyCode == KeyCode.ESCAPE) {
                 if (Game.promptOn && !Game.promptNoClose) {
                     Game.ClosePrompt();
                     PlaySound('snd/tickOff.mp3');
@@ -4433,13 +4421,13 @@ Game.Launch = function () {
                 if (Game.AscendTimer > 0) Game.AscendTimer = Game.AscendDuration;
             } // esc closes prompt
             if (Game.promptOn) {
-                if (e.keyCode == 13) Game.ConfirmPrompt(); // enter confirms prompt
+                if (e.keyCode == KeyCode.ENTER) Game.ConfirmPrompt(); // enter confirms prompt
             }
             Game.keys[e.keyCode] = 0;
         });
-        AddEvent(window, 'keydown', function (e) {
+        window.addEventListener('keydown', function (e) {
             if (Game.promptOn) {
-                if (e.keyCode == 9) {
+                if (e.keyCode == KeyCode.TAB) {
                     // tab to shift through prompt buttons
                     if (e.shiftKey) Game.FocusPromptOption(-1);
                     else Game.FocusPromptOption(1);
@@ -4447,21 +4435,21 @@ Game.Launch = function () {
                 }
             }
             if (!Game.OnAscend && Game.AscendTimer == 0) {
-                if (e.ctrlKey && e.keyCode == 83) {
+                if (e.ctrlKey && e.keyCode == KeyCode.LETTER_S) {
                     Game.toSave = true;
                     e.preventDefault();
                 } // ctrl-s saves the game
-                else if (e.ctrlKey && e.keyCode == 79) {
+                else if (e.ctrlKey && e.keyCode == KeyCode.LETTER_O) {
                     Game.ImportSave();
                     e.preventDefault();
                 } // ctrl-o opens the import menu
             }
-            if ((e.keyCode == 16 || e.keyCode == 17) && Game.tooltip.dynamic) Game.tooltip.update();
+            if ((e.keyCode == KeyCode.SHIFT || e.keyCode == KeyCode.CTRL) && Game.tooltip.dynamic) Game.tooltip.update();
             Game.keys[e.keyCode] = 1;
-            if (e.keyCode == 9) Game.keys = []; // reset keys on tab press
+            if (e.keyCode == KeyCode.TAB) Game.keys = []; // reset keys on tab press
         });
 
-        AddEvent(window, 'visibilitychange', function (e) {
+        window.addEventListener('visibilitychange', function (e) {
             Game.keys = []; // reset all key pressed on visibility change (should help prevent ctrl still being down after ctrl-tab)
         });
 
@@ -4720,8 +4708,7 @@ Game.Launch = function () {
             this.l = document.createElement('div');
             this.l.className = 'shimmer';
             if (!Game.touchEvents) {
-                AddEvent(
-                    this.l,
+                this.l.addEventListener(
                     'click',
                     (function (what) {
                         return function (event) {
@@ -4731,8 +4718,7 @@ Game.Launch = function () {
                     })(this)
                 );
             } else {
-                AddEvent(
-                    this.l,
+                this.l.addEventListener(
                     'touchend',
                     (function (what) {
                         return function (event) {
@@ -5806,9 +5792,9 @@ Game.Launch = function () {
         /* =====================================================================================
         PROMPT
         =======================================================================================*/
-        Game.darkenL = $('darken');
-        AddEvent(Game.darkenL, 'click', function () {
-            if (Game.promptNoClose) { /* empty */ } else {
+        Game.darkenL = $('darken', true);
+        Game.darkenL.addEventListener('click', function () {
+            if (!Game.promptNoClose) {
                 Game.Click = 0;
                 PlaySound('snd/tickOff.mp3');
                 Game.ClosePrompt();
@@ -6144,29 +6130,22 @@ Game.Launch = function () {
                 firstLaunch ? 0 : [loc('Cancel')]
             );
 
-            for (let i in Langs) {
-                let lang = Langs[i];
-                AddEvent(
-                    $('langSelect-' + i),
+            for (const lang in Langs) {
+                $('langSelect-' + lang, true).addEventListener(
                     'click',
-                    (function (lang) {
-                        return function () {
-                            PlaySound('snd/tick.mp3');
-                            localStorageSet('CookieClickerLang', lang);
-                            Game.toSave = true;
-                            Game.toReload = true;
-                        };
-                    })(i)
+                    function () {
+                        PlaySound('snd/tick.mp3');
+                        localStorageSet('CookieClickerLang', lang);
+                        Game.toSave = true;
+                        Game.toReload = true;
+                    }
                 );
-                AddEvent(
-                    $('langSelect-' + i),
+                $('langSelect-' + lang, true).addEventListener(
                     'mouseover',
-                    (function (lang) {
-                        return function () {
-                            PlaySound('snd/smallTick.mp3', 0.75);
-                            $('languageSelectHeader', true).innerHTML = Langs[lang].changeLanguage;
-                        };
-                    })(i)
+                    function () {
+                        PlaySound('snd/smallTick.mp3', 0.75);
+                        $('languageSelectHeader', true).innerHTML = Langs[lang].changeLanguage;
+                    }
                 );
             }
         };
@@ -6832,16 +6811,16 @@ Game.Launch = function () {
             $('menu', true).innerHTML = str;
         };
 
-        AddEvent($('prefsButton'), 'click', function () {
+        $('prefsButton', true).addEventListener('click', function () {
             Game.ShowMenu('prefs');
         });
-        AddEvent($('statsButton'), 'click', function () {
+        $('statsButton', true).addEventListener('click', function () {
             Game.ShowMenu('stats');
         });
-        AddEvent($('logButton'), 'click', function () {
+        $('logButton', true).addEventListener('click', function () {
             Game.ShowMenu('log');
         });
-        AddEvent($('legacyButton'), 'click', function () {
+        $('legacyButton', true).addEventListener('click', function () {
             PlaySound('snd/tick.mp3');
             Game.Ascend();
         });
@@ -8168,7 +8147,7 @@ Game.Launch = function () {
             void Game.tickerL.offsetWidth;
             Game.tickerL.className = 'commentsText risingUp';
         };
-        AddEvent(Game.tickerL, 'click', function (event) {
+        Game.tickerL.addEventListener('click', function (event) {
             Game.Ticker = '';
             Game.TickerClicks++;
             if (Game.windowW < Game.tickerTooNarrow) {
@@ -9315,8 +9294,7 @@ Game.Launch = function () {
 
                 // these are a bit messy but ah well
                 if (!Game.touchEvents) {
-                    AddEvent(
-                        me.l,
+                    me.l.addEventListener(
                         'click',
                         (function (what) {
                             return function (e) {
@@ -9326,8 +9304,7 @@ Game.Launch = function () {
                         })(me.id)
                     );
                 } else {
-                    AddEvent(
-                        me.l,
+                    me.l.addEventListener(
                         'touchend',
                         (function (what) {
                             return function (e) {
@@ -10145,8 +10122,7 @@ Game.Launch = function () {
                     Game.getDynamicTooltip('Game.mutedBuildingTooltip(' + me.id + ')', 'this') +
                     '></div>';
 
-                AddEvent(
-                    me.canvas,
+                me.canvas.addEventListener(
                     'mouseover',
                     (function (me) {
                         return function () {
@@ -10154,8 +10130,7 @@ Game.Launch = function () {
                         };
                     })(me)
                 );
-                AddEvent(
-                    me.canvas,
+                me.canvas.addEventListener(
                     'mouseout',
                     (function (me) {
                         return function () {
@@ -10163,8 +10138,7 @@ Game.Launch = function () {
                         };
                     })(me)
                 );
-                AddEvent(
-                    me.canvas,
+                me.canvas.addEventListener(
                     'mousemove',
                     (function (me) {
                         return function (e) {
@@ -21720,8 +21694,7 @@ Game.Launch = function () {
                                     this.s +
                                     'px;background:#999;position:absolute;left:0px;top:0px;z-index:10000000;transform:translate(-1000px,-1000px);';
                                 $('sectionLeft', true).appendChild(this.l);
-                                AddEvent(
-                                    this.l,
+                                this.l.addEventListener(
                                     'mousedown',
                                     (function (what) {
                                         return function () {
@@ -21729,8 +21702,7 @@ Game.Launch = function () {
                                         };
                                     })(this)
                                 );
-                                AddEvent(
-                                    this.l,
+                                this.l.addEventListener(
                                     'mouseup',
                                     (function (what) {
                                         return function () {
@@ -22948,8 +22920,7 @@ window.onload = function () {
                 '<div class="line" style="max-width:300px;"></div>' + str;
             for (let i in Langs) {
                 let lang = Langs[i];
-                AddEvent(
-                    $('langSelect-' + i),
+                $('langSelect-' + i, true).addEventListener(
                     'click',
                     (function (lang) {
                         return function () {
@@ -22957,8 +22928,7 @@ window.onload = function () {
                         };
                     })(i)
                 );
-                AddEvent(
-                    $('langSelect-' + i),
+                $('langSelect-' + i, true).addEventListener(
                     'mouseover',
                     (function (lang) {
                         return function () {
