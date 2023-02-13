@@ -17,69 +17,15 @@ http://orteil.dashnet.org
 const VERSION = 9.999;
 const BETA = 1;
 
-let Loader = function () // asset-loading system
-{
-    this.loadingN = 0;
-    this.assetsN = 0;
-    this.assets = [];
-    this.assetsLoading = [];
-    this.assetsLoaded = [];
-    this.domain = '';
-    this.loaded = 0; // callback
-    this.doneLoading = 0;
+const BLANK_CANVAS = document.createElement('canvas');
+BLANK_CANVAS.width = 8;
+BLANK_CANVAS.height = 8;
+BLANK_CANVAS.alt = 'blank';
 
-    this.blank = document.createElement('canvas');
-    this.blank.width = 8;
-    this.blank.height = 8;
-    this.blank.alt = 'blank';
-
-    this.Load = function (assets) {
-        for (let i in assets) {
-            this.loadingN++;
-            this.assetsN++;
-            if (!this.assetsLoading[assets[i]] && !this.assetsLoaded[assets[i]]) {
-                let img = new Image();
-                if (assets[i].indexOf('/') != -1) img.src = assets[i];
-                else img.src = this.domain + assets[i];
-                img.alt = assets[i];
-                img.onload = this.onLoad.bind(this);
-                this.assets[assets[i]] = img;
-                this.assetsLoading.push(assets[i]);
-            }
-        }
-    };
-    this.Replace = function (old, newer) {
-        if (!this.assets[old]) this.Load([old]);
-        let img = new Image();
-        if (newer.indexOf('/') != -1) img.src = newer;
-        else img.src = this.domain + newer;
-        img.alt = newer;
-        img.onload = this.onLoad.bind(this);
-        this.assets[old] = img;
-    };
-    this.onLoad = function (e) {
-        // @ts-expect-error
-        this.assetsLoaded.push(e.target.alt);
-        // @ts-expect-error
-        this.assetsLoading.splice(this.assetsLoading.indexOf(e.target.alt), 1);
-        // @ts-expect-error
-        this.loadingN--;
-        // @ts-expect-error
-        if (this.doneLoading == 0 && this.loadingN <= 0 && this.loaded != 0) {
-            this.doneLoading = 1;
-            // @ts-expect-error
-            this.loaded();
-        }
-    };
-    this.getProgress = function () {
-        return 1 - this.loadingN / this.assetsN;
-    };
-};
-
-let Pic = function (what) {
+const Pic = function (/** @type {string} */ what) {
     if (Game.Loader.assetsLoaded.indexOf(what) != -1) return Game.Loader.assets[what];
     else if (Game.Loader.assetsLoading.indexOf(what) == -1) Game.Loader.Load([what]);
-    return Game.Loader.blank;
+    return BLANK_CANVAS;
 };
 
 let Sounds = [];
