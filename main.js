@@ -17,24 +17,6 @@ http://orteil.dashnet.org
 const VERSION = 9.999;
 const BETA = 1;
 
-function writeIcon(icon) {
-    // returns CSS for an icon's background image
-    // for use in CSS strings
-    return (
-        `${icon[2] ? `background-image:url('${icon[2].replace(/'/g, '\\\'')}');` : ''}background-position:${-icon[0] * 48}px ${-icon[1] * 48}px;`
-    );
-}
-function tinyIcon(icon, css) {
-    // returns HTML displaying an icon, with optional extra CSS
-    return (
-        '<div class="icon tinyIcon" style="vertical-align:middle;display:inline-block;' +
-        writeIcon(icon) +
-        'transform:scale(0.5);margin:-16px;' +
-        (css ? css : '') +
-        '"></div>'
-    );
-}
-
 let Loader = function () // asset-loading system
 {
     this.loadingN = 0;
