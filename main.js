@@ -3106,7 +3106,7 @@ Game.Launch = function () {
                                 ? 'Click to ' + purchase + '. Shift-click to vault.'
                                 : loc('Click to purchase.') + ' ' + loc('%1 to vault.', loc('Shift-click'));
                         if (EN) {
-                            if (Game.keys[16]) tip += '<br>(You are holding Shift.)';
+                            if (Game.keys['ShiftRight'] || Game.keys['ShiftLeft']) tip += '<br>(You are holding Shift.)';
                             else tip += '<br>(You are not holding Shift.)';
                         }
                     } else tip = EN ? 'Click to ' + purchase + '.' : loc('Click to purchase.');
@@ -3519,10 +3519,10 @@ Game.Launch = function () {
         Game.AscendGridSnap = 24;
         Game.heavenlyBounds = { left: 0, right: 0, top: 0, bottom: 0 };
         Game.UpdateAscend = function () {
-            if (Game.keys[37]) Game.AscendOffXT += 16 * (1 / Game.AscendZoomT);
-            if (Game.keys[38]) Game.AscendOffYT += 16 * (1 / Game.AscendZoomT);
-            if (Game.keys[39]) Game.AscendOffXT -= 16 * (1 / Game.AscendZoomT);
-            if (Game.keys[40]) Game.AscendOffYT -= 16 * (1 / Game.AscendZoomT);
+            if (Game.keys['ArrowLeft']) Game.AscendOffXT += 16 * (1 / Game.AscendZoomT);
+            if (Game.keys['ArrowUp']) Game.AscendOffYT += 16 * (1 / Game.AscendZoomT);
+            if (Game.keys['ArrowRight']) Game.AscendOffXT -= 16 * (1 / Game.AscendZoomT);
+            if (Game.keys['ArrowDown']) Game.AscendOffYT -= 16 * (1 / Game.AscendZoomT);
 
             if (Game.AscendOffXT > -Game.heavenlyBounds.left) Game.AscendOffXT = -Game.heavenlyBounds.left;
             if (Game.AscendOffXT < -Game.heavenlyBounds.right) Game.AscendOffXT = -Game.heavenlyBounds.right;
@@ -3770,7 +3770,7 @@ Game.Launch = function () {
                             return function () {
                                 let LASTHEAVENLYSELECTED;
                                 if (!Game.DebuggingPrestige) return;
-                                if (Game.keys[16] && typeof LASTHEAVENLYSELECTED !== 'undefined' && me != LASTHEAVENLYSELECTED) {
+                                if ((Game.keys['ShiftRight'] || Game.keys['ShiftLeft']) && typeof LASTHEAVENLYSELECTED !== 'undefined' && me != LASTHEAVENLYSELECTED) {
                                     // when clicking an upgrade with ctrl, set it as reference point; clicking any sibling upgrade with shift will align it in a nice arc around their shared parent
                                     let parent = 0;
                                     for (let i = 0; i < me.parents.length; i++) {
@@ -3796,7 +3796,7 @@ Game.Launch = function () {
                                     LASTHEAVENLYSELECTED = me;
                                     console.log('Set reference point to', me.name, '.');
                                 }
-                                if (Game.keys[17]) {
+                                if (Game.keys['ControlRight'] || Game.keys['ControlLeft']) {
                                     LASTHEAVENLYSELECTED = me;
                                     console.log('Set reference point to', me.name, '.');
                                 }
@@ -4395,7 +4395,7 @@ Game.Launch = function () {
         Game.keys = [];
         window.addEventListener('keyup', function (e) {
             Game.lastActivity = Game.time;
-            if (e.keyCode == KeyCode.ESCAPE) {
+            if (e.key === 'Escape') {
                 if (Game.promptOn && !Game.promptNoClose) {
                     Game.ClosePrompt();
                     PlaySound('snd/tickOff.mp3');
@@ -4403,13 +4403,13 @@ Game.Launch = function () {
                 if (Game.AscendTimer > 0) Game.AscendTimer = Game.AscendDuration;
             } // esc closes prompt
             if (Game.promptOn) {
-                if (e.keyCode == KeyCode.ENTER) Game.ConfirmPrompt(); // enter confirms prompt
+                if (e.key === 'Enter') Game.ConfirmPrompt(); // enter confirms prompt
             }
-            Game.keys[e.keyCode] = 0;
+            Game.keys[e.code] = false;
         });
         window.addEventListener('keydown', function (e) {
             if (Game.promptOn) {
-                if (e.keyCode == KeyCode.TAB) {
+                if (e.key === 'Tab') {
                     // tab to shift through prompt buttons
                     if (e.shiftKey) Game.FocusPromptOption(-1);
                     else Game.FocusPromptOption(1);
@@ -4417,18 +4417,18 @@ Game.Launch = function () {
                 }
             }
             if (!Game.OnAscend && Game.AscendTimer == 0) {
-                if (e.ctrlKey && e.keyCode == KeyCode.LETTER_S) {
+                if (e.ctrlKey && e.code === 'KeyS') {
                     Game.toSave = true;
                     e.preventDefault();
                 } // ctrl-s saves the game
-                else if (e.ctrlKey && e.keyCode == KeyCode.LETTER_O) {
+                else if (e.ctrlKey && e.code === 'KeyO') {
                     Game.ImportSave();
                     e.preventDefault();
                 } // ctrl-o opens the import menu
             }
-            if ((e.keyCode == KeyCode.SHIFT || e.keyCode == KeyCode.CTRL) && Game.tooltip.dynamic) Game.tooltip.update();
-            Game.keys[e.keyCode] = 1;
-            if (e.keyCode == KeyCode.TAB) Game.keys = []; // reset keys on tab press
+            if ((e.key === 'Shift' || e.key === 'Control') && Game.tooltip.dynamic) Game.tooltip.update();
+            Game.keys[e.code] = true;
+            if (e.key === 'Tab') Game.keys = []; // reset keys on tab press
         });
 
         window.addEventListener('visibilitychange', function (e) {
@@ -10245,7 +10245,7 @@ Game.Launch = function () {
         };
 
         Game.Upgrade.prototype.click = function (e) {
-            if ((e && e.shiftKey) || Game.keys[16]) {
+            if ((e && e.shiftKey) || Game.keys['ShiftLeft'] || Game.keys['ShiftRight']) {
                 if (this.pool == 'toggle' || this.pool == 'tech') { /* empty */ } else if (Game.Has('Inspired checklist')) {
                     if (this.isVaulted()) this.unvault();
                     else this.vault();
@@ -19991,7 +19991,7 @@ Game.Launch = function () {
                     if (me.selected && onWrinkler == 0 && Game.CanClick) {
                         me.hurt = Math.max(me.hurt, 0.25);
                         if (Game.Click && Game.lastClickedEl == $('backgroundLeftCanvas')) {
-                            if (Game.keys[17] && Game.sesame) {
+                            if ((Game.keys['ControlRight'] || Game.keys['ControlLeft']) && Game.sesame) {
                                 me.type = !me.type;
                                 PlaySound('snd/shimmerClick.mp3');
                             } // ctrl-click on a wrinkler in god mode to toggle its shininess
@@ -22176,15 +22176,19 @@ Game.Launch = function () {
 
             // press ctrl to bulk-buy 10, shift to bulk-buy 100
             if (!Game.promptOn) {
-                if ((Game.keys[16] || Game.keys[17]) && !Game.buyBulkShortcut) {
+                const holdingShift = Game.keys['ShiftRight'] || Game.keys['ShiftLeft'];
+                const holdingCtrl = Game.keys['ControlRight'] || Game.keys['ControlLeft'];
+                if ((holdingShift || holdingCtrl) && !Game.buyBulkShortcut) {
                     Game.buyBulkOld = Game.buyBulk;
-                    if (Game.keys[16]) Game.buyBulk = 100;
-                    if (Game.keys[17]) Game.buyBulk = 10;
+                    if (Game.keys['ShiftRight'] || Game.keys['ShiftLeft']) Game.buyBulk = 100;
+                    if (Game.keys['ControlRight'] || Game.keys['ControlLeft']) Game.buyBulk = 10;
                     Game.buyBulkShortcut = 1;
                     Game.storeBulkButton(-1);
                 }
             }
-            if (!Game.keys[16] && !Game.keys[17] && Game.buyBulkShortcut) {
+            const holdingShift = Game.keys['ShiftRight'] || Game.keys['ShiftLeft'];
+            const holdingCtrl = Game.keys['ControlRight'] || Game.keys['ControlLeft'];
+            if (!holdingShift && !holdingCtrl && Game.buyBulkShortcut) {
                 // release
                 Game.buyBulk = Game.buyBulkOld;
                 Game.buyBulkShortcut = 0;
