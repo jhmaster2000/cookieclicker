@@ -30,24 +30,6 @@ const KeyCode = {
     LETTER_S: 83,
 };
 
-function RemoveEvent(evObj) {
-    // ie. RemoveEvent(myListener);
-    if (!evObj) return false;
-    if (evObj[0].removeEventListener) evObj[0].removeEventListener(evObj[1], evObj[2], false);
-    else if (evObj[0].detachEvent) evObj[0].detachEvent('on' + evObj[1], evObj[2]);
-    return true;
-}
-
-function FireEvent(el, ev) {
-    if (el.fireEvent) {
-        el.fireEvent('on' + ev);
-    } else {
-        let evObj = document.createEvent('Events');
-        evObj.initEvent(ev, true, false);
-        el.dispatchEvent(evObj);
-    }
-}
-
 function writeIcon(icon) {
     // returns CSS for an icon's background image
     // for use in CSS strings
@@ -5882,7 +5864,7 @@ Game.Launch = function () {
                 $('promptOption' + Game.promptOptionFocus) &&
                 $('promptOption' + Game.promptOptionFocus, true).style.display != 'none'
             )
-                FireEvent($('promptOption' + Game.promptOptionFocus), 'click');
+                $('promptOption' + Game.promptOptionFocus, true).dispatchEvent(new Event('click', { bubbles: true }));
         };
         Game.FocusPromptOption = function (dir, tryN) {
             let id = Game.promptOptionFocus + dir;
