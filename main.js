@@ -17,19 +17,6 @@ http://orteil.dashnet.org
 const VERSION = 9.999;
 const BETA = 1;
 
-const KeyCode = {
-    TAB: 9,
-    ENTER: 13,
-    SHIFT: 16,
-    CTRL: 17,
-    ESCAPE: 27,
-    LETTER_O: 79,
-    LETTER_P: 80,
-    LETTER_Q: 81,
-    LETTER_R: 82,
-    LETTER_S: 83,
-};
-
 function writeIcon(icon) {
     // returns CSS for an icon's background image
     // for use in CSS strings
