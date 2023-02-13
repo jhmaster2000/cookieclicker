@@ -1018,15 +1018,14 @@ M.launch = function () {
                 descFunc: function () {
                     return (
                         'Instantly harvest all plants in your garden.<div class="line"></div>' +
-                        (Game.keys[16] && Game.keys[17]
+                        ((Game.keys['ShiftLeft'] || Game.keys['ShiftRight']) && (Game.keys['ControlLeft'] || Game.keys['ControlRight'])
                             ? '<b>You are holding shift+ctrl.</b> Only mature, mortal plants will be harvested.'
                             : 'Shift+ctrl+click to harvest only mature, mortal plants.')
                     );
                 },
                 func: function () {
                     PlaySound('snd/toneTick.mp3');
-                    /*if (M.freeze){return false;}*/
-                    if (Game.keys[16] && Game.keys[17]) M.harvestAll(0, 1, 1); //ctrl & shift, harvest only mature non-immortal plants
+                    if ((Game.keys['ShiftLeft'] || Game.keys['ShiftRight']) && (Game.keys['ControlLeft'] || Game.keys['ControlRight'])) M.harvestAll(0, 1, 1); //ctrl & shift, harvest only mature non-immortal plants
                     else M.harvestAll();
                 }
             },
@@ -1037,7 +1036,6 @@ M.launch = function () {
                     return 'Cryogenically preserve your garden.<br>Plants no longer grow, spread or die; they provide no benefits.<br>Soil cannot be changed.<div class="line"></div>Using this will effectively pause your garden.<div class="line"></div>'; //<span class="red">'+((M.nextFreeze>Date.now())?'You will be able to freeze your garden again in '+Game.sayTime((M.nextFreeze-Date.now())/1000*30+30,-1)+'.':'After unfreezing your garden, you must wait 10 minutes to freeze it again.')+'</span>
                 },
                 func: function () {
-                    //if (!M.freeze && M.nextFreeze>Date.now()) return false;
                     PlaySound('snd/toneTick.mp3');
                     M.freeze = M.freeze ? 0 : 1;
                     if (M.freeze) {
@@ -1308,7 +1306,7 @@ M.launch = function () {
         };
         M.tileTooltip = function (x, y) {
             return function () {
-                if (Game.keys[16]) return '';
+                if (Game.keys['ShiftLeft'] || Game.keys['ShiftRight']) return '';
                 let tile = M.plot[y][x];
                 if (tile[0] == 0) {
                     let me = M.seedSelected >= 0 ? M.plantsById[M.seedSelected] : 0;
@@ -1499,7 +1497,7 @@ M.launch = function () {
                     'click',
                     (function (me) {
                         return function () {
-                            if (/* !M.freeze && */ Game.keys[16] && Game.keys[17]) {
+                            if ((Game.keys['ShiftLeft'] || Game.keys['ShiftRight']) && (Game.keys['ControlLeft'] || Game.keys['ControlRight'])) {
                                 //shift & ctrl
                                 //harvest all mature of type
                                 M.harvestAll(me, 1);
@@ -1674,7 +1672,6 @@ M.launch = function () {
                         iconL.style.opacity = dying ? 0.5 : 1;
                         iconL.style.backgroundPosition = -icon[0] * 48 + 'px ' + -icon[1] * 48 + 'px';
                         iconL.style.display = 'block';
-                        //iconL.innerHTML=M.plotBoost[y][x];
                     } else iconL.style.display = 'none';
                     if (M.isTileUnlocked(x, y)) tileL.style.display = 'block';
                     else tileL.style.display = 'none';
@@ -1684,10 +1681,9 @@ M.launch = function () {
         };
 
         M.clickTile = function (x, y) {
-            //if (M.freeze) return false;
             let outcome = M.useTool(M.seedSelected, x, y);
             M.toCompute = true;
-            if (outcome && !Game.keys[16]) {
+            if (outcome && !(Game.keys['ShiftLeft'] || Game.keys['ShiftRight'])) {
                 //shift
                 M.seedSelected = -1;
                 for (let i in M.plants) {
@@ -1954,7 +1950,7 @@ M.launch = function () {
         });
         $('gardenSeedsUnlocked', true).addEventListener('click', function () {
             if (Game.sesame) {
-                if (Game.keys[16] && Game.keys[17]) {
+                if ((Game.keys['ShiftLeft'] || Game.keys['ShiftRight']) && (Game.keys['ControlLeft'] || Game.keys['ControlRight'])) {
                     //ctrl & shift, fill garden with random plants
                     for (let y = 0; y < 6; y++) {
                         for (let x = 0; x < 6; x++) {
@@ -2359,7 +2355,7 @@ M.launch = function () {
         if (M.toRebuild) M.buildPlot();
         if (M.toCompute) M.computeEffs();
 
-        if (Game.keys[27]) {
+        if (Game.keys['Escape']) {
             //esc
             if (M.seedSelected > -1) M.plantsById[M.seedSelected].l.classList.remove('on');
             M.seedSelected = -1;

@@ -861,7 +861,7 @@ M.launch = function () {
                 'click',
                 (function (i) {
                     return function () {
-                        if (Game.keys[16]) {
+                        if (Game.keys['ShiftLeft'] || Game.keys['ShiftRight']) {
                             //solo with shift-click
                             let mode = M.goodsById[i].hidden;
                             for (let ii = 0; ii < M.goodsById.length; ii++) {
