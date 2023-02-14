@@ -3,7 +3,9 @@ LAUNCH THIS THING
 =======================================================================================*/
 window.onload = function () {
     if (!Game.ready) {
-        let loadLangAndLaunch = function (lang, firstLaunch) {
+        const loadLangAndLaunch = function (
+            /** @type {string} */ lang, /** @type {boolean=} */ firstLaunch = false
+        ) {
             if (!firstLaunch) localStorageSet('CookieClickerLang', lang);
 
             LoadScript(
@@ -42,6 +44,6 @@ window.onload = function () {
 
         let lang = localStorageGet('CookieClickerLang');
         if (!lang) loadLangAndLaunch('EN', true);
-        else loadLangAndLaunch(lang);
+        else loadLangAndLaunch(String(lang));
     }
 };

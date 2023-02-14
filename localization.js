@@ -1,17 +1,19 @@
 // === LOCALIZATION ===
 
+/** @type {Record<string, string | string[]>} */
 let locStrings = {};
+/** @type {Record<string, string | string[]>} */
 let locStringsFallback = {};
-let locId = 'NONE';
+/** @type {keyof typeof Langs} */
+let locId;
 let EN = true;
+/** @type {{ id: number, type: number, title: string, points: string[] }[]} */
 let locPatches = [];
 let locPlur = 'nplurals=2;plural=(n!=1);'; // see http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
 const locPlurFallback = locPlur;
 // note : plural index will be downgraded to the last matching, ie. in this case, if we get "0" but don't have a 3rd option, use the 2nd option (or 1st, lacking that too)
+/** @type {Record<string, string>} */
 const locStringsByPart = {};
-const FindLocStringByPart = (/** @type {string} */ match) => {
-    return locStringsByPart[match] || undefined;
-};
 
 const Langs = {
     EN: {
@@ -20,8 +22,7 @@ const Langs = {
         name: 'English',
         changeLanguage: 'Language',
         icon: 0,
-        w: 1,
-        isEN: true
+        w: 1
     },
     FR: {
         file: 'FR',
@@ -154,7 +155,7 @@ const loc = (
     /** @type {string | string[]} */
     let str = '';
     if (found) {
-        str = parseLoc(found, params);
+        str = parseLoc(/** @type string */(found), params);
         if (str instanceof Array) return str;
         const noBlink = ['Buildings', 'Switches', 'Upgrades', 'Store', 'Other versions', 'Ascending', '%1 cookie'];
         if (locBlink && !fallback && !noBlink.includes(id)) return '<span class="blinking">' + str + '</span>'; // will make every localized text blink on screen, making omissions obvious; will not work for elements filled with textContent
@@ -228,14 +229,14 @@ const LBeautify = (
  * 
  * if mod is true, this file is augmenting the current language */
 const AddLanguage = (
-    /** @type {string} */ id,
-    /** @type {Record<string, string | string[] | Record<string, string>>} */ json,
+    /** @type {keyof typeof Langs} */ id,
+    /** @type {Record<string, string | string[]> & { '': Record<string, string> }} */ json,
     /** @type {boolean=} */ mod = false
 ) => {
-    if (id == locId && !mod) return false; // don't load twice
+    if (id === locId && !mod) return false; // don't load twice
     if (!Langs[id]) return false;
     locId = id;
-    EN = Langs[locId].isEN ? true : false;
+    EN = locId === 'EN' ? true : false;
     const locName = Langs[id].nameEN;
 
     if (mod) {
@@ -267,7 +268,7 @@ const AddLanguage = (
         for (let i in locStrings) {
             if (i.split('|')[0] === 'Update notes') {
                 let patch = i.split('|');
-                let patchTranslated = locStrings[i].split('|');
+                let patchTranslated = String(locStrings[i]).split('|');
                 locPatches.push({
                     id: parseInt(patch[1]),
                     type: 1,
@@ -289,6 +290,7 @@ const AddLanguage = (
 
         console.log('Loaded language "' + locName + '".');
     }
+    return true;
 }; AddLanguage; //! export
 
 const LocalizeUpgradesAndAchievs = function () {
@@ -305,16 +307,17 @@ const LocalizeUpgradesAndAchievs = function () {
         let it = allThings[i];
         let type = it.getType();
         let found;
-        found = FindLocStringByPart(type + ' name ' + it.id);
+        found = locStringsByPart[type + ' name ' + it.id] || undefined;
         if (found) it.dname = loc(found);
 
         if (!EN) it.baseDesc = it.baseDesc.replace(/<q>.*/, ''); // strip quote section
         it.ddesc = BeautifyInText(it.baseDesc);
 
-        found = FindLocStringByPart(type + ' desc ' + it.id);
+        found = locStringsByPart[type + ' desc ' + it.id] || undefined;
         if (found) it.ddesc = loc(found);
-        found = FindLocStringByPart(type + ' quote ' + it.id);
+        found = locStringsByPart[type + ' quote ' + it.id] || undefined;
         if (found) it.ddesc += '<q>' + loc(found) + '</q>';
     }
     BeautifyAll();
+    return true;
 }; LocalizeUpgradesAndAchievs; //! export

@@ -1,7 +1,7 @@
 /* =====================================================================================
 MISC HELPER FUNCTIONS
 =======================================================================================*/
-const STUB = (..._) => void _; STUB; //!export
+const STUB = (/** @type {unknown[]} */ ..._) => void _; STUB; //!export
 /**
  * @template T
  * @param {T} v
@@ -89,25 +89,17 @@ const LoadScript = function (
 };
 LoadScript; //!export
 
-const localStorageGet = function (key) {
-    /** @type number | string | null */
-    let local = 0;
+const localStorageGet = function (/** @type {string} */ key) {
     try {
-        local = localStorage.getItem(key);
-    } catch (exception) {
-        /* empty */
+        return localStorage.getItem(key);
+    } catch {
+        return null;
     }
-    return local;
 }; localStorageGet; //!export
-const localStorageSet = function (key, str) {
-    /** @type number | void */
-    let local = 0;
+const localStorageSet = function (/** @type {string} */ key, /** @type {string} */ str) {
     try {
-        local = localStorage.setItem(key, str);
-    } catch (exception) {
-        /* empty */
-    }
-    return local;
+        localStorage.setItem(key, str);
+    } catch { /* empty */ }
 }; localStorageSet; //!export
 
 /**
@@ -195,32 +187,33 @@ for (const i in short_suffixes) {
 formatShort[10] = 'Dc';
 
 const numberFormatters = [formatEveryThirdPower(formatShort), formatEveryThirdPower(formatLong), rawFormatter];
-const Beautify = function (/** @type {number} */ val, /** @type {number=} */ floats = 0) {
+const Beautify = (/** @type {number} */ val, /** @type {number=} */ floats = 0) => {
     let negative = val < 0;
     let decimal = '';
-    let fixed = Number(val.toFixed(floats));
-    if (floats > 0 && Math.abs(val) < 1000 && Math.floor(fixed) !== fixed) decimal = '.' + fixed.toString().split('.')[1];
+    const fixed = Number(val.toFixed(floats));
+    if (floats > 0 && Math.abs(val) < 1000 && Math.floor(fixed) !== fixed)
+        decimal = '.' + fixed.toString().split('.')[1];
     val = Math.floor(Math.abs(val));
-    if (floats > 0 && fixed == val + 1) val++;
-    let format = Game.prefs.format ? 2 : 1;
-    let formatter = numberFormatters[format];
-    let output =
-        val.toString().indexOf('e+') !== -1 && format == 2
-            ? val.toPrecision(3).toString()
-            : formatter(val)
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    if (output == '0') negative = false;
+    if (floats > 0 && fixed === val + 1) val++;
+    const format = Game.prefs.format ? 2 : 1;
+    const formatter = numberFormatters[format];
+    const output = val.toString().indexOf('e+') !== -1 && format == 2
+        ? val.toPrecision(3).toString()
+        : formatter(val)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if (output === '0') negative = false;
     return negative ? '-' + output : output + decimal;
 };
-const shortenNumber = function (val) {
+const shortenNumber = (/** @type {number} */ val) => {
     // if no scientific notation, return as is, else :
     // keep only the 5 first digits (plus dot), round the rest
     // may or may not work properly
     if (val >= 1000000 && isFinite(val)) {
         let num = val.toString();
         let ind = num.indexOf('e+');
-        if (ind == -1) return val;
+        if (ind == -1)
+            return val;
         let str = '';
         for (let i = 0; i < ind; i++) {
             str += i < 6 ? num[i] : '0';
@@ -245,9 +238,15 @@ const SimpleBeautify = function (/** @type {number} */ val) {
 }; SimpleBeautify; //? externally used
 
 const beautifyInTextFilter = /(([\d]+[,]*)+)/g; // new regex
+/**
+ * @param {string} str
+ */
 function BeautifyInTextFunction(str) {
     return Beautify(parseInt(str.replace(/,/g, ''), 10));
 }
+/**
+ * @param {string} str
+ */
 function BeautifyInText(str) {
     return str.replace(beautifyInTextFilter, BeautifyInTextFunction);
 } // reformat every number inside a string
@@ -263,6 +262,9 @@ function BeautifyAll() {
 BeautifyAll; //! export
 
 // phewie! https://stackoverflow.com/questions/30106476/using-javascripts-atob-to-decode-base64-doesnt-properly-decode-utf-8-strings
+/**
+ * @param {string | number | boolean} str
+ */
 function utf8_to_b64(str) {
     try {
         return btoa(
@@ -276,6 +278,9 @@ function utf8_to_b64(str) {
 }
 utf8_to_b64; //! export
 
+/**
+ * @param {string} str
+ */
 function b64_to_utf8(str) {
     try {
         return decodeURIComponent(
@@ -293,26 +298,30 @@ b64_to_utf8; //! export
 
 const getUpgradeName = (/** @type {string} */ name) => {
     const it = Game.Upgrades[name];
-    const found = FindLocStringByPart('Upgrade name ' + it.id);
+    const found = locStringsByPart['Upgrade name ' + it.id] || undefined;
     if (found) return loc(found);
     else return name;
 }; getUpgradeName; //! export
 
+/**
+ * returns CSS for an icon's background image, for use in CSS strings
+ * @param {any[]} icon
+ */
 function writeIcon(icon) {
-    // returns CSS for an icon's background image
-    // for use in CSS strings
     return (
         `${icon[2] ? `background-image:url('${icon[2].replace(/'/g, '\\\'')}');` : ''}background-position:${-icon[0] * 48}px ${-icon[1] * 48}px;`
     );
 }
+/**
+ * returns HTML displaying an icon, with optional extra CSS
+ * @param {any[]} icon
+ * @param {string=} css
+ */
 function tinyIcon(icon, css) {
-    // returns HTML displaying an icon, with optional extra CSS
     return (
-        '<div class="icon tinyIcon" style="vertical-align:middle;display:inline-block;' +
-        writeIcon(icon) +
-        'transform:scale(0.5);margin:-16px;' +
-        (css ? css : '') +
-        '"></div>'
+        `<div class="icon tinyIcon" style="vertical-align:middle;display:inline-block;${
+            writeIcon(icon)
+        }transform:scale(0.5);margin:-16px;${css ? css : ''}"></div>`
     );
 }
 tinyIcon; //! export
@@ -342,23 +351,21 @@ Element.prototype.getBounds = function () {
     return bounds;
 };
 
-CanvasRenderingContext2D.prototype.fillPattern = function (img, X, Y, W, H, iW, iH, offX, offY) {
+CanvasRenderingContext2D.prototype.fillPattern = function (
+    /** @type {HTMLImageElement} */ img,
+    /** @type {number} */ X, /** @type {number} */ Y,
+    /** @type {number} */ W, /** @type {number} */ H,
+    /** @type {number} */ iW, /** @type {number} */ iH,
+    /** @type {number} */ offX, /** @type {number} */ offY
+) {
     // for when built-in patterns aren't enough
-    if (img.alt != 'blank') {
+    if (img.alt !== 'blank') {
         offX ||= 0;
         offY ||= 0;
-        if (offX < 0) {
-            offX -= Math.floor(offX / iW) * iW;
-        }
-        if (offX > 0) {
-            offX = (offX % iW) - iW;
-        }
-        if (offY < 0) {
-            offY -= Math.floor(offY / iH) * iH;
-        }
-        if (offY > 0) {
-            offY = (offY % iH) - iH;
-        }
+        if (offX < 0) offX -= Math.floor(offX / iW) * iW;
+        if (offX > 0) offX = (offX % iW) - iW;
+        if (offY < 0) offY -= Math.floor(offY / iH) * iH;
+        if (offY > 0) offY = (offY % iH) - iH;
         for (let y = offY; y < H; y += iH) {
             for (let x = offX; x < W; x += iW) {
                 this.drawImage(img, X + x, Y + y, iW, iH);
@@ -368,7 +375,9 @@ CanvasRenderingContext2D.prototype.fillPattern = function (img, X, Y, W, H, iW, 
 };
 
 const OldCanvasDrawImage = CanvasRenderingContext2D.prototype.drawImage;
-CanvasRenderingContext2D.prototype.drawImage = function () {
-    // only draw the image if it's loaded
-    if (arguments[0].alt != 'blank') OldCanvasDrawImage.apply(this, arguments);
-};
+CanvasRenderingContext2D.prototype.drawImage = /** @type {typeof OldCanvasDrawImage} */ (
+    function (/** @type {Parameters<typeof OldCanvasDrawImage>} */ ...args) {
+        // only draw the image if it's loaded
+        if (/** @type {HTMLImageElement} */ (args[0]).alt !== 'blank') OldCanvasDrawImage.call(this, ...args);
+    }
+);

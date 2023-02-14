@@ -642,7 +642,7 @@ Game.Launch = function () {
 
     Game.ready = 0;
 
-    Game.Load = function (callback) {
+    Game.Load = function (/** @type {any} */ callback) {
         Game.Loader = new Loader();
         Game.Loader.domain = 'img/';
 
@@ -8006,7 +8006,7 @@ Game.Launch = function () {
             this.dname = loc(this.name);
             this.single = loc(this.single);
             this.plural = loc(this.plural);
-            this.desc = loc(FindLocStringByPart(this.name + ' quote'));
+            this.desc = loc(locStringsByPart[this.name + ' quote'] || undefined);
             this.basePrice = price;
             this.price = this.basePrice;
             this.bulkPrice = this.price;
@@ -9864,8 +9864,8 @@ Game.Launch = function () {
         Game.foolObjects['Unknown'].name = loc('Investment');
         Game.foolObjects['Unknown'].desc = loc('You\'re not sure what this does, you just know it means profit.');
         for (let i in Game.Objects) {
-            Game.foolObjects[i].name = loc(FindLocStringByPart(Game.Objects[i].name + ' business name')) || Game.foolObjects[i].name;
-            Game.foolObjects[i].desc = loc(FindLocStringByPart(Game.Objects[i].name + ' business quote')) || Game.foolObjects[i].desc;
+            Game.foolObjects[i].name = loc(locStringsByPart[Game.Objects[i].name + ' business name'] || undefined) || Game.foolObjects[i].name;
+            Game.foolObjects[i].desc = loc(locStringsByPart[Game.Objects[i].name + ' business quote'] || undefined) || Game.foolObjects[i].desc;
         }
 
         // build store

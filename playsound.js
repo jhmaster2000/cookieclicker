@@ -1,4 +1,10 @@
-const Sounds = [];
+/**
+ * @type {Record<string, HTMLAudioElement>}
+ */
+const Sounds = {};
+/**
+ * @type {HTMLAudioElement[]}
+ */
 const SoundInsts = [];
 for (let i = 0; i < 12; i++) SoundInsts[i] = new Audio();
 let SoundI = 0;

@@ -19,6 +19,7 @@ class Loader {
         for (let i in assets) {
             this.loadingN++;
             this.assetsN++;
+            // @ts-expect-error why isnt this an object...
             if (!this.assetsLoading[assets[i]] && !this.assetsLoaded[assets[i]]) {
                 const img = new Image();
                 img.src = assets[i].includes('/') ? assets[i] : this.domain + assets[i];
