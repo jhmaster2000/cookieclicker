@@ -17,17 +17,6 @@ http://orteil.dashnet.org
 const VERSION = 9.999;
 const BETA = 1;
 
-const BLANK_CANVAS = document.createElement('canvas');
-BLANK_CANVAS.width = 8;
-BLANK_CANVAS.height = 8;
-BLANK_CANVAS.alt = 'blank';
-
-const Pic = function (/** @type {string} */ what) {
-    if (Game.Loader.assetsLoaded.indexOf(what) != -1) return Game.Loader.assets[what];
-    else if (Game.Loader.assetsLoading.indexOf(what) == -1) Game.Loader.Load([what]);
-    return BLANK_CANVAS;
-};
-
 let Sounds = [];
 let OldPlaySound = function (url, vol) {
     let volume = 1;
