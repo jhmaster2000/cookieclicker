@@ -24,12 +24,6 @@ let triggerAnim = function (element, anim) {
     element.classList.add(anim);
 };
 
-let debugStr = '';
-let Debug = function (what) {
-    if (!debugStr) debugStr = what;
-    else debugStr += '; ' + what;
-};
-
 let Timer = {};
 Timer.t = Date.now();
 Timer.labels = [];
