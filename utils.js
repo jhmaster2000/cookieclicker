@@ -325,6 +325,13 @@ function tinyIcon(icon, css) {
     );
 }
 
+const triggerAnim = (/** @type {HTMLElement | null} */ element, /** @type {string} */ anim) => {
+    if (!element) return;
+    element.classList.remove(anim);
+    void element.offsetWidth;
+    element.classList.add(anim);
+};
+
 //!=====================!\\
 //! Prototype Pollution !\\
 //!=====================!\\

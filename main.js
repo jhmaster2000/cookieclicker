@@ -17,13 +17,6 @@ http://orteil.dashnet.org
 const VERSION = 9.999;
 const BETA = 1;
 
-let triggerAnim = function (element, anim) {
-    if (!element) return;
-    element.classList.remove(anim);
-    void element.offsetWidth;
-    element.classList.add(anim);
-};
-
 let Timer = {};
 Timer.t = Date.now();
 Timer.labels = [];
