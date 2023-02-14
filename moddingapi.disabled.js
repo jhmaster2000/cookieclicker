@@ -90,7 +90,7 @@
         if (Game.sortedMods.length > 0) Game.Win('Third-party');
     };
     Game.registerHook = function (hook, func) {
-        if (func.constructor === Array) {
+        if (func instanceof Array) {
             for (let i = 0; i < func.length; i++) {
                 Game.registerHook(hook, func[i]);
             }
@@ -101,7 +101,7 @@
         else console.log('Error: a mod tried to register a non-existent hook named "' + hook + '".');
     };
     Game.removeHook = function (hook, func) {
-        if (func.constructor === Array) {
+        if (func instanceof Array) {
             for (let i = 0; i < func.length; i++) {
                 Game.removeHook(hook, func[i]);
             }
