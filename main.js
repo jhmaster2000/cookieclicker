@@ -34,7 +34,6 @@ Game.Launch = function () {
     Game.touchEvents = 0;
 
     let css = document.createElement('style');
-    css.type = 'text/css';
     css.innerHTML = 'body .icon,body .crate,body .usesIcon{background-image:url(img/icons.png?v=' + Game.version + ');}';
     document.head.appendChild(css);
 
@@ -65,7 +64,6 @@ Game.Launch = function () {
     if (!EN) {
         // code-patching the CSS for localization feels like it should be against the law, and yet
         let css = document.createElement('style');
-        css.type = 'text/css';
         css.innerHTML =
             '#upgrades:before{content:\'' +
             loc('Upgrades') +
@@ -904,8 +902,8 @@ Game.Launch = function () {
 
         window.onbeforeunload = function (event) {
             if (Game.prefs && Game.prefs.warn) {
-                if (typeof event == 'undefined') event = window.event;
-                if (event) event.returnValue = loc('Are you sure you want to close Cookie Clicker?');
+                event.preventDefault();
+                return event.returnValue = loc('Are you sure you want to close Cookie Clicker?');
             }
         };
 
@@ -1163,10 +1161,10 @@ Game.Launch = function () {
                 let text = this.text();
                 if (text == '') tta.style.opacity = '0';
                 else {
-                    tt.innerHTML = unescape(text);
+                    tt.innerHTML = decodeURIComponent(text);
                     tta.style.opacity = '1';
                 }
-            } else tt.innerHTML = unescape(this.text);
+            } else tt.innerHTML = decodeURIComponent(this.text);
             tta.style.display = 'block';
             tta.style.visibility = 'hidden';
             Game.tooltip.update();
@@ -1269,7 +1267,7 @@ Game.Launch = function () {
                 if (text == '') this.tta.style.opacity = '0';
                 else {
                     // @ts-expect-error
-                    this.tt.innerHTML = unescape(text);
+                    this.tt.innerHTML = decodeURIComponent(text);
                     // @ts-expect-error
                     this.tta.style.opacity = '1';
                 }
@@ -1286,7 +1284,7 @@ Game.Launch = function () {
             if (isCrate)
                 return (
                     'onMouseOut="Game.setOnCrate(0);Game.tooltip.shouldHide=1;" onMouseOver="if (!Game.mouseDown) {Game.setOnCrate(this);Game.tooltip.dynamic=0;Game.tooltip.draw(this,\'' +
-                    escape(text) +
+                    encodeURIComponent(text) +
                     '\',\'' +
                     origin +
                     '\');}"'
@@ -1294,7 +1292,7 @@ Game.Launch = function () {
             else
                 return (
                     'onMouseOut="Game.tooltip.shouldHide=1;" onMouseOver="Game.tooltip.dynamic=0;Game.tooltip.draw(this,\'' +
-                    escape(text) +
+                    encodeURIComponent(text) +
                     '\',\'' +
                     origin +
                     '\');"'
@@ -1883,7 +1881,7 @@ Game.Launch = function () {
             if (type == 2 || type == 3) {
                 return str;
             } else if (type == 1) {
-                str = escape(utf8_to_b64(str) + '!END!');
+                str = encodeURIComponent(utf8_to_b64(str) + '!END!');
                 return str;
             } else {
                 if (Game.useLocalStorage) {
@@ -1897,7 +1895,7 @@ Game.Launch = function () {
                             'Purchasing an upgrade and saving again might fix this.<br>This really shouldn\'t happen; please notify Orteil on his tumblr.'
                         );
                     } else {
-                        str = escape(str);
+                        str = encodeURIComponent(str);
                         localStorageSet(Game.SaveTo, str); // aaand save
                         if (!localStorageGet(Game.SaveTo)) {
                             Game.Notify(loc('Error while saving'), loc('Export your save instead!'));
@@ -1913,8 +1911,8 @@ Game.Launch = function () {
                     let now = new Date(); // we storin dis for 5 years, people
                     now.setFullYear(now.getFullYear() + 5); // mmh stale cookies
                     str = utf8_to_b64(str) + '!END!';
-                    Game.saveData = escape(str);
-                    str = Game.SaveTo + '=' + escape(str) + '; expires=' + now.toUTCString() + ';';
+                    Game.saveData = encodeURIComponent(str);
+                    str = Game.SaveTo + '=' + encodeURIComponent(str) + '; expires=' + now.toUTCString() + ';';
                     document.cookie = str; // aaand save
                     if (document.cookie.indexOf(Game.SaveTo) < 0) {
                         Game.Notify(loc('Error while saving'), loc('Export your save instead!'), '', 0, 1);
@@ -1936,22 +1934,22 @@ Game.Launch = function () {
         };
         Game.LoadSave = function (data, ignoreVersionIssues) {
             let str = '';
-            if (typeof data !== 'undefined') str = unescape(data);
+            if (typeof data !== 'undefined') str = decodeURIComponent(data);
             else {
                 if (Game.useLocalStorage) {
                     let local = localStorageGet(Game.SaveTo);
                     if (!local) {
                         // no localstorage save found? let's get the cookie one last time
                         if (document.cookie.indexOf(Game.SaveTo) >= 0) {
-                            str = unescape(document.cookie.split(Game.SaveTo + '=')[1]);
+                            str = decodeURIComponent(document.cookie.split(Game.SaveTo + '=')[1]);
                             document.cookie = Game.SaveTo + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                         } else return false;
                     } else {
-                        str = unescape(String(local));
+                        str = decodeURIComponent(String(local));
                     }
                 } // legacy system
                 else {
-                    if (document.cookie.indexOf(Game.SaveTo) >= 0) str = unescape(document.cookie.split(Game.SaveTo + '=')[1]);
+                    if (document.cookie.indexOf(Game.SaveTo) >= 0) str = decodeURIComponent(document.cookie.split(Game.SaveTo + '=')[1]);
                     // get cookie here
                     else return false;
                 }
@@ -4095,7 +4093,6 @@ Game.Launch = function () {
         Game.GetMouseCoords = function (e) {
             let posx = 0;
             let posy = 0;
-            if (!e) e = window.event;
             if (e.pageX || e.pageY) {
                 posx = e.pageX;
                 posy = e.pageY;
@@ -14916,7 +14913,7 @@ Game.Launch = function () {
                 return (
                     this.desc +
                     '<q style="font-family:Courier;">' +
-                    (str.substr(i % str.length, n) + (i % str.length > str.length - n ? str.substr(0, (i % str.length) - (str.length - n)) : '')) +
+                    (str.substring(i % str.length, (i % str.length) + n) + (i % str.length > str.length - n ? str.substring(0, (i % str.length) - (str.length - n)) : '')) +
                     '</q>'
                 );
             };
