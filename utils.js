@@ -280,15 +280,9 @@ function b64_to_utf8(str) {
     }
 }
 
-let getUpgradeName = function (name) {
-    let it = Game.Upgrades[name];
-    let found = FindLocStringByPart('Upgrade name ' + it.id);
-    if (found) return loc(found);
-    else return name;
-};
-let getAchievementName = function (name) {
-    let it = Game.Achievements[name];
-    let found = FindLocStringByPart('Achievement name ' + it.id);
+const getUpgradeName = (/** @type {string} */ name) => {
+    const it = Game.Upgrades[name];
+    const found = FindLocStringByPart('Upgrade name ' + it.id);
     if (found) return loc(found);
     else return name;
 };
