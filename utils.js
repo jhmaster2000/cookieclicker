@@ -343,9 +343,15 @@ const originalDecodeURIComponent = decodeURIComponent;
 decodeURIComponent = (/** @type string */ encodedURIComponent) => {
     const input = [...encodedURIComponent].map((curr, i, arr) => {
         const nextTwo = arr.slice(i + 1, i + 3).join('');
-        if (
-            curr === '%' && (nextTwo.trim().length !== 2 || Number.isNaN(Number('0x' + nextTwo)))
-        ) return '%25';
+        const nextTwoNum = Number('0x' + nextTwo);
+        if (curr === '%') {
+            if (nextTwo.trim().length !== 2 || Number.isNaN(nextTwoNum)) return '%25';
+            if (nextTwoNum > 0x7F) {
+                arr[i + 1] = '';
+                arr[i + 2] = '';
+                return String.fromCharCode(nextTwoNum);
+            }
+        }
         return curr;
     }).join('');
     try {
