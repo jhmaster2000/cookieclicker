@@ -17,47 +17,33 @@ http://orteil.dashnet.org
 const VERSION = 9.999;
 const BETA = 1;
 
-let Sounds = [];
-let SoundInsts = [];
+const Sounds = [];
+const SoundInsts = [];
+for (let i = 0; i < 12; i++) SoundInsts[i] = new Audio();
 let SoundI = 0;
-for (let i = 0; i < 12; i++) {
-    SoundInsts[i] = new Audio();
-}
-let pitchSupport = false;
-// note : Chrome turns out to not support webkitPreservesPitch despite the specifications claiming otherwise, and Firefox clips some short sounds when changing playbackRate, so i'm turning the feature off completely until browsers get it together
 
-let PlaySound = function (url, vol, pitchVar) {
+const PlaySound = (
+    /** @type {string} */ url,
+    /** @type {number} */ volume = 1
+) => {
     // url : the url of the sound to play (will be cached so it only loads once)
-    // vol : volume between 0 and 1 (multiplied by game volume setting); defaults to 1 (full volume)
-    // (DISABLED) pitchVar : pitch variance in browsers that support it (Firefox only at the moment); defaults to 0.05 (which means pitch can be up to -5% or +5% anytime the sound plays)
-    let volume = 1;
+    // volume : volume between 0 and 1 (multiplied by game volume setting); defaults to 1 (full volume)
     let volumeSetting = Game.volume;
-    if (typeof vol !== 'undefined') volume = vol;
     if (volume < -5) {
         volume += 10;
         volumeSetting = Game.volumeMusic;
     }
-    if (!volumeSetting || volume == 0) return 0;
+    if (!volumeSetting || volume === 0) return;
     if (typeof Sounds[url] === 'undefined') {
         // sound isn't loaded, cache it
         Sounds[url] = new Audio(url);
-        Sounds[url].onloadeddata = function (e) {
-            PlaySound(url, vol, pitchVar);
-        };
+        Sounds[url].onloadeddata = () => PlaySound(url, volume);
     } else if (Sounds[url].readyState >= 2 && SoundInsts[SoundI].paused) {
-        let sound = SoundInsts[SoundI];
+        const sound = SoundInsts[SoundI];
         SoundI++;
         if (SoundI >= 12) SoundI = 0;
         sound.src = Sounds[url].src;
         sound.volume = Math.pow((volume * volumeSetting) / 100, 2);
-        if (pitchSupport) {
-            pitchVar ??= 0.05;
-            let rate = 1 + (Math.random() * 2 - 1) * pitchVar;
-            sound.preservesPitch = false;
-            sound.mozPreservesPitch = false;
-            sound.webkitPreservesPitch = false;
-            sound.playbackRate = rate;
-        }
         try {
             sound.play();
         } catch (e) { /* empty */ }
