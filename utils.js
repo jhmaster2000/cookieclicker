@@ -70,20 +70,6 @@ function shuffle(array) {
     return array;
 }
 
-Element.prototype.getBounds = function () {
-    const bounds = this.getBoundingClientRect();
-    const s = Game.scale;
-    bounds.x /= s;
-    bounds.y /= s;
-    bounds.width /= s;
-    bounds.height /= s;
-    Reflect.set(bounds, 'top', bounds.top / s);
-    Reflect.set(bounds, 'bottom', bounds.bottom / s);
-    Reflect.set(bounds, 'left', bounds.left / s);
-    Reflect.set(bounds, 'right', bounds.right / s);
-    return bounds;
-};
-
 const LoadScript = function (
     /** @type {string} */ url,
     /** @type {((this: GlobalEventHandlers, ev: Event) => any) | null} */ callback,
@@ -335,6 +321,20 @@ const triggerAnim = (/** @type {HTMLElement | null} */ element, /** @type {strin
 //!=====================!\\
 //! Prototype Pollution !\\
 //!=====================!\\
+
+Element.prototype.getBounds = function () {
+    const bounds = this.getBoundingClientRect();
+    const s = Game.scale;
+    bounds.x /= s;
+    bounds.y /= s;
+    bounds.width /= s;
+    bounds.height /= s;
+    Reflect.set(bounds, 'top', bounds.top / s);
+    Reflect.set(bounds, 'bottom', bounds.bottom / s);
+    Reflect.set(bounds, 'left', bounds.left / s);
+    Reflect.set(bounds, 'right', bounds.right / s);
+    return bounds;
+};
 
 CanvasRenderingContext2D.prototype.fillPattern = function (img, X, Y, W, H, iW, iH, offX, offY) {
     // for when built-in patterns aren't enough
