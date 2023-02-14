@@ -337,30 +337,27 @@ const triggerAnim = (/** @type {HTMLElement | null} */ element, /** @type {strin
 //! Prototype Pollution !\\
 //!=====================!\\
 
-const originalDecodeURIComponent = decodeURIComponent;
-// @ts-expect-error
-// eslint-disable-next-line no-global-assign
-decodeURIComponent = (/** @type string */ encodedURIComponent) => {
+/** Variant of `decodeURIComponent` which is backwards compatible with `unescape` semantics. */
+const decode = (/** @type string */ encodedURIComponent) => {
     const input = [...encodedURIComponent].map((curr, i, arr) => {
         const nextTwo = arr.slice(i + 1, i + 3).join('');
         const nextTwoNum = Number('0x' + nextTwo);
         if (curr === '%') {
             if (nextTwo.trim().length !== 2 || Number.isNaN(nextTwoNum)) return '%25';
             if (nextTwoNum > 0x7F) {
-                arr[i + 1] = '';
-                arr[i + 2] = '';
+                arr[i + 1] = ''; arr[i + 2] = '';
                 return String.fromCharCode(nextTwoNum);
             }
         }
         return curr;
     }).join('');
     try {
-        return originalDecodeURIComponent(input);
+        return decodeURIComponent(input);
     } catch (e) {
-        console.log('decodeURIComponent error with input: ' + input);
+        console.log('decode() error with input: ' + input);
         throw e;
     }
-};
+}; decode; //! export
 
 Element.prototype.getBounds = function () {
     const bounds = this.getBoundingClientRect();

@@ -1161,10 +1161,10 @@ Game.Launch = function () {
                 let text = this.text();
                 if (text == '') tta.style.opacity = '0';
                 else {
-                    tt.innerHTML = decodeURIComponent(text);
+                    tt.innerHTML = decode(text);
                     tta.style.opacity = '1';
                 }
-            } else tt.innerHTML = decodeURIComponent(this.text);
+            } else tt.innerHTML = decode(this.text);
             tta.style.display = 'block';
             tta.style.visibility = 'hidden';
             Game.tooltip.update();
@@ -1267,7 +1267,7 @@ Game.Launch = function () {
                 if (text == '') this.tta.style.opacity = '0';
                 else {
                     // @ts-expect-error
-                    this.tt.innerHTML = decodeURIComponent(text);
+                    this.tt.innerHTML = decode(text);
                     // @ts-expect-error
                     this.tta.style.opacity = '1';
                 }
@@ -1934,22 +1934,22 @@ Game.Launch = function () {
         };
         Game.LoadSave = function (data, ignoreVersionIssues) {
             let str = '';
-            if (typeof data !== 'undefined') str = decodeURIComponent(data);
+            if (typeof data !== 'undefined') str = decode(data);
             else {
                 if (Game.useLocalStorage) {
                     let local = localStorageGet(Game.SaveTo);
                     if (!local) {
                         // no localstorage save found? let's get the cookie one last time
                         if (document.cookie.indexOf(Game.SaveTo) >= 0) {
-                            str = decodeURIComponent(document.cookie.split(Game.SaveTo + '=')[1]);
+                            str = decode(document.cookie.split(Game.SaveTo + '=')[1]);
                             document.cookie = Game.SaveTo + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                         } else return false;
                     } else {
-                        str = decodeURIComponent(String(local));
+                        str = decode(String(local));
                     }
                 } // legacy system
                 else {
-                    if (document.cookie.indexOf(Game.SaveTo) >= 0) str = decodeURIComponent(document.cookie.split(Game.SaveTo + '=')[1]);
+                    if (document.cookie.indexOf(Game.SaveTo) >= 0) str = decode(document.cookie.split(Game.SaveTo + '=')[1]);
                     // get cookie here
                     else return false;
                 }
