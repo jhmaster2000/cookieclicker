@@ -8,12 +8,12 @@ window.onload = function () {
         let loadLangAndLaunch = function (lang, firstLaunch) {
             if (!firstLaunch) localStorageSet('CookieClickerLang', lang);
 
-            LoadLang(
+            LoadScript(
                 'loc/EN.js?v=' + Game.version,
                 (function (lang) {
                     return function () {
                         locStringsFallback = locStrings;
-                        LoadLang('loc/' + lang + '.js?v=' + Game.version, function () {
+                        LoadScript('loc/' + lang + '.js?v=' + Game.version, function () {
                             let launch = function () {
                                 Game.Launch();
                                 if (top !== self) Game.ErrorFrame();

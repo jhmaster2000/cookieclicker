@@ -6,17 +6,16 @@ let locStrings = {};
 let locStringsFallback = {};
 let locId = 'NONE';
 let EN = true;
-let locName = 'none';
 let locPatches = [];
 let locPlur = 'nplurals=2;plural=(n!=1);'; // see http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
-let locPlurFallback = locPlur;
+const locPlurFallback = locPlur;
 // note : plural index will be downgraded to the last matching, ie. in this case, if we get "0" but don't have a 3rd option, use the 2nd option (or 1st, lacking that too)
-let locStringsByPart = {};
-let FindLocStringByPart = function (match) {
+const locStringsByPart = {};
+const FindLocStringByPart = (/** @type {string} */ match) => {
     return locStringsByPart[match] || undefined;
 };
 
-let Langs = {
+const Langs = {
     EN: {
         file: 'EN',
         nameEN: 'English',
@@ -125,7 +124,8 @@ let Langs = {
 };
 
 // note : baseline should be the original english text
-// in several instances, the english text will be quite different from the other languages, as this game was initially never meant to be translated and the translation process doesn't always play well with complex sentence structures
+// in several instances, the english text will be quite different from the other languages,
+// as this game was initially never meant to be translated and the translation process doesn't always play well with complex sentence structures
 /* use:
     loc('Plain text')
     loc('Text where %1 is a parameter','something')
@@ -141,22 +141,23 @@ let Langs = {
     loc('You have %1.','<b>'+loc('%1 apple',LBeautify(amount))+'</b>')
         ...you may nest localized strings, and use LBeautify() to pack Beautified values
 */
-let locBlink = false;
-let loc = function (
+const locBlink = false;
+const loc = (
     /** @type {string} */ id,
     /** @type {{ n: Number, b: string | number } | number | string | any[] | undefined} */ params,
-    /** @type {string | undefined} */ baseline) {
+    /** @type {string | undefined} */ baseline
+) => {
     let fallback = false;
     let found = locStrings[id];
     if (!found) {
         found = locStringsFallback[id];
         fallback = true;
     }
-    let str;
+    /** @type {string | string[]} */
+    let str = '';
     if (found) {
-        str = '';
         str = parseLoc(found, params);
-        if (str.constructor === Array) return str;
+        if (str instanceof Array) return str;
         const noBlink = ['Buildings', 'Switches', 'Upgrades', 'Store', 'Other versions', 'Ascending', '%1 cookie'];
         if (locBlink && !fallback && !noBlink.includes(id)) return '<span class="blinking">' + str + '</span>'; // will make every localized text blink on screen, making omissions obvious; will not work for elements filled with textContent
     }
@@ -164,20 +165,30 @@ let loc = function (
     if (found) return str;
     return baseline || id;
 };
+const locStr = (
+    /** @type {string} */ id,
+    /** @type {{ n: Number, b: string | number } | number | string | any[] | undefined} */ params,
+    /** @type {string | undefined} */ baseline
+) => {
+    const locRet = loc(id, params, baseline);
+    if (locRet instanceof Array) return locRet[0];
+    return locRet;
+};
 
-let parseLoc = function (str, params) {
+const parseLoc = (
+    /** @type {string | string[]} */ str,
+    /** @type {string | number | any[] | { n: number; b: string | number; }} */ params = []
+) => {
     /*
         parses localization strings
         -there can only be 1 plural per string and it MUST be at index %1
         -a pluralized string is detected if we have at least 1 param and the matching localized string is an array
     */
-    if (typeof params === 'undefined') params = [];
-    else if (params.constructor !== Array) params = [params];
     if (!str) return '';
+    if (!(params instanceof Array)) params = [params];
+    if (params.length === 0) return str;
 
-    if (params.length == 0) return str;
-
-    if (str.constructor === Array) {
+    if (str instanceof Array) {
         if (typeof params[0] === 'object') {
             // an object containing a beautified number
             // @ts-expect-error this will be pain
@@ -194,35 +205,40 @@ let parseLoc = function (str, params) {
         }
     }
 
-    let out = '';
-    let len = str.length;
-    let inPercent = false;
+    const len = str.length;
+    let out = '', inPercent = false;
     for (let i = 0; i < len; i++) {
-        let it = str[i];
+        const it = str[i];
         if (inPercent) {
             inPercent = false;
-            if (!isNaN(it) && params.length >= parseInt(it) - 1) out += params[parseInt(it) - 1];
+            if (!isNaN(Number(it)) && params.length >= Number(it) - 1) out += params[Number(it) - 1];
             else out += '%' + it;
-        } else if (it == '%') inPercent = true;
+        } else if (it === '%') inPercent = true;
         else out += it;
     }
     return out;
 };
 
-let LBeautify = function (val, floats) {
-    // returns an object in the form {n:original value floored,b:beautified value as string} for localization purposes
+/** returns an object in the form `{ n: original value floored, b: beautified value as string }` for localization purposes */
+const LBeautify = (
+    /** @type {number} */ val, /** @type {number | undefined} */ floats
+) => {
     return { n: Math.floor(Math.abs(val)), b: Beautify(val, floats) };
 };
 
-let AddLanguage = function (id, name, json, mod) {
-    // used in loc files
-    // if mod is true, this file is augmenting the current language
+/** used in loc files.
+ * 
+ * if mod is true, this file is augmenting the current language */
+const AddLanguage = (
+    /** @type {string} */ id,
+    /** @type {Record<string, string | string[] | Record<string, string>>} */ json,
+    /** @type {boolean=} */ mod = false
+) => {
     if (id == locId && !mod) return false; // don't load twice
     if (!Langs[id]) return false;
     locId = id;
-    if (Langs[locId].isEN) EN = true;
-    else EN = false;
-    locName = Langs[id].nameEN; // name
+    EN = Langs[locId].isEN ? true : false;
+    const locName = Langs[id].nameEN;
 
     if (mod) {
         for (let i in json) {
@@ -238,7 +254,7 @@ let AddLanguage = function (id, name, json, mod) {
         locPlur = json['']['plural-forms'] || locPlurFallback;
         delete locStrings[''];
         for (let i in locStrings) {
-            if (locStrings[i] == '/') locStrings[i] = i;
+            if (locStrings[i] === '/') locStrings[i] = i;
         }
 
         // @ts-expect-error WHY SO MUCH VARIABLE REUSE
@@ -247,12 +263,11 @@ let AddLanguage = function (id, name, json, mod) {
             let pf_re = new RegExp('^\\s*nplurals\\s*=\\s*[0-9]+\\s*;\\s*plural\\s*=\\s*(?:\\s|[-\\?\\|&=!<>+*/%:;n0-9_()])+');
             if (!pf_re.test(plural_form)) throw new Error('The plural form "' + plural_form + '" is not valid');
             return new Function('n', 'let plural, nplurals; ' + plural_form + ' return plural;');
-            // return new Function('n','let plural, nplurals; '+ plural_form +' return { nplurals: nplurals, plural: (plural === true ? 1 : (plural ? plural : 0)) };');
         })(locPlur);
 
         locPatches = [];
         for (let i in locStrings) {
-            if (i.split('|')[0] == 'Update notes') {
+            if (i.split('|')[0] === 'Update notes') {
                 let patch = i.split('|');
                 let patchTranslated = locStrings[i].split('|');
                 locPatches.push({
@@ -263,7 +278,7 @@ let AddLanguage = function (id, name, json, mod) {
                 });
             }
         }
-        let sortMap = function (a, b) {
+        let sortMap = function (/** @type {{ id: number; }} */ a, /** @type {{ id: number; }} */ b) {
             if (a.id < b.id) return 1;
             else return -1;
         };
@@ -278,9 +293,7 @@ let AddLanguage = function (id, name, json, mod) {
     }
 };
 
-let LoadLang = LoadScript;
-
-let LocalizeUpgradesAndAchievs = function () {
+const LocalizeUpgradesAndAchievs = function () {
     if (!Game.UpgradesById) return false;
 
     let allThings = [];

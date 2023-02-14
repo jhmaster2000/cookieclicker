@@ -1478,8 +1478,8 @@ Game.Launch = function () {
             '<div style="padding:8px;width:250px;text-align:center;">A thing we made that lets you create your own idle games using a simple scripting language.</div>',
             'this'
         );
-        $('changeLanguage', true).innerHTML = loc('Change language');
-        $('links', true).childNodes[0].nodeValue = loc('Other versions');
+        $('changeLanguage', true).innerHTML = locStr('Change language');
+        $('links', true).childNodes[0].nodeValue = locStr('Other versions');
 
         Game.attachTooltip(
             $('heralds'),
@@ -2912,10 +2912,10 @@ Game.Launch = function () {
                             if (Game.keys['ShiftRight'] || Game.keys['ShiftLeft']) tip += '<br>(You are holding Shift.)';
                             else tip += '<br>(You are not holding Shift.)';
                         }
-                    } else tip = EN ? 'Click to ' + purchase + '.' : loc('Click to purchase.');
-                } else if (me.pool == 'toggle' && me.choicesFunction) tip = loc('Click to open selector.');
-                else if (me.pool == 'toggle') tip = loc('Click to toggle.');
-                else if (me.pool == 'tech') tip = loc('Click to research.');
+                    } else tip = EN ? 'Click to ' + purchase + '.' : locStr('Click to purchase.');
+                } else if (me.pool == 'toggle' && me.choicesFunction) tip = locStr('Click to open selector.');
+                else if (me.pool == 'toggle') tip = locStr('Click to toggle.');
+                else if (me.pool == 'tech') tip = locStr('Click to research.');
             }
 
             if (tip != '') ariaText += tip + ' ';
@@ -4828,7 +4828,7 @@ Game.Launch = function () {
 
                     if (choice == 'free sugar lump') {
                         Game.gainLumps(1);
-                        popup = loc('Sweet!<br><small>Found 1 sugar lump!</small>');
+                        popup = locStr('Sweet!<br><small>Found 1 sugar lump!</small>');
                     } else if (choice == 'frenzy') {
                         buff = Game.gainBuff('frenzy', Math.ceil(77 * effectDurMod), 7);
                     } else if (choice == 'dragon harvest') {
@@ -5856,14 +5856,14 @@ Game.Launch = function () {
                 if (hours > 0) bits.push(loc('%1 hour', LBeautify(hours)));
                 if (minutes > 0) bits.push(loc('%1 minute', LBeautify(minutes)));
                 if (seconds > 0) bits.push(loc('%1 second', LBeautify(seconds)));
-                if (bits.length == 0) str = loc('less than 1 second');
+                if (bits.length == 0) str = locStr('less than 1 second');
                 else str = bits.join(', ');
             } else {
-                if (time >= Game.fps * 60 * 60 * 24 && detail < 2) str = loc('%1 day', LBeautify(Math.floor(time / (Game.fps * 60 * 60 * 24))));
-                else if (time >= Game.fps * 60 * 60 && detail < 3) str = loc('%1 hour', LBeautify(Math.floor(time / (Game.fps * 60 * 60))));
-                else if (time >= Game.fps * 60 && detail < 4) str = loc('%1 minute', LBeautify(Math.floor(time / (Game.fps * 60))));
-                else if (time >= Game.fps && detail < 5) str = loc('%1 second', LBeautify(Math.floor(time / Game.fps)));
-                else str = loc('less than 1 second');
+                if (time >= Game.fps * 60 * 60 * 24 && detail < 2) str = locStr('%1 day', LBeautify(Math.floor(time / (Game.fps * 60 * 60 * 24))));
+                else if (time >= Game.fps * 60 * 60 && detail < 3) str = locStr('%1 hour', LBeautify(Math.floor(time / (Game.fps * 60 * 60))));
+                else if (time >= Game.fps * 60 && detail < 4) str = locStr('%1 minute', LBeautify(Math.floor(time / (Game.fps * 60))));
+                else if (time >= Game.fps && detail < 5) str = locStr('%1 second', LBeautify(Math.floor(time / Game.fps)));
+                else str = locStr('less than 1 second');
             }
             return str;
         };
@@ -6313,10 +6313,10 @@ Game.Launch = function () {
                 let researchStr = Game.sayTime(Game.researchT, -1);
                 let pledgeStr = Game.sayTime(Game.pledgeT, -1);
                 let wrathStr = '';
-                if (Game.elderWrath == 1) wrathStr = loc('awoken');
-                else if (Game.elderWrath == 2) wrathStr = loc('displeased');
-                else if (Game.elderWrath == 3) wrathStr = loc('angered');
-                else if (Game.elderWrath == 0 && Game.pledges > 0) wrathStr = loc('appeased');
+                if (Game.elderWrath == 1) wrathStr = locStr('awoken');
+                else if (Game.elderWrath == 2) wrathStr = locStr('displeased');
+                else if (Game.elderWrath == 3) wrathStr = locStr('angered');
+                else if (Game.elderWrath == 0 && Game.pledges > 0) wrathStr = locStr('appeased');
 
                 let dropMult = Game.dropRateMult();
 
@@ -6630,7 +6630,7 @@ Game.Launch = function () {
         ) {
             let list = [];
 
-            let NEWS = loc('News :').replace(' ', '&nbsp;') + ' ';
+            let NEWS = locStr('News :').replace(' ', '&nbsp;') + ' ';
 
             let loreProgress = Math.round((Math.log(Game.cookiesEarned / 10) * Math.LOG10E + 1) | 0);
 
@@ -10352,7 +10352,7 @@ Game.Launch = function () {
         Game.UnlockAt = []; // this contains an array of every upgrade with a cookie requirement in the form of {cookies:(amount of cookies earned required),name:(name of upgrade or achievement to unlock)} (and possibly require:(name of upgrade of achievement to own))
         // note : the cookie will not be added to the list if it contains locked:1 (use for seasonal cookies and such)
 
-        let strCookieProductionMultiplierPlus = loc('Cookie production multiplier <b>+%1%</b>.', '[x]');
+        let strCookieProductionMultiplierPlus = locStr('Cookie production multiplier <b>+%1%</b>.', '[x]');
         let getStrCookieProductionMultiplierPlus = function (x) {
             return strCookieProductionMultiplierPlus.replace('[x]', x);
         };
@@ -11713,7 +11713,7 @@ Game.Launch = function () {
         );
         new Game.Upgrade(
             'Naughty list',
-            loc('%1 are <b>twice</b> as efficient.', cap(loc('grandmas'))) +
+            loc('%1 are <b>twice</b> as efficient.', cap(locStr('grandmas'))) +
             '<br>' +
             loc('Cost scales with Santa level.') +
             '<q>This list contains every unholy deed perpetuated by grandmakind.<br>He won\'t be checking this one twice.<br>Once. Once is enough.</q>',
@@ -12546,8 +12546,8 @@ Game.Launch = function () {
         });
 
         order = 0;
-        let desc = loc('Placing an upgrade in this slot will make its effects <b>permanent</b> across all playthroughs.');
-        new Game.Upgrade('Permanent upgrade slot I', desc, 100, [0, 10]);
+        let descStr = locStr('Placing an upgrade in this slot will make its effects <b>permanent</b> across all playthroughs.');
+        new Game.Upgrade('Permanent upgrade slot I', descStr, 100, [0, 10]);
         Game.last.pool = 'prestige';
         Game.last.iconFunction = function () {
             return Game.PermanentSlotIcon(0);
@@ -12555,7 +12555,7 @@ Game.Launch = function () {
         Game.last.activateFunction = function () {
             Game.AssignPermanentSlot(0);
         };
-        new Game.Upgrade('Permanent upgrade slot II', desc, 20000, [1, 10]);
+        new Game.Upgrade('Permanent upgrade slot II', descStr, 20000, [1, 10]);
         Game.last.pool = 'prestige';
         Game.last.parents = ['Permanent upgrade slot I'];
         Game.last.iconFunction = function () {
@@ -12564,7 +12564,7 @@ Game.Launch = function () {
         Game.last.activateFunction = function () {
             Game.AssignPermanentSlot(1);
         };
-        new Game.Upgrade('Permanent upgrade slot III', desc, 3000000, [2, 10]);
+        new Game.Upgrade('Permanent upgrade slot III', descStr, 3000000, [2, 10]);
         Game.last.pool = 'prestige';
         Game.last.parents = ['Permanent upgrade slot II'];
         Game.last.iconFunction = function () {
@@ -12573,7 +12573,7 @@ Game.Launch = function () {
         Game.last.activateFunction = function () {
             Game.AssignPermanentSlot(2);
         };
-        new Game.Upgrade('Permanent upgrade slot IV', desc, 400000000, [3, 10]);
+        new Game.Upgrade('Permanent upgrade slot IV', descStr, 400000000, [3, 10]);
         Game.last.pool = 'prestige';
         Game.last.parents = ['Permanent upgrade slot III'];
         Game.last.iconFunction = function () {
@@ -12582,7 +12582,7 @@ Game.Launch = function () {
         Game.last.activateFunction = function () {
             Game.AssignPermanentSlot(3);
         };
-        new Game.Upgrade('Permanent upgrade slot V', desc, 50000000000, [4, 10]);
+        new Game.Upgrade('Permanent upgrade slot V', descStr, 50000000000, [4, 10]);
         Game.last.pool = 'prestige';
         Game.last.parents = ['Permanent upgrade slot IV'];
         Game.last.iconFunction = function () {
@@ -12742,7 +12742,7 @@ Game.Launch = function () {
         Game.last.parents = ['Season switcher'];
 
         let angelPriceFactor = 7;
-        desc = function (percent, total) {
+        let desc = function (percent, total) {
             return loc('You gain another <b>+%1%</b> of your regular CpS while the game is closed, for a total of <b>%2%</b>.', [percent, total]);
         };
         new Game.Upgrade(
@@ -13499,7 +13499,7 @@ Game.Launch = function () {
             choices[3] = { name: 'Cymbal', icon: [9, 10] };
             choices[4] = { name: 'Squeak', icon: [8, 10] };
             for (let i = 0; i < choices.length; i++) {
-                choices[i].name = loc(choices[i].name);
+                choices[i].name = locStr(choices[i].name);
             }
 
             choices[Game.chimeType].selected = 1;
@@ -14438,7 +14438,7 @@ Game.Launch = function () {
             '<br>' +
             loc('%1 are <b>%2%</b> more powerful.', [cap(Game.Objects['Grandma'].plural), 2]) +
             '<br>' +
-            loc('Dropped by %1 plants.', loc('Elderwort').toLowerCase()) +
+            loc('Dropped by %1 plants.', locStr('Elderwort').toLowerCase()) +
             '<q>They taste incredibly stale, even when baked fresh.</q>';
         Game.NewUpgradeCookie({
             name: 'Bakeberry cookies',
@@ -14451,7 +14451,7 @@ Game.Launch = function () {
         Game.last.baseDesc =
             getStrCookieProductionMultiplierPlus(2) +
             '<br>' +
-            loc('Dropped by %1 plants.', loc('Bakeberry').toLowerCase()) +
+            loc('Dropped by %1 plants.', locStr('Bakeberry').toLowerCase()) +
             '<q>Really good dipped in hot chocolate.</q>';
         Game.NewUpgradeCookie({
             name: 'Duketater cookies',
@@ -14464,7 +14464,7 @@ Game.Launch = function () {
         Game.last.baseDesc =
             getStrCookieProductionMultiplierPlus(10) +
             '<br>' +
-            loc('Dropped by %1 plants.', loc('Duketater').toLowerCase()) +
+            loc('Dropped by %1 plants.', locStr('Duketater').toLowerCase()) +
             '<q>Fragrant and mealy, with a slight yellow aftertaste.</q>';
         Game.NewUpgradeCookie({
             name: 'Green yeast digestives',
@@ -14483,7 +14483,7 @@ Game.Launch = function () {
             '<br>' +
             loc('Random drops are <b>%1% more common</b>.', 3) +
             '<br>' +
-            loc('Dropped by %1 plants.', loc('Green rot').toLowerCase()) +
+            loc('Dropped by %1 plants.', locStr('Green rot').toLowerCase()) +
             '<q>These are tastier than you\'d expect, but not by much.</q>';
 
         order = 23000;
@@ -14494,7 +14494,7 @@ Game.Launch = function () {
             loc('Must own the %1 upgrade.', getUpgradeName('Twin Gates of Transcendence')) +
             ')</small>' +
             '<br>' +
-            loc('Dropped by %1 plants.', loc('Drowsyfern').toLowerCase()) +
+            loc('Dropped by %1 plants.', locStr('Drowsyfern').toLowerCase()) +
             '<q>A chemically complex natural beverage, this soothing concoction has been used by mathematicians to solve equations in their sleep.</q>',
             60,
             [26, 25]
@@ -14508,7 +14508,7 @@ Game.Launch = function () {
             '<br>' +
             loc('Sugar lumps mature <b>%1</b> sooner.', Game.sayTime(7 * 60 * Game.fps)) +
             '<br>' +
-            loc('Dropped by %1 plants.', loc('Ichorpuff').toLowerCase()) +
+            loc('Dropped by %1 plants.', locStr('Ichorpuff').toLowerCase()) +
             '<q>Tastes like candy. The smell is another story.</q>',
             60 * 2,
             [27, 25]
@@ -14526,7 +14526,7 @@ Game.Launch = function () {
         Game.last.baseDesc =
             getStrCookieProductionMultiplierPlus(1) +
             '<br>' +
-            loc('Dropped by %1 plants.', loc('Baker\'s wheat').toLowerCase()) +
+            loc('Dropped by %1 plants.', locStr('Baker\'s wheat').toLowerCase()) +
             '<q>The only reason you\'d consider these to be cookies is because you feel slightly sorry for them.</q>';
 
         let gardenDrops = ['Elderwort biscuits', 'Bakeberry cookies', 'Duketater cookies', 'Green yeast digestives', 'Fern tea', 'Ichor syrup', 'Wheat slims'];
@@ -16844,7 +16844,7 @@ Game.Launch = function () {
                 obj.tier == 1 ? 'Unshackled flavor' : 'Unshackled ' + tier.name.toLowerCase(),
                 loc(
                     'Unshackles all <b>%1-tier upgrades</b>, making them more powerful.<br>Only applies to unshackled buildings.',
-                    cap(loc('[Tier]' + tier.name, 0, tier.name))
+                    cap(locStr('[Tier]' + tier.name, 0, tier.name))
                 ) + (EN ? '<q>' + obj.q + '</q>' : ''),
                 Math.pow(obj.tier, 7.5) * 10000000,
                 [10, tier.iconRow]
@@ -21877,17 +21877,17 @@ Game.Launch = function () {
                     el.style.transform = 'scale(1,' + width + ')';
                 }
             };
-            ASSERT_NOT_NULL($('prefsButton', true).firstElementChild).innerHTML = loc('Options');
-            ASSERT_NOT_NULL($('statsButton', true).firstElementChild).innerHTML = loc('Stats');
-            ASSERT_NOT_NULL($('logButton', true).firstElementChild).innerHTML = loc('Info');
-            ASSERT_NOT_NULL($('legacyButton', true).firstElementChild).innerHTML = loc('Legacy');
+            ASSERT_NOT_NULL($('prefsButton', true).firstElementChild).innerHTML = locStr('Options');
+            ASSERT_NOT_NULL($('statsButton', true).firstElementChild).innerHTML = locStr('Stats');
+            ASSERT_NOT_NULL($('logButton', true).firstElementChild).innerHTML = locStr('Info');
+            ASSERT_NOT_NULL($('legacyButton', true).firstElementChild).innerHTML = locStr('Legacy');
             adaptWidth($('prefsButton', true));
             adaptWidth($('statsButton', true));
             adaptWidth($('logButton', true));
             adaptWidth($('legacyButton', true));
-            $('checkForUpdate', true).childNodes[0].textContent = loc('New update!');
-            $('buildingsTitle', true).childNodes[0].textContent = loc('Buildings');
-            $('storeTitle', true).childNodes[0].textContent = loc('Store');
+            $('checkForUpdate', true).childNodes[0].textContent = locStr('New update!');
+            $('buildingsTitle', true).childNodes[0].textContent = locStr('Buildings');
+            $('storeTitle', true).childNodes[0].textContent = locStr('Store');
         }
     };
     /* =====================================================================================
@@ -22483,7 +22483,7 @@ Game.Launch = function () {
                 str = [str.slice(0, spacePos), add, str.slice(spacePos)].join('');
             }
 
-            str = loc('%1 cookie', { n: Math.round(Game.cookiesd), b: str });
+            str = locStr('%1 cookie', { n: Math.round(Game.cookiesd), b: str });
             if (str.length > 14) str = str.replace(' ', '<br>');
 
             if (Game.prefs.monospace) str = '<span class="monospace">' + str + '</span>';

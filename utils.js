@@ -27,9 +27,10 @@ function $(what, assertNotNull) {
 }
 /**
  * @template T
- * @param {T[]} arr
+ * @param {T[] | T} arr
  */
 function choose(arr) {
+    if (!(arr instanceof Array)) return arr;
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
