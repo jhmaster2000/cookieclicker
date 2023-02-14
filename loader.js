@@ -69,8 +69,8 @@ BLANK_CANVAS.height = 8;
 BLANK_CANVAS.alt = 'blank';
 
 const Pic = function (/** @type {string} */ what) {
-    if (Game.Loader.assetsLoaded.indexOf(what) != -1) return Game.Loader.assets[what];
-    else if (Game.Loader.assetsLoading.indexOf(what) == -1) Game.Loader.Load([what]);
+    if (Game.Loader.assetsLoaded.includes(what)) return Game.Loader.assets[what];
+    else if (!Game.Loader.assetsLoading.includes(what)) Game.Loader.Load([what]);
     return BLANK_CANVAS;
 };
 Pic; //! export
