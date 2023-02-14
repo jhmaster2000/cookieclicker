@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 class Loader {
     loadingN = 0;
     assetsN = 0;

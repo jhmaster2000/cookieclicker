@@ -1,5 +1,4 @@
 ﻿/* eslint-disable @typescript-eslint/no-this-alias */
-/* eslint-disable no-undef */
 let M = {};
 M.parent = Game.Objects['Farm'];
 M.parent.minigame = M;

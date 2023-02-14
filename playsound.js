@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 const Sounds = [];
 const SoundInsts = [];
 for (let i = 0; i < 12; i++) SoundInsts[i] = new Audio();

@@ -1,5 +1,4 @@
-﻿/* eslint-disable no-undef */
-let M = {};
+﻿let M = {};
 M.parent = Game.Objects['Temple'];
 M.parent.minigame = M;
 M.launch = function () {

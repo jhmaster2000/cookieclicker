@@ -19,6 +19,7 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "no-undef": "off",
         "no-inner-declarations": "off",
         "@typescript-eslint/ban-ts-comment": [0, 2, 2, 0],
         "indent": [

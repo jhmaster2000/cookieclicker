@@ -1,9 +1,7 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* =====================================================================================
 MISC HELPER FUNCTIONS
 =======================================================================================*/
-const STUB = (..._) => void 0;
+const STUB = (..._) => void _; STUB; //!export
 /**
  * @template T
  * @param {T} v
@@ -12,7 +10,7 @@ const STUB = (..._) => void 0;
 const ASSERT_NOT_NULL = (v) => {
     if (v === null || v === undefined) throw new Error('Non-null assertion failed. Follow stacktrace for location.');
     return /** @type Exclude<T, null | undefined> */(v);
-};
+}; ASSERT_NOT_NULL; //!export
 /**
  * @template {boolean} asserted
  * @param {string} what
@@ -25,6 +23,7 @@ function $(what, assertNotNull) {
     // @ts-expect-error --- Need proper TS to fix this one, but the external types work and that's what matters
     return el;
 }
+$; //!export
 /**
  * @template T
  * @param {T[] | T} arr
@@ -33,6 +32,7 @@ function choose(arr) {
     if (!(arr instanceof Array)) return arr;
     return arr[Math.floor(Math.random() * arr.length)];
 }
+choose; //!export
 
 /**
  * @param {string} str
@@ -40,6 +40,7 @@ function choose(arr) {
 function cap(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+cap; //!export
 
 /**
  * @param {number} x
@@ -48,6 +49,7 @@ function randomRound(x) {
     if (x % 1 < Math.random()) return Math.floor(x);
     else return Math.ceil(x);
 }
+randomRound; //!export
 
 /**
  * @template T
@@ -70,6 +72,7 @@ function shuffle(array) {
     }
     return array;
 }
+shuffle; //!export
 
 const LoadScript = function (
     /** @type {string} */ url,
@@ -84,6 +87,7 @@ const LoadScript = function (
     js.setAttribute('src', url);
     document.head.appendChild(js);
 };
+LoadScript; //!export
 
 const localStorageGet = function (key) {
     /** @type number | string | null */
@@ -94,7 +98,7 @@ const localStorageGet = function (key) {
         /* empty */
     }
     return local;
-};
+}; localStorageGet; //!export
 const localStorageSet = function (key, str) {
     /** @type number | void */
     let local = 0;
@@ -104,7 +108,7 @@ const localStorageSet = function (key, str) {
         /* empty */
     }
     return local;
-};
+}; localStorageSet; //!export
 
 /**
  * @param {number} x
@@ -128,6 +132,7 @@ function toFixed(x) {
     }
     return x;
 }
+toFixed; //!export
 
 // Beautify and number-formatting adapted from the Frozen Cookies add-on (http://cookieclicker.wikia.com/wiki/Frozen_Cookies_%28JavaScript_Add-on%29)
 /**
@@ -150,6 +155,7 @@ function formatEveryThirdPower(notations) {
         return Math.round(val * 1000) / 1000 + notationValue;
     };
 }
+formatEveryThirdPower; //!export
 
 /**
  * @param {number} val
@@ -157,6 +163,7 @@ function formatEveryThirdPower(notations) {
 function rawFormatter(val) {
     return Math.round(val * 1000) / 1000;
 }
+rawFormatter; //!export
 
 const formatLong = [' thousand', ' million', ' billion', ' trillion', ' quadrillion', ' quintillion', ' sextillion', ' septillion', ' octillion', ' nonillion'];
 const prefixes = ['', 'un', 'duo', 'tre', 'quattuor', 'quin', 'sex', 'septen', 'octo', 'novem'];
@@ -235,7 +242,7 @@ const SimpleBeautify = function (/** @type {number} */ val) {
         str2 += str[i];
     }
     return str2;
-};
+}; SimpleBeautify; //? externally used
 
 const beautifyInTextFilter = /(([\d]+[,]*)+)/g; // new regex
 function BeautifyInTextFunction(str) {
@@ -253,6 +260,7 @@ function BeautifyAll() {
         Game.AchievementsById[i].ddesc = BeautifyInText(Game.AchievementsById[i].ddesc);
     }
 }
+BeautifyAll; //! export
 
 // phewie! https://stackoverflow.com/questions/30106476/using-javascripts-atob-to-decode-base64-doesnt-properly-decode-utf-8-strings
 function utf8_to_b64(str) {
@@ -266,6 +274,7 @@ function utf8_to_b64(str) {
         return '';
     }
 }
+utf8_to_b64; //! export
 
 function b64_to_utf8(str) {
     try {
@@ -280,13 +289,14 @@ function b64_to_utf8(str) {
         return '';
     }
 }
+b64_to_utf8; //! export
 
 const getUpgradeName = (/** @type {string} */ name) => {
     const it = Game.Upgrades[name];
     const found = FindLocStringByPart('Upgrade name ' + it.id);
     if (found) return loc(found);
     else return name;
-};
+}; getUpgradeName; //! export
 
 function writeIcon(icon) {
     // returns CSS for an icon's background image
@@ -305,13 +315,14 @@ function tinyIcon(icon, css) {
         '"></div>'
     );
 }
+tinyIcon; //! export
 
 const triggerAnim = (/** @type {HTMLElement | null} */ element, /** @type {string} */ anim) => {
     if (!element) return;
     element.classList.remove(anim);
     void element.offsetWidth;
     element.classList.add(anim);
-};
+}; triggerAnim; //! export
 
 //!=====================!\\
 //! Prototype Pollution !\\

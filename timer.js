@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 class Timer {
     /** @type {Record<string, string>} */
     static labels = {};

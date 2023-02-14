@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-undef */
 // === LOCALIZATION ===
 
 let locStrings = {};
@@ -173,7 +171,7 @@ const locStr = (
     const locRet = loc(id, params, baseline);
     if (locRet instanceof Array) return locRet[0];
     return locRet;
-};
+}; locStr; //! export
 
 const parseLoc = (
     /** @type {string | string[]} */ str,
@@ -224,7 +222,7 @@ const LBeautify = (
     /** @type {number} */ val, /** @type {number | undefined} */ floats
 ) => {
     return { n: Math.floor(Math.abs(val)), b: Beautify(val, floats) };
-};
+}; LBeautify; //! export
 
 /** used in loc files.
  * 
@@ -291,7 +289,7 @@ const AddLanguage = (
 
         console.log('Loaded language "' + locName + '".');
     }
-};
+}; AddLanguage; //! export
 
 const LocalizeUpgradesAndAchievs = function () {
     if (!Game.UpgradesById) return false;
@@ -319,4 +317,4 @@ const LocalizeUpgradesAndAchievs = function () {
         if (found) it.ddesc += '<q>' + loc(found) + '</q>';
     }
     BeautifyAll();
-};
+}; LocalizeUpgradesAndAchievs; //! export
