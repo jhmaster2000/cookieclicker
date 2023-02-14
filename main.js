@@ -1908,7 +1908,7 @@ Game.Launch = function () {
                     // that's right
                     // we're using cookies
                     // yeah I went there
-                    let now = new Date(); // we storin dis for 5 years, people
+                    const now = new Date(); // we storin dis for 5 years, people
                     now.setFullYear(now.getFullYear() + 5); // mmh stale cookies
                     str = utf8_to_b64(str) + '!END!';
                     Game.saveData = encodeURIComponent(str);

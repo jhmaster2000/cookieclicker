@@ -337,6 +337,25 @@ const triggerAnim = (/** @type {HTMLElement | null} */ element, /** @type {strin
 //! Prototype Pollution !\\
 //!=====================!\\
 
+const originalDecodeURIComponent = decodeURIComponent;
+// @ts-expect-error
+// eslint-disable-next-line no-global-assign
+decodeURIComponent = (/** @type string */ encodedURIComponent) => {
+    const input = [...encodedURIComponent].map((curr, i, arr) => {
+        const nextTwo = arr.slice(i + 1, i + 3).join('');
+        if (
+            curr === '%' && (nextTwo.trim().length !== 2 || Number.isNaN(Number('0x' + nextTwo)))
+        ) return '%25';
+        return curr;
+    }).join('');
+    try {
+        return originalDecodeURIComponent(input);
+    } catch (e) {
+        console.log('decodeURIComponent error with input: ' + input);
+        throw e;
+    }
+};
+
 Element.prototype.getBounds = function () {
     const bounds = this.getBoundingClientRect();
     const s = Game.scale;
