@@ -256,6 +256,7 @@ function BeautifyAll() {
         Game.UpgradesById[i].ddesc = BeautifyInText(Game.UpgradesById[i].ddesc);
     }
     for (let i in Game.AchievementsById) {
+        // @ts-expect-error for now x2
         Game.AchievementsById[i].ddesc = BeautifyInText(Game.AchievementsById[i].ddesc);
     }
 }
@@ -305,7 +306,7 @@ const getUpgradeName = (/** @type {string} */ name) => {
 
 /**
  * returns CSS for an icon's background image, for use in CSS strings
- * @param {any[]} icon
+ * @param {any} icon
  */
 function writeIcon(icon) {
     return (
@@ -326,12 +327,48 @@ function tinyIcon(icon, css) {
 }
 tinyIcon; //! export
 
+/** easter is a pain goddamn
+ * @param {number} year Full year */
+function getEasterDay(year) {
+    const C = Math.floor(year / 100);
+    const N = year - 19 * Math.floor(year / 19);
+    const K = Math.floor((C - 17) / 25);
+    let I = C - Math.floor(C / 4) - Math.floor((C - K) / 3) + 19 * N + 15;
+    I = I - 30 * Math.floor(I / 30);
+    I = I - Math.floor(I / 28) * (1 - Math.floor(I / 28) * Math.floor(29 / (I + 1)) * Math.floor((21 - N) / 11));
+    let J = year + Math.floor(year / 4) + I + 2 - C + Math.floor(C / 4);
+    J = J - 7 * Math.floor(J / 7);
+    const L = I - J;
+    const M = 3 + Math.floor((L + 40) / 44);
+    const D = L + 28 - 31 * Math.floor(M / 4);
+    const easterDay = new Date(year, M - 1, D);
+    const easterDayNum = Math.floor((+easterDay - +new Date(easterDay.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+    return easterDayNum;
+}
+getEasterDay; //! export
+
 const triggerAnim = (/** @type {HTMLElement | null} */ element, /** @type {string} */ anim) => {
     if (!element) return;
     element.classList.remove(anim);
     void element.offsetWidth;
     element.classList.add(anim);
 }; triggerAnim; //! export
+
+const strCookieProductionMultiplierPlus = locStr('Cookie production multiplier <b>+%1%</b>.', '[x]');
+const getStrCookieProductionMultiplierPlus = (/** @type {string | number} */ x) => {
+    return strCookieProductionMultiplierPlus.replace('[x]', String(x));
+};
+getStrCookieProductionMultiplierPlus; //! export
+const getStrThousandFingersGain = (/** @type {string | number} */ x) => {
+    return loc('Multiplies the gain from %1 by <b>%2</b>.', [getUpgradeName('Thousand fingers'), x]);
+};
+getStrThousandFingersGain; //! export
+const strKittenDesc = loc('You gain <b>more CpS</b> the more milk you have.');
+strKittenDesc; //! export
+const getStrClickingGains = (/** @type {string | number} */ x) => {
+    return loc('Clicking gains <b>+%1% of your CpS</b>.', x);
+};
+getStrClickingGains; //! export
 
 //!=====================!\\
 //! Prototype Pollution !\\

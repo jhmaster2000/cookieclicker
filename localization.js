@@ -267,8 +267,8 @@ const AddLanguage = (
         locPatches = [];
         for (let i in locStrings) {
             if (i.split('|')[0] === 'Update notes') {
-                let patch = i.split('|');
-                let patchTranslated = String(locStrings[i]).split('|');
+                const patch = i.split('|');
+                const patchTranslated = String(locStrings[i]).split('|');
                 locPatches.push({
                     id: parseInt(patch[1]),
                     type: 1,
@@ -298,9 +298,11 @@ const LocalizeUpgradesAndAchievs = function () {
 
     let allThings = [];
     for (let i in Game.UpgradesById) {
+        // @ts-expect-error for now
         allThings.push(Game.UpgradesById[i]);
     }
     for (let i in Game.AchievementsById) {
+        // @ts-expect-error for now
         allThings.push(Game.AchievementsById[i]);
     }
     for (let i = 0; i < allThings.length; i++) {

@@ -16,6 +16,11 @@ declare interface ChildNode {
     innerHTML: string;
 }
 
+declare interface ParentNode {
+    offsetWidth: number;
+    offsetHeight: number;
+}
+
 declare interface CanvasRenderingContext2D {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fillPattern(img: any, X: any, Y: any, W: any, H: any, iW: any, iH: any, offX: any, offY: any): void;

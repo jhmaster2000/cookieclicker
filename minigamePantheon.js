@@ -322,14 +322,14 @@ M.launch = function () {
         };
 
         //external
-        Game.hasGod = function (what) {
+        static hasGod(what) {
             let god = M.gods[what];
             for (let i = 0; i < 3; i++) {
                 if (M.slot[i] == god.id) return i + 1;
             }
             return false;
         };
-        Game.forceUnslotGod = function (god) {
+        static forceUnslotGod(god) {
             let god = M.gods[god];
             if (god.slot == -1) return false;
             let div = $('templeGod' + god.id);
