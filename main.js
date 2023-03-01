@@ -13,9 +13,6 @@ Spoilers ahead.
 http://orteil.dashnet.org
 */
 
-const VERSION = 9.999;
-const BETA = true;
-
 /** @type {number | undefined} */
 let order;
 /** @type {'' | 'cookie' | 'toggle' | 'debug' | 'prestige' | 'prestigeDecor' | 'tech' | undefined} */
@@ -3236,6 +3233,7 @@ class Game {
             [16, 6],
             function () {
                 for (let i in Game.seasons) {
+                    if (i === '') continue;
                     Game.Unlock(Game.seasons[/** @type {keyof typeof Game.seasons} */(i)].trigger);
                 }
             }
@@ -3290,6 +3288,7 @@ class Game {
         order = 40000;
         new Game.Upgrade('Eternal seasons', loc('Seasons now last forever.') + '<q>Season to taste.</q>', 7, [16, 6], function () {
             for (let i in Game.seasons) {
+                if (i === '') continue;
                 Game.Unlock(Game.seasons[/** @type {keyof typeof Game.seasons} */(i)].trigger);
             }
         }); // debug purposes only
@@ -8179,6 +8178,7 @@ class Game {
 
         if (!EN) {
             for (let i in Game.seasons) {
+                if (i === '') continue;
                 const it = Game.seasons[/** @type {keyof typeof Game.seasons} */(i)];
                 it.name = String(loc(it.name));
                 it.start = String(loc('%1 has started!', it.name));
@@ -10774,6 +10774,7 @@ class Game {
                     // recompute season trigger prices
                     if (Game.Has('Season switcher')) {
                         for (let i in Game.seasons) {
+                            if (i === '') continue;
                             Game.Unlock(Game.seasons[/** @type {keyof typeof Game.seasons} */(i)].trigger);
                         }
                     }
@@ -11093,6 +11094,7 @@ class Game {
                 }
                 if (Game.Has('Season switcher')) {
                     for (let i in Game.seasons) {
+                        if (i === '') continue;
                         Game.Unlock(Game.seasons[/** @type {keyof typeof Game.seasons} */(i)].trigger);
                     }
                 }
@@ -17405,8 +17407,9 @@ class Game {
                 (EN ? desc : '');
         const upgrade = new Game.Upgrade(
             name, desc,
-            (b1.basePrice * 10 + b2.basePrice * 1) * Game.Tiers[/** @type {keyof typeof Game.Tiers} */ (Number(tier))].price,
-            Game.GetIcon(building1, Number(tier))
+            (b1.basePrice * 10 + b2.basePrice * 1) * Game.Tiers[/** @type {keyof typeof Game.Tiers} */ (tier)].price,
+            // @ts-expect-error it begins again
+            Game.GetIcon(building1, tier)
         );
         upgrade.tier = /** @type {keyof typeof Game.Tiers} */ (tier);
         upgrade.buildingTie1 = b1;
@@ -18089,6 +18092,7 @@ class Game {
 
     static computeSeasonPrices() {
         for (let i in Game.seasons) {
+            if (i === '') continue;
             ASSERT_NOT_NULL(Game.seasons[/** @type {keyof typeof Game.seasons} */ (i)].triggerUpgrade)
                 .priceFunc = function () {
                     let m = 1;
@@ -18105,6 +18109,7 @@ class Game {
     static computeSeasons() {
         for (let i in Game.seasons) {
             const seasonI = /** @type {keyof typeof Game.seasons} */ (i);
+            if (seasonI === '') continue;
             const me = Game.Upgrades[Game.seasons[seasonI].trigger];
             Game.seasons[seasonI].triggerUpgrade = me;
             me.pool = 'toggle';
@@ -18112,7 +18117,8 @@ class Game {
                 Game.seasonUses += 1;
                 Game.computeSeasonPrices();
                 for (let i in Game.seasons) {
-                    let me = Game.Upgrades[Game.seasons[seasonI].trigger];
+                    if (i === '') continue;
+                    let me = Game.Upgrades[Game.seasons[/** @type {keyof typeof Game.seasons} */ (i)].trigger];
                     if (me.name != this.name) {
                         Game.Lock(me.name);
                         Game.Unlock(me.name);

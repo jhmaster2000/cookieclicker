@@ -36,3 +36,6 @@ interface Window {
         roman(num: number): string;
     };
 }
+
+declare const VERSION: number;
+declare const BETA: number;
