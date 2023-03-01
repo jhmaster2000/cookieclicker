@@ -2049,7 +2049,7 @@ class Game {
 
         // define upgrades
         // WARNING : do NOT add new upgrades in between, this breaks the saves. Add them at the end !
-        let order = 100; // this is used to set the order in which the items are listed
+        order = 100; // this is used to set the order in which the items are listed
         new Game.Upgrade('Reinforced index finger', loc('The mouse and cursors are <b>twice</b> as efficient.') + '<q>prod prod</q>', 100, [0, 0]);
         Game.MakeTiered(Game.last, 1, 0);
         new Game.Upgrade(
