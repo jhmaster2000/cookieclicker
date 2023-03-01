@@ -11657,7 +11657,7 @@ class Game {
             name: 'None',
             dname: loc('None [ascension type]'),
             desc: loc('No special modifiers.'),
-            icon: [10, 0]
+            icon: /** @type {[number, number]} */ ([10, 0])
         },
         1: {
             name: 'Born again',
@@ -11665,7 +11665,7 @@ class Game {
             desc: loc(
                 'This run will behave as if you\'d just started the game from scratch. Prestige levels and heavenly upgrades will have no effect, as will sugar lumps and building levels. Perma-upgrades and minigames will be unavailable.<div class="line"></div>Some achievements are only available in this mode.'
             ),
-            icon: [2, 7]
+            icon: /** @type {[number, number]} */ ([2, 7])
         }
     };
 
@@ -13937,24 +13937,26 @@ class Game {
     static noteL = $('notes', true);
     static Note = class Note {
         /**
-         * @param {any} title
-         * @param {string} desc
-         * @param {string} pic
-         * @param {number} quick
+         * @param {string} title
+         * @param {string} [desc]
+         * @param {[number, number]} [pic]
+         * @param {number} [quick]
          */
-        constructor(title, desc, pic, quick) {
+        constructor(title, desc = '', pic, quick = 0) {
             this.title = title;
-            this.desc = desc || '';
-            this.pic = pic || '';
+            this.desc = desc;
+            this.pic = pic;
             this.id = Game.noteId;
             this.date = Date.now();
-            this.quick = quick || 0;
+            this.quick = quick;
             this.life = (this.quick || 1) * Game.fps;
             this.l = 0;
             this.height = 0;
             this.tooltip = 0;
             Game._GameNoteHandleNotesArrayTemp(this);
         }
+
+        title; desc; pic; id; date; quick; life; height; tooltip;
 
         /** @type {HTMLElement | 0} */
         l;
@@ -13993,14 +13995,14 @@ class Game {
             if (Number(i) < 5) {
                 me = Game.Notes[i];
                 let pic = '';
-                if (me.pic != '') pic = '<div class="icon" style="' + writeIcon(me.pic) + '"></div>';
+                if (me.pic) pic = '<div class="icon" style="' + writeIcon(me.pic) + '"></div>';
                 str =
                         '<div id="note-' +
                         me.id +
                         '" ' +
                         (me.tooltip ? Game.getDynamicTooltip(String(me.tooltip), 'this', true) + ' ' : '') +
                         'class="framed note ' +
-                        (me.pic != '' ? 'haspic' : 'nopic') +
+                        (me.pic ? 'haspic' : 'nopic') +
                         ' ' +
                         (me.desc != '' ? 'hasdesc' : 'nodesc') +
                         '"><div class="close" onclick="PlaySound(\'snd/tick.mp3\');Game.CloseNote(' +
@@ -18494,7 +18496,7 @@ class Game {
             time: 0,
             name: '???',
             desc: '',
-            icon: [0, 0],
+            icon: /** @type {[number, number]} */ ([0, 0]),
             maxTime: 0,
             id: 0,
             /** @type {HTMLElement=} */
@@ -19450,7 +19452,16 @@ class Game {
         }
     ];
 
-    static _dragonAuras = {
+    /**
+     * @type {Record<
+     *      0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20,
+     *      {
+     *          name: string; pic: [number, number]; desc: string | string[];
+     *          dname?: string; id?: number;
+     *      }
+     * >}
+     */
+    static dragonAuras = {
         0: {
             name: 'No aura',
             pic: [0, 7],
@@ -19557,13 +19568,6 @@ class Game {
             desc: loc('Confers various powers to your minigames while active.<br>See the bottom of each minigame for more details.')
         }
     };
-    /**
-     * @type {{
-     *      [K in keyof typeof Game._dragonAuras]: typeof Game._dragonAuras[K]
-     *          & { dname?: string; id?: number; }
-     * }}
-     */
-    static dragonAuras = Game._dragonAuras;
 
     /** @type {Record<string, typeof Game.dragonAuras[0]>} */
     static dragonAurasBN = {};

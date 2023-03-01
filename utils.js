@@ -306,16 +306,24 @@ const getUpgradeName = (/** @type {string} */ name) => {
 
 /**
  * returns CSS for an icon's background image, for use in CSS strings
- * @param {any} icon
+ * @param {[number, number, string?]} icon
  */
 function writeIcon(icon) {
     return (
-        `${icon[2] ? `background-image:url('${icon[2].replace(/'/g, '\\\'')}');` : ''}background-position:${-icon[0] * 48}px ${-icon[1] * 48}px;`
+        `${
+            icon[2]
+                ? `background-image:url('${icon[2].replace(/'/g, '\\\'')}');`
+                : ''
+        }background-position:${
+            -icon[0] * 48
+        }px ${
+            -icon[1] * 48
+        }px;`
     );
 }
 /**
  * returns HTML displaying an icon, with optional extra CSS
- * @param {any[]} icon
+ * @param {[number, number]} icon
  * @param {string=} css
  */
 function tinyIcon(icon, css) {

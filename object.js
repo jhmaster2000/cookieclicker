@@ -40,7 +40,7 @@ class CookieObject {
 
     constructor(
         /** @type {string} */ name, /** @type {string | string[]} */ commonName, /** @type {string} */ desc,
-        /** @type {any} */ icon, /** @type {any} */ iconColumn,
+        /** @type {any} */ icon, /** @type {number} */ iconColumn,
         /** @type {{
          *      base?: string; pic?: string | Function; bg?: string; xV?: number; yV?: number;
          *      w?: number; x?: number; y?: number; rows?: number; frames?: number; }} */ art,
@@ -381,7 +381,7 @@ class CookieObject {
                     desc = Game.foolObjects[/** @type {keyof typeof Game.foolObjects} */(this.name)].desc;
                 }
             }
-            let icon = [this.iconColumn, 0];
+            let icon = /** @type {[number, number]} */ ([this.iconColumn, 0]);
             if (this.locked) {
                 name = '???';
                 desc = '???';
