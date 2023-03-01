@@ -14063,7 +14063,8 @@ class Game {
             if (!quick) quick = 6;
         }
         desc = String(desc).replaceAll('==CLOSETHIS()==', `Game.CloseNote(${Game.noteId});`);
-        if (Game.popups) new Game.Note(title, desc, String(pic), quick || 0);
+        // @ts-expect-error sweet misery
+        if (Game.popups) new Game.Note(title, desc, pic, quick || 0);
         if (!noLog) Game.AddToLog('<b>' + title + '</b> | ' + desc);
     }
     /**
