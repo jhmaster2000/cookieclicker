@@ -354,22 +354,6 @@ const triggerAnim = (/** @type {HTMLElement | null} */ element, /** @type {strin
     element.classList.add(anim);
 }; triggerAnim; //! export
 
-const strCookieProductionMultiplierPlus = locStr('Cookie production multiplier <b>+%1%</b>.', '[x]');
-const getStrCookieProductionMultiplierPlus = (/** @type {string | number} */ x) => {
-    return strCookieProductionMultiplierPlus.replace('[x]', String(x));
-};
-getStrCookieProductionMultiplierPlus; //! export
-const getStrThousandFingersGain = (/** @type {string | number} */ x) => {
-    return loc('Multiplies the gain from %1 by <b>%2</b>.', [getUpgradeName('Thousand fingers'), x]);
-};
-getStrThousandFingersGain; //! export
-const strKittenDesc = loc('You gain <b>more CpS</b> the more milk you have.');
-strKittenDesc; //! export
-const getStrClickingGains = (/** @type {string | number} */ x) => {
-    return loc('Clicking gains <b>+%1% of your CpS</b>.', x);
-};
-getStrClickingGains; //! export
-
 //!=====================!\\
 //! Prototype Pollution !\\
 //!=====================!\\

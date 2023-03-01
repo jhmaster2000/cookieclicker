@@ -298,11 +298,9 @@ const LocalizeUpgradesAndAchievs = function () {
 
     let allThings = [];
     for (let i in Game.UpgradesById) {
-        // @ts-expect-error for now
         allThings.push(Game.UpgradesById[i]);
     }
     for (let i in Game.AchievementsById) {
-        // @ts-expect-error for now
         allThings.push(Game.AchievementsById[i]);
     }
     for (let i = 0; i < allThings.length; i++) {
@@ -310,7 +308,7 @@ const LocalizeUpgradesAndAchievs = function () {
         let type = it.getType();
         let found;
         found = locStringsByPart[type + ' name ' + it.id] || undefined;
-        if (found) it.dname = loc(found);
+        if (found) it.dname = String(loc(found));
 
         if (!EN) it.baseDesc = it.baseDesc.replace(/<q>.*/, ''); // strip quote section
         it.ddesc = BeautifyInText(it.baseDesc);
@@ -323,3 +321,21 @@ const LocalizeUpgradesAndAchievs = function () {
     BeautifyAll();
     return true;
 }; LocalizeUpgradesAndAchievs; //! export
+
+/* localization utils */
+
+const strCookieProductionMultiplierPlus = locStr('Cookie production multiplier <b>+%1%</b>.', '[x]');
+const getStrCookieProductionMultiplierPlus = (/** @type {string | number} */ x) => {
+    return strCookieProductionMultiplierPlus.replace('[x]', String(x));
+};
+getStrCookieProductionMultiplierPlus; //! export
+const getStrThousandFingersGain = (/** @type {string | number} */ x) => {
+    return loc('Multiplies the gain from %1 by <b>%2</b>.', [getUpgradeName('Thousand fingers'), x]);
+};
+getStrThousandFingersGain; //! export
+const strKittenDesc = loc('You gain <b>more CpS</b> the more milk you have.');
+strKittenDesc; //! export
+const getStrClickingGains = (/** @type {string | number} */ x) => {
+    return loc('Clicking gains <b>+%1% of your CpS</b>.', x);
+};
+getStrClickingGains; //! export

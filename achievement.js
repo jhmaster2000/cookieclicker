@@ -46,5 +46,7 @@ class Achievement {
     shortName;
     /** @type {keyof typeof Game.Tiers | undefined} */
     tier;
+    /** @type {string=} */
+    ddesc;
 }
 Achievement; //! export
