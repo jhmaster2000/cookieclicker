@@ -18476,14 +18476,14 @@ class Game {
     static buffsI = 0;
     static buffsL = $('buffs', true);
     /**
-     * @param {string | number} typeArg
+     * @param {string} typeArg
      * @param {number} time
      * @param {number} arg1
      * @param {number} [arg2]
      * @param {number} [arg3]
      */
     static gainBuff(typeArg, time, arg1, arg2, arg3) {
-        const type = Game.buffTypesByName[Number(typeArg)];
+        const type = Game.buffTypesByName[typeArg];
         const obj = ASSERT_NOT_NULL(type.func)(time, arg1, arg2, arg3);
         obj.type = type;
         obj.arg1 = arg1;
