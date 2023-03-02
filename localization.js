@@ -9,8 +9,10 @@ let locId;
 let EN = true;
 /** @type {{ id: number, type: number, title: string, points: string[] }[]} */
 let locPatches = [];
-let locPlur = 'nplurals=2;plural=(n!=1);'; // see http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
-const locPlurFallback = locPlur;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+let locPlurFn = (/** @type {string | number} */ _n) => false;
+let locPlurStr = 'nplurals=2;plural=(n!=1);'; // see http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
+const locPlurFallback = locPlurStr;
 // note : plural index will be downgraded to the last matching, ie. in this case, if we get "0" but don't have a 3rd option, use the 2nd option (or 1st, lacking that too)
 /** @type {Record<string, string>} */
 const locStringsByPart = {};
@@ -122,30 +124,37 @@ const Langs = {
     }
 };
 
-// note : baseline should be the original english text
-// in several instances, the english text will be quite different from the other languages,
-// as this game was initially never meant to be translated and the translation process doesn't always play well with complex sentence structures
-/* use:
-    loc('Plain text')
-    loc('Text where %1 is a parameter','something')
-    loc('Text where %1 and %2 are parameters',['a thing','another thing'])
-    loc('There is %1 apple',5)
-         ...if the localized string is an array, this is parsed as a pluralized string; for instance, the localized string could be
-        "There is %1 apple":[
-            "There is %1 apple",
-            "There are %1 apples"
-        ]
-    loc('There is %1 apple and also, %2!',[5,'hello'])
-    loc('This string is localized.',0,'This is the string displayed in the english version.')
-    loc('You have %1.','<b>'+loc('%1 apple',LBeautify(amount))+'</b>')
-        ...you may nest localized strings, and use LBeautify() to pack Beautified values
-*/
-const locBlink = false;
+/** 
+ * @note `baseline` should be the original english text.
+ * 
+ * In several instances, the english text will be quite different from the other languages,
+ * as this game was initially never meant to be translated and
+ * the translation process doesn't always play well with complex sentence structures.
+ * 
+ * @usage
+ * ```js
+ *  loc('Plain text');
+ *  loc('Text where %1 is a parameter', 'something');
+ *  loc('Text where %1 and %2 are parameters', ['a thing', 'another thing']);
+ *  loc('There is %1 apple', 5);
+ *  //? ...if the localized string is an array, this is parsed as a pluralized string; for instance, the localized string could be
+ *  "There is %1 apple": [
+ *      "There is %1 apple",
+ *      "There are %1 apples"
+ *  ]
+ *  loc('There is %1 apple and also, %2!', [5, 'hello']);
+ *  loc('This string is localized.', 0, 'This is the string displayed in the english version.');
+ *  loc('You have %1.', '<b>' + loc('%1 apple', LBeautify(amount)) + '</b>');
+ *  //? ...you may nest localized strings, and use LBeautify() to pack Beautified values
+ * ```
+ */
 const loc = (
     /** @type {string} */ id,
-    /** @type {{ n: Number, b: string | number } | number | string | any[] | undefined} */ params,
+    /** @type {{ n: Number, b: string | number } | number | string | (number|string)[] | undefined} */ params,
     /** @type {string | undefined} */ baseline
 ) => {
+    const locBlink = false; // debug option
+
     let fallback = false;
     let found = locStrings[id];
     if (!found) {
@@ -155,7 +164,7 @@ const loc = (
     /** @type {string | string[]} */
     let str = '';
     if (found) {
-        str = parseLoc(/** @type string */(found), params);
+        str = parseLoc(found, params);
         if (str instanceof Array) return str;
         const noBlink = ['Buildings', 'Switches', 'Upgrades', 'Store', 'Other versions', 'Ascending', '%1 cookie'];
         if (locBlink && !fallback && !noBlink.includes(id)) return '<span class="blinking">' + str + '</span>'; // will make every localized text blink on screen, making omissions obvious; will not work for elements filled with textContent
@@ -166,7 +175,7 @@ const loc = (
 };
 const locStr = (
     /** @type {string} */ id,
-    /** @type {{ n: Number, b: string | number } | number | string | any[] | undefined} */ params,
+    /** @type {{ n: Number, b: string | number } | number | string | (number|string)[] | undefined} */ params,
     /** @type {string | undefined} */ baseline
 ) => {
     const locRet = loc(id, params, baseline);
@@ -176,7 +185,7 @@ const locStr = (
 
 const parseLoc = (
     /** @type {string | string[]} */ str,
-    /** @type {string | number | any[] | { n: number; b: string | number; }} */ params = []
+    /** @type {string | number | (number|string)[] | { n: number; b: string | number; }} */ paramsArg = []
 ) => {
     /*
         parses localization strings
@@ -184,25 +193,24 @@ const parseLoc = (
         -a pluralized string is detected if we have at least 1 param and the matching localized string is an array
     */
     if (!str) return '';
-    if (!(params instanceof Array)) params = [params];
+    const params = paramsArg instanceof Array ? paramsArg : [paramsArg];
     if (params.length === 0) return str;
 
     if (str instanceof Array) {
         if (typeof params[0] === 'object') {
             // an object containing a beautified number
-            // @ts-expect-error this will be pain
-            let plurIndex = locPlur(params[0].n);
-            plurIndex = Math.min(str.length - 1, plurIndex);
+            const isPlur = locPlurFn(params[0].n);
+            const plurIndex = Math.min(str.length - 1, Number(isPlur));
             str = str[plurIndex];
-            str = str.replaceAll('%1', params[0].b);
+            str = str.replaceAll('%1', String(params[0].b));
         } else {
-            // @ts-expect-error this IS pain
-            let plurIndex = locPlur(params[0]);
-            plurIndex = Math.min(str.length - 1, plurIndex);
+            const isPlur = locPlurFn(params[0]);
+            const plurIndex = Math.min(str.length - 1, Number(isPlur));
             str = str[plurIndex];
-            str = str.replaceAll('%1', params[0]);
+            str = str.replaceAll('%1', String(params[0]));
         }
     }
+
 
     const len = str.length;
     let out = '', inPercent = false;
@@ -210,7 +218,8 @@ const parseLoc = (
         const it = str[i];
         if (inPercent) {
             inPercent = false;
-            if (!isNaN(Number(it)) && params.length >= Number(it) - 1) out += params[Number(it) - 1];
+            // how did this work in the original???
+            if (it !== ' ' && !isNaN(Number(it)) && params.length >= Number(it) - 1) out += params[Number(it) - 1];
             else out += '%' + it;
         } else if (it === '%') inPercent = true;
         else out += it;
@@ -230,7 +239,7 @@ const LBeautify = (
  * if mod is true, this file is augmenting the current language */
 const AddLanguage = (
     /** @type {keyof typeof Langs} */ id,
-    /** @type {Record<string, string | string[]> & { '': Record<string, string> }} */ json,
+    /** @type {{ '': Record<string, string>, [str: string]: string | string[] }} */ json,
     /** @type {boolean=} */ mod = false
 ) => {
     if (id === locId && !mod) return false; // don't load twice
@@ -250,19 +259,16 @@ const AddLanguage = (
         console.log('Augmented language "' + locName + '".');
     } else {
         locStrings = json;
-        locPlur = json['']['plural-forms'] || locPlurFallback;
+        locPlurStr = json['']['plural-forms'] || locPlurFallback;
         delete locStrings[''];
         for (let i in locStrings) {
             if (locStrings[i] === '/') locStrings[i] = i;
         }
 
-        // @ts-expect-error WHY SO MUCH VARIABLE REUSE
-        locPlur = (function (plural_form) {
-            // lifted and modified from gettext.js
-            let pf_re = new RegExp('^\\s*nplurals\\s*=\\s*[0-9]+\\s*;\\s*plural\\s*=\\s*(?:\\s|[-\\?\\|&=!<>+*/%:;n0-9_()])+');
-            if (!pf_re.test(plural_form)) throw new Error('The plural form "' + plural_form + '" is not valid');
-            return new Function('n', 'let plural, nplurals; ' + plural_form + ' return plural;');
-        })(locPlur);
+        // lifted and modified from gettext.js
+        const pf_re = new RegExp('^\\s*nplurals\\s*=\\s*[0-9]+\\s*;\\s*plural\\s*=\\s*(?:\\s|[-\\?\\|&=!<>+*/%:;n0-9_()])+');
+        if (!pf_re.test(locPlurStr)) throw new Error('The plural form "' + locPlurStr + '" is not valid');
+        locPlurFn = (n) => { let plural = false, nplurals; eval(locPlurStr); nplurals; n; return plural; };
 
         locPatches = [];
         for (let i in locStrings) {

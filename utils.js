@@ -300,7 +300,7 @@ b64_to_utf8; //! export
 const getUpgradeName = (/** @type {string} */ name) => {
     const it = Game.Upgrades[name];
     const found = locStringsByPart['Upgrade name ' + it.id] || undefined;
-    if (found) return loc(found);
+    if (found) return String(loc(found));
     else return name;
 }; getUpgradeName; //! export
 

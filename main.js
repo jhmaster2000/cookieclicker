@@ -2331,7 +2331,7 @@ class Game {
         Game.last.pool = 'tech';
         new Game.Upgrade(
             'One mind',
-            loc('Each %1 gains <b>+%2 base CpS per %3</b>.', [loc('grandma'), '0.0<span></span>2', loc('grandma')]) +
+            loc('Each %1 gains <b>+%2 base CpS per %3</b>.', [String(loc('grandma')), '0.0<span></span>2', String(loc('grandma'))]) +
             '<div class="warning">' +
             loc('Note: the grandmothers are growing restless. Do not encourage them.') +
             '</div><q>We are one. We are many.</q>',
@@ -2360,7 +2360,7 @@ class Game {
             'Communal brainsweep',
             (EN
                 ? 'Each grandma gains another <b>+0.0<span></span>2 base CpS per grandma</b>.'
-                : loc('Each %1 gains <b>+%2 base CpS per %3</b>.', [loc('grandma'), '0.0<span></span>2', loc('grandma')])) +
+                : loc('Each %1 gains <b>+%2 base CpS per %3</b>.', [String(loc('grandma')), '0.0<span></span>2', String(loc('grandma'))])) +
             '<div class="warning">' +
             loc('Note: proceeding any further in scientific research may have unexpected results. You have been warned.') +
             '</div><q>We fuse. We merge. We grow.</q>',
@@ -2385,7 +2385,7 @@ class Game {
         Game.last.pool = 'tech';
         new Game.Upgrade(
             'Elder Pact',
-            loc('Each %1 gains <b>+%2 base CpS per %3</b>.', [loc('grandma'), '0.0<span></span>5', loc('portal')]) +
+            loc('Each %1 gains <b>+%2 base CpS per %3</b>.', [String(loc('grandma')), '0.0<span></span>5', String(loc('portal'))]) +
             '<div class="warning">' +
             loc('Note: this is a bad idea.') +
             '</div><q>squirm crawl slither writhe<br>today we rise</q>',
@@ -3895,7 +3895,7 @@ class Game {
 
         new Game.Upgrade(
             'Starspawn',
-            loc('Eggs drop <b>%1%</b> more often.', 10) + '<br>' + loc('Golden cookies appear <b>%1%</b> more often during %2.', [2, loc('Easter')]),
+            loc('Eggs drop <b>%1%</b> more often.', 10) + '<br>' + loc('Golden cookies appear <b>%1%</b> more often during %2.', [2, String(loc('Easter'))]),
             111111,
             [0, 12]
         );
@@ -3913,7 +3913,7 @@ class Game {
             'Starterror',
             loc('Spooky cookies drop <b>%1%</b> more often.', 10) +
             '<br>' +
-            loc('Golden cookies appear <b>%1%</b> more often during %2.', [2, loc('Halloween')]),
+            loc('Golden cookies appear <b>%1%</b> more often during %2.', [2, String(loc('Halloween'))]),
             111111,
             [13, 8]
         );
@@ -3923,13 +3923,13 @@ class Game {
             'Starlove',
             loc('Heart cookies are <b>%1%</b> more powerful.', 50) +
             '<br>' +
-            loc('Golden cookies appear <b>%1%</b> more often during %2.', [2, loc('Valentine\'s day')]),
+            loc('Golden cookies appear <b>%1%</b> more often during %2.', [2, String(loc('Valentine\'s day'))]),
             111111,
             [20, 3]
         );
         Game.last.pool = 'prestige';
         Game.last.parents = ['Season switcher'];
-        new Game.Upgrade('Startrade', loc('Golden cookies appear <b>%1%</b> more often during %2.', [5, loc('Business day')]), 111111, [17, 6]);
+        new Game.Upgrade('Startrade', loc('Golden cookies appear <b>%1%</b> more often during %2.', [5, String(loc('Business day'))]), 111111, [17, 6]);
         Game.last.pool = 'prestige';
         Game.last.parents = ['Season switcher'];
 
@@ -4763,7 +4763,7 @@ class Game {
 
         new Game.Upgrade(
             'Five-finger discount',
-            loc('All upgrades are <b>%1% cheaper per %2</b>.', [1, loc('%1 cursor', 100)]) + '<q>Stick it to the man.</q>',
+            loc('All upgrades are <b>%1% cheaper per %2</b>.', [1, String(loc('%1 cursor', 100))]) + '<q>Stick it to the man.</q>',
             555555,
             [28, 7],
             function () {
@@ -7509,7 +7509,7 @@ class Game {
 
         new Game.Upgrade(
             'Cat ladies',
-            loc('Each kitten upgrade boosts %1 CpS by <b>%2%</b>.', [loc('grandma'), 29]) + '<q>Oh no. Oh no no no. Ohhh this isn\'t right at all.</q>',
+            loc('Each kitten upgrade boosts %1 CpS by <b>%2%</b>.', [String(loc('grandma')), 29]) + '<q>Oh no. Oh no no no. Ohhh this isn\'t right at all.</q>',
             9000000000,
             [32, 3]
         );
@@ -7517,7 +7517,7 @@ class Game {
         Game.last.parents = ['Kitten angels'];
         new Game.Upgrade(
             'Milkhelp&reg; lactose intolerance relief tablets',
-            loc('Each rank of milk boosts %1 CpS by <b>%2%</b>.', [loc('grandma'), 5]) + '<q>Aged like milk.</q>',
+            loc('Each rank of milk boosts %1 CpS by <b>%2%</b>.', [String(loc('grandma')), 5]) + '<q>Aged like milk.</q>',
             900000000000,
             [33, 3]
         );
@@ -8343,7 +8343,7 @@ class Game {
         new Game.Achievement('From scratch', loc('Ascend with <b>%1</b> baked.', loc('%1 cookie', LBeautify(1e12))) + '<q>It\'s been fun.</q>', [11, 6]);
 
         order = 11010;
-        new Game.Achievement('Neverclick', loc('Make <b>%1</b> by only having clicked <b>%2 times</b>.', [loc('%1 cookie', LBeautify(1e6)), 15]), [12, 0]);
+        new Game.Achievement('Neverclick', loc('Make <b>%1</b> by only having clicked <b>%2 times</b>.', [String(loc('%1 cookie', LBeautify(1e6))), 15]), [12, 0]);
         order = 1000;
         new Game.Achievement('Clicktastic', loc('Make <b>%1</b> from clicking.', loc('%1 cookie', LBeautify(1e3))), [11, 0]);
         new Game.Achievement('Clickathlon', loc('Make <b>%1</b> from clicking.', loc('%1 cookie', LBeautify(1e5))), [11, 1]);
@@ -8488,19 +8488,19 @@ class Game {
         order = 30600;
         new Game.Achievement(
             'Speed baking I',
-            loc('Get to <b>%1</b> baked in <b>%2</b>.', [loc('%1 cookie', LBeautify(1e6)), Game.sayTime(60 * 35 * Game.fps)]),
+            loc('Get to <b>%1</b> baked in <b>%2</b>.', [String(loc('%1 cookie', LBeautify(1e6))), Game.sayTime(60 * 35 * Game.fps)]),
             [12, 5]
         );
         Game.last.pool = 'shadow';
         new Game.Achievement(
             'Speed baking II',
-            loc('Get to <b>%1</b> baked in <b>%2</b>.', [loc('%1 cookie', LBeautify(1e6)), Game.sayTime(60 * 25 * Game.fps)]),
+            loc('Get to <b>%1</b> baked in <b>%2</b>.', [String(loc('%1 cookie', LBeautify(1e6))), Game.sayTime(60 * 25 * Game.fps)]),
             [13, 5]
         );
         Game.last.pool = 'shadow';
         new Game.Achievement(
             'Speed baking III',
-            loc('Get to <b>%1</b> baked in <b>%2</b>.', [loc('%1 cookie', LBeautify(1e6)), Game.sayTime(60 * 15 * Game.fps)]),
+            loc('Get to <b>%1</b> baked in <b>%2</b>.', [String(loc('%1 cookie', LBeautify(1e6))), Game.sayTime(60 * 15 * Game.fps)]),
             [14, 5]
         );
         Game.last.pool = 'shadow';
@@ -8876,7 +8876,7 @@ class Game {
         order = 1099;
         new Game.Achievement(
             'The elder scrolls',
-            loc('Own a combined <b>%1</b> %2 and %3.', [777, loc('grandmas'), loc('cursors')]) + '<q>Let me guess. Someone stole your cookie.</q>',
+            loc('Own a combined <b>%1</b> %2 and %3.', [777, String(loc('grandmas')), String(loc('cursors'))]) + '<q>Let me guess. Someone stole your cookie.</q>',
             [10, 9]
         );
 
@@ -17499,7 +17499,7 @@ class Game {
      */
     static GrandmaSynergy(name, desc, buildingArg) {
         const building = Game.Objects[buildingArg];
-        const grandmaNumber = loc('%1 grandma', LBeautify(building.id - 1));
+        const grandmaNumber = String(loc('%1 grandma', LBeautify(building.id - 1)));
         desc =
                 loc('%1 are <b>twice</b> as efficient.', cap(Game.Objects['Grandma'].plural)) +
                 ' ' +
@@ -18405,10 +18405,10 @@ class Game {
             icon[1] = 24;
             n += 14;
         }
-        let pow = Math.pow(10, n);
-        let achiev = new Game.Achievement(
+        const pow = Math.pow(10, n);
+        const achiev = new Game.Achievement(
             name,
-            loc('Make <b>%1</b> just from %2.', [loc('%1 cookie', { n: pow, b: toFixed(pow) }), building.plural]) + (q ? '<q>' + q + '</q>' : ''),
+            loc('Make <b>%1</b> just from %2.', [String(loc('%1 cookie', { n: pow, b: toFixed(pow) })), building.plural]) + (q ? '<q>' + q + '</q>' : ''),
             icon
         );
         building.productionAchievs.push({ pow: pow, achiev: achiev });
