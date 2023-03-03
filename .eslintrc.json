@@ -1,12 +1,13 @@
 {
     "env": {
         "browser": true,
-        "es2021": true
+        "es2022": true
     },
     "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
-        //"plugin:@typescript-eslint/recommended-requiring-type-checking"
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:unicorn/recommended"
     ],
     "overrides": [
     ],
@@ -20,9 +21,11 @@
     },
     "plugins": [
         "@typescript-eslint",
-        "deprecation"
+        "deprecation",
+        "unicorn"
     ],
     "rules": {
+        "unicorn/prevent-abbreviations": "off",
         "no-undef": "off",
         "no-inner-declarations": "off",
         "@typescript-eslint/ban-ts-comment": [0, 2, 2, 0],
