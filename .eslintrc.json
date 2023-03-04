@@ -25,14 +25,32 @@
         "unicorn"
     ],
     "rules": {
+        "unicorn/switch-case-braces": ["error", "avoid"],
         "unicorn/prevent-abbreviations": "off",
+        "unicorn/prefer-query-selector": "off",
+        "unicorn/prefer-dom-node-append": "off",
+        "unicorn/prefer-dom-node-remove": "off",
+        "unicorn/numeric-separators-style": "off",
+        "unicorn/consistent-function-scoping": "off",
+        "unicorn/no-negated-condition": "off",
+        "unicorn/no-instanceof-array": "off",
+        "unicorn/no-null": "off",
         "no-undef": "off",
         "no-inner-declarations": "off",
         "@typescript-eslint/ban-ts-comment": [0, 2, 2, 0],
+        "@typescript-eslint/no-unsafe-call": "off",
+        "@typescript-eslint/no-unsafe-return": "off",
+        "@typescript-eslint/no-unsafe-argument": "off",
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-unsafe-member-access": "off",
+        "@typescript-eslint/restrict-template-expressions": "off",
+        "@typescript-eslint/restrict-plus-operands": "off",
+        "@typescript-eslint/unbound-method": "off",
         "deprecation/deprecation": "warn",
         "indent": [
             "error",
-            4
+            4,
+            { "SwitchCase": 1 }
         ],
         "linebreak-style": [
             "error",
