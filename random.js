@@ -1,11 +1,14 @@
 {
+    /**
+     * @type {any[]}
+     */
     const sharedCharcodeArray = [];
     class RNG {
         /**
          * @param {any[]} inputArr
          */
         constructor(inputArr) {
-            const inputArrLen = inputArr.length || (inputArr = [0], 1);
+            const inputArrLen = Number(inputArr.length > 0) || (inputArr = [0], 1);
             const arr256nums = Array.from({ length: 256 }, (_, i) => i);
             this.arr256nums = arr256nums;
             this.i = 0;
@@ -42,14 +45,17 @@
     }
 
     Math.seedrandom = function (seed, useSharedCharcodeArrayForSeed) {
+        /**
+         * @type {any[]}
+         */
         const altNumArr = [];
         const finalSeed = hash(
-            deepStringify(
+            /** @type {string} */ (deepStringify(
                 useSharedCharcodeArrayForSeed
                     ? [seed, fromCharCodes(sharedCharcodeArray)]
                     : seed ?? fromCharCodes(crypto.getRandomValues(new Uint8Array(256))),
                 3
-            ), altNumArr
+            )), altNumArr
         );
         const rng = new RNG(altNumArr);
         hash(fromCharCodes(rng.arr256nums), sharedCharcodeArray);
@@ -67,8 +73,11 @@
     hash(Math.random(), sharedCharcodeArray);
 
 
+    /**
+     * @param {number[] | Uint8Array} code
+     */
     function fromCharCodes(code) {
-        return String.fromCharCode(...code);
+        return String.fromCodePoint(...code);
     }
 
     /**
@@ -77,26 +86,35 @@
      */
     function hash(str, numArr) {
         for (let c = String(str), e = 0; c.length > e;) {
-            numArr[(256 - 1) & e] = (256 - 1) & (~~(19 * numArr[(256 - 1) & e]) + c.charCodeAt(e++));
+            numArr[(256 - 1) & e] =
+            (256 - 1) & (
+                // eslint-disable-next-line unicorn/prefer-math-trunc
+                ~~(19 * numArr[(256 - 1) & e]) +
+                /** @type {number} */(c.codePointAt(e++))
+            );
         }
         return fromCharCodes(numArr);
     }
 
     /**
-     * @param {string | unknown[] | unknown} arrOrValue
+     * @param {string | any[] | any} arrOrValue
      * @param {number} recursionLevel
+     * @returns {string | string[]}
      */
     function deepStringify(arrOrValue, recursionLevel) {
+        /** @type {string[]} */
         const stringifiedValues = [];
         if (recursionLevel && typeof arrOrValue === 'object') {
             const arr = arrOrValue;
             for (const e in arr) {
                 try {
-                    stringifiedValues.push(deepStringify(arr[e], recursionLevel - 1));
+                    stringifiedValues.push(
+                        /** @type {string} */ (deepStringify(arr[e], recursionLevel - 1))
+                    );
                 } catch { /* empty */ }
             }
         }
-        if (stringifiedValues.length) return stringifiedValues;
+        if (stringifiedValues.length > 0) return stringifiedValues;
         else return typeof arrOrValue === 'string' ? arrOrValue : `${arrOrValue}\0`;
     }
 }

@@ -74,7 +74,7 @@ class Upgrade {
     timerDisplay;
     /** @type {Function | undefined} */
     clickFunction;
-    /** @type {Function | undefined} */
+    /** @type {(() => boolean) | undefined} */
     canBuyFunc;
     /** @type {number | undefined} */
     kitten;
@@ -118,15 +118,13 @@ class Upgrade {
 
     canBuy() {
         if (this.canBuyFunc) return this.canBuyFunc();
-        if (Game.cookies >= this.getPrice()) return true;
-        else return false;
+        return Game.cookies >= this.getPrice();
     }
 
     //////////////////////////////////////////////
 
     isVaulted() {
-        if (Game.vault.includes(this.id)) return true;
-        else return false;
+        return Game.vault.includes(this.id);
     }
     vault() {
         if (!this.isVaulted()) Game.vault.push(this.id);
@@ -196,11 +194,11 @@ class Upgrade {
                         };
                         choices.sort(sortMap);
 
-                        for (let i = 0; i < choices.length; i++) {
-                            if (!choices[i]) continue;
-                            let icon = choices[i].icon;
-                            let id = choices[i].id;
-                            if (choices[i].div) str += '<div class="line"></div>';
+                        for (const [i, choice] of choices.entries()) {
+                            if (!choice) continue;
+                            const icon = choice.icon;
+                            const id = choice.id;
+                            if (choice.div) str += '<div class="line"></div>';
                             str +=
                                 '<div class="crate noFrame enabled' +
                                 (id == selected ? ' highlighted' : '') +

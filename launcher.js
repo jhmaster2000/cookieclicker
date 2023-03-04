@@ -1,7 +1,7 @@
 /* =====================================================================================
 LAUNCH THIS THING
 =======================================================================================*/
-window.onload = function () {
+window.addEventListener('load', () => {
     if (!Game.ready) {
         const loadLangAndLaunch = function (
             /** @type {string} */ lang, /** @type {boolean=} */ firstLaunch = false
@@ -46,4 +46,4 @@ window.onload = function () {
         if (!lang) loadLangAndLaunch('EN', true);
         else loadLangAndLaunch(String(lang));
     }
-};
+});

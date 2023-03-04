@@ -23,10 +23,10 @@ const PlaySound = (
         volumeSetting = Game.volumeMusic;
     }
     if (!volumeSetting || volume === 0) return;
-    if (typeof Sounds[url] === 'undefined') {
+    if (Sounds[url] === undefined) {
         // sound isn't loaded, cache it
         Sounds[url] = new Audio(url);
-        Sounds[url].onloadeddata = () => PlaySound(url, volume);
+        Sounds[url].addEventListener('loadeddata', () => PlaySound(url, volume));
     } else if (Sounds[url].readyState >= 2 && SoundInsts[SoundI].paused) {
         const sound = SoundInsts[SoundI];
         SoundI++;
@@ -34,8 +34,8 @@ const PlaySound = (
         sound.src = Sounds[url].src;
         sound.volume = Math.pow((volume * volumeSetting) / 100, 2);
         try {
-            sound.play();
-        } catch (e) { /* empty */ }
+            void sound.play();
+        } catch { /* empty */ }
     }
 };
 PlaySound; //! export

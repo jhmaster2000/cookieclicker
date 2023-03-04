@@ -16,17 +16,17 @@ class Loader {
      * @param {string[]} assets
      */
     Load(assets) {
-        for (let i in assets) {
+        for (const asset of assets) {
             this.loadingN++;
             this.assetsN++;
-            // @ts-expect-error why isnt this an object...
-            if (!this.assetsLoading[assets[i]] && !this.assetsLoaded[assets[i]]) {
+            // @ts-expect-error this REALLY needs to be an object
+            if (!this.assetsLoading[asset] && !this.assetsLoaded[asset]) {
                 const img = new Image();
-                img.src = assets[i].includes('/') ? assets[i] : this.domain + assets[i];
-                img.alt = assets[i];
-                img.onload = this.onLoad.bind(this);
-                this.assets[assets[i]] = img;
-                this.assetsLoading.push(assets[i]);
+                img.src = asset.includes('/') ? asset : this.domain + asset;
+                img.alt = asset;
+                img.addEventListener('load', this.onLoad.bind(this));
+                this.assets[asset] = img;
+                this.assetsLoading.push(asset);
             }
         }
     }
@@ -40,7 +40,7 @@ class Loader {
         const img = new Image();
         img.src = newer.includes('/') ? newer : this.domain + newer;
         img.alt = newer;
-        img.onload = this.onLoad.bind(this);
+        img.addEventListener('load', this.onLoad.bind(this));
         this.assets[old] = img;
     }
     /**

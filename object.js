@@ -80,11 +80,11 @@ class CookieObject {
         if (this.n !== 0) {
             // new automated price and CpS curves
             this.baseCps = Math.ceil(Math.pow(this.n * 1, this.n * 0.5 + 2) * 10) / 10; // 0.45 used to be 0.5
-            let digits = Math.pow(10, Math.ceil(Math.log(Math.ceil(this.baseCps)) / Math.LN10)) / 100;
+            let digits = Math.pow(10, Math.ceil(Math.log10(Math.ceil(this.baseCps)))) / 100;
             this.baseCps = Math.round(this.baseCps / digits) * digits;
 
             this.basePrice = (this.n * 1 + 9 + (this.n < 5 ? 0 : Math.pow(this.n - 5, 1.75) * 5)) * Math.pow(10, this.n) * Math.max(1, this.n - 14);
-            digits = Math.pow(10, Math.ceil(Math.log(Math.ceil(this.basePrice)) / Math.LN10)) / 100;
+            digits = Math.pow(10, Math.ceil(Math.log10(Math.ceil(this.basePrice)))) / 100;
             this.basePrice = Math.round(this.basePrice / digits) * digits;
             if (this.id >= 16) this.basePrice *= 10;
             if (this.id >= 17) this.basePrice *= 10;
@@ -395,19 +395,18 @@ class CookieObject {
             let synergiesStr = '';
             // note : might not be entirely accurate, math may need checking
             if (this.amount > 0) {
+                /** @type {Record<string, number>} */
                 let synergiesWith = {};
                 let synergyBoost = 0;
 
                 if (this.name == 'Grandma') {
-                    for (let i in Game.GrandmaSynergies) {
-                        if (Game.Has(Game.GrandmaSynergies[i])) {
-                            const other = ASSERT_NOT_NULL(Game.Upgrades[Game.GrandmaSynergies[i]].buildingTie);
+                    for (const synergy of Game.GrandmaSynergies) {
+                        if (Game.Has(synergy)) {
+                            const other = ASSERT_NOT_NULL(Game.Upgrades[synergy].buildingTie);
                             const mult = this.amount * 0.01 * (1 / (other.id - 1));
                             const boost = other.storedTotalCps * Game.globalCpsMult - (other.storedTotalCps * Game.globalCpsMult) / (1 + mult);
                             synergyBoost += boost;
-                            // @ts-expect-error i cant even be bothered
                             if (!synergiesWith[other.plural]) synergiesWith[other.plural] = 0;
-                            // @ts-expect-error i cant even be bothered v2
                             synergiesWith[other.plural] += mult;
                         }
                     }
@@ -415,14 +414,11 @@ class CookieObject {
                     let other = Game.Objects['Grandma'];
                     let boost = this.amount * 0.05 * other.amount * Game.globalCpsMult;
                     synergyBoost += boost;
-                    // @ts-expect-error i cant even be bothered v4
                     if (!synergiesWith[other.plural]) synergiesWith[other.plural] = 0;
-                    // @ts-expect-error i cant even be bothered v5
                     synergiesWith[other.plural] += boost / (other.storedTotalCps * Game.globalCpsMult);
                 }
                 
-                for (let i in this.synergies) {
-                    let it = this.synergies[i];
+                for (const it of this.synergies) {
                     if (Game.Has(it.name)) {
                         let weight = 0.05;
                         let other = it.buildingTie1;
@@ -432,9 +428,7 @@ class CookieObject {
                         }
                         let boost = other.storedTotalCps * Game.globalCpsMult - (other.storedTotalCps * Game.globalCpsMult) / (1 + this.amount * weight);
                         synergyBoost += boost;
-                        // @ts-expect-error i cant even be bothered v6
                         if (!synergiesWith[other.plural]) synergiesWith[other.plural] = 0;
-                        // @ts-expect-error i cant even be bothered v7
                         synergiesWith[other.plural] += this.amount * weight;
                     }
                 }
@@ -442,12 +436,9 @@ class CookieObject {
                     for (let i in synergiesWith) {
                         if (synergiesStr != '') synergiesStr += ', ';
                         synergiesStr +=
-                        '<span style="color:#fff;font-weight:bold;font-size:80%;background:#000;box-shadow:0px 0px 0px 1px rgba(255,255,255,0.2);border-radius:3px;padding:0px 2px;display:inline-block;">' +
-                        i +
-                        ' +' +
-                        // @ts-expect-error i cant even be bothered v8
-                            Beautify(synergiesWith[i] * 100, 1) +
-                            '%</span>';
+                            '<span style="color:#fff;font-weight:bold;font-size:80%;background:#000;' +
+                            'box-shadow:0px 0px 0px 1px rgba(255,255,255,0.2);border-radius:3px;padding:0px 2px;display:inline-block;">' +
+                            i + ' +' + Beautify(synergiesWith[i] * 100, 1) + '%</span>';
                     }
                     synergiesStr =
                         loc('...also boosting some other buildings:') +
@@ -455,6 +446,7 @@ class CookieObject {
                         synergiesStr +
                         ' - ' +
                         loc('all combined, these boosts account for <b>%1</b> per second (<b>%2%</b> of total CpS)', [
+                            // @ts-expect-error uncertain
                             loc('%1 cookie', LBeautify(synergyBoost, 1)),
                             Beautify((synergyBoost / Game.cookiesPs) * 100, 1)
                         ]);
@@ -462,8 +454,7 @@ class CookieObject {
             }
 
             if (Game.prefs.screenreader) {
-                if (this.locked) ariaText = 'This building is not yet unlocked. ';
-                else ariaText = name + '. ';
+                ariaText = this.locked ? 'This building is not yet unlocked. ' : `${name}. `;
                 if (!this.locked) ariaText += 'You own ' + this.amount + '. ';
                 ariaText += (canBuy ? 'Can buy 1 for' : 'Cannot afford the') + ' ' + Beautify(Math.round(price)) + ' cookies. ';
                 if (!this.locked && this.totalCookies > 0) {
@@ -505,13 +496,16 @@ class CookieObject {
                         ? '<div class="descriptionBlock">' +
                         loc('each %1 produces <b>%2</b> per second', [
                             this.single,
+                            // @ts-expect-error unsure
                             loc('%1 cookie', LBeautify((this.storedTotalCps / this.amount) * Game.globalCpsMult, 1))
                         ]) +
                         '</div>'
                         : '') +
                     '<div class="descriptionBlock">' +
                     loc('%1 producing <b>%2</b> per second', [
+                        // @ts-expect-error
                         loc('%1 ' + this.bsingle, LBeautify(this.amount)),
+                        // @ts-expect-error
                         loc('%1 cookie', LBeautify(this.storedTotalCps * Game.globalCpsMult, 1))
                     ]) +
                     ' (' +
@@ -649,7 +643,7 @@ class CookieObject {
             // @ts-expect-error
             else $('productName' + this.id).classList.remove('longProductName');
             // @ts-expect-error
-            $('productOwned' + this.id).textContent = this.amount ? this.amount : '';
+            $('productOwned' + this.id).textContent = this.amount || '';
             // @ts-expect-error
             $('productPrice' + this.id).textContent = Beautify(Math.round(price));
             // @ts-expect-error
@@ -875,42 +869,39 @@ class CookieObject {
 
                 let selected = -1;
                 // @ts-expect-error
-                if (this.mouseOn) {
-                    // @ts-expect-error
-                    if (this.name === 'Grandma') {
-                        // mouse detection only fits grandma sprites for now
-                        let marginW = -18;
-                        let marginH = -10;
-                        for (let i = 0; i < len; i++) {
+                if (this.mouseOn && this.name === 'Grandma') {
+                    // mouse detection only fits grandma sprites for now
+                    let marginW = -18;
+                    let marginH = -10;
+                    for (let i = 0; i < len; i++) {
+                        // @ts-expect-error
+                        const pic = this.pics[i];
+                        if (
                             // @ts-expect-error
-                            let pic = this.pics[i];
-                            if (
-                                // @ts-expect-error
-                                this.mousePos[0] >= pic.x - marginW &&
-                                // @ts-expect-error
-                                this.mousePos[0] < pic.x + 64 + marginW &&
-                                // @ts-expect-error
-                                this.mousePos[1] >= pic.y - marginH &&
-                                // @ts-expect-error
-                                this.mousePos[1] < pic.y + 64 + marginH
-                            )
-                                selected = i;
-                            if (selected == i && pic.pic == 'elfGrandma.png' && Game.mouseDown) Game.Win('Baby it\'s old outside');
-                        }
-                        if (Game.prefs.customGrandmas && Game.customGrandmaNames.length > 0) {
-                            let str = loc('Names in white were submitted by our supporters on Patreon.');
-                            ctx.globalAlpha = 0.75;
-                            ctx.fillStyle = '#000';
-                            ctx.font = '9px Merriweather';
-                            ctx.textAlign = 'left';
-                            ctx.fillRect(0, 0, ctx.measureText(str).width + 4, 12);
-                            ctx.globalAlpha = 1;
-                            ctx.fillStyle = 'rgba(255,255,255,0.7)';
-                            ctx.fillText(str, 2, 8);
-                            if (EN) {
-                                ctx.fillStyle = 'rgba(255,255,255,1)';
-                                ctx.fillText('white', 2 + ctx.measureText('Names in ').width, 8);
-                            }
+                            this.mousePos[0] >= pic.x - marginW &&
+                            // @ts-expect-error
+                            this.mousePos[0] < pic.x + 64 + marginW &&
+                            // @ts-expect-error
+                            this.mousePos[1] >= pic.y - marginH &&
+                            // @ts-expect-error
+                            this.mousePos[1] < pic.y + 64 + marginH
+                        )
+                            selected = i;
+                        if (selected == i && pic.pic == 'elfGrandma.png' && Game.mouseDown) Game.Win('Baby it\'s old outside');
+                    }
+                    if (Game.prefs.customGrandmas && Game.customGrandmaNames.length > 0) {
+                        let str = loc('Names in white were submitted by our supporters on Patreon.');
+                        ctx.globalAlpha = 0.75;
+                        ctx.fillStyle = '#000';
+                        ctx.font = '9px Merriweather';
+                        ctx.textAlign = 'left';
+                        ctx.fillRect(0, 0, ctx.measureText(str).width + 4, 12);
+                        ctx.globalAlpha = 1;
+                        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                        ctx.fillText(str, 2, 8);
+                        if (EN) {
+                            ctx.fillStyle = 'rgba(255,255,255,1)';
+                            ctx.fillText('white', 2 + ctx.measureText('Names in ').width, 8);
                         }
                     }
                 }
@@ -950,8 +941,7 @@ class CookieObject {
                         ctx.stroke();
                         ctx.fillRect(Math.floor(x), Math.floor(y), Math.floor(width), 24);
                         ctx.globalAlpha = 1;
-                        if (custom) ctx.fillStyle = '#fff';
-                        else ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                        ctx.fillStyle = custom ? '#fff' : 'rgba(255,255,255,0.7)';
                         ctx.fillText(text, Math.floor(x + width / 2), Math.floor(y + 16));
 
                         ctx.drawImage(sprite, Math.floor(pic.x + Math.random() * 4 - 2), Math.floor(pic.y + Math.random() * 4 - 2));

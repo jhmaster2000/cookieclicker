@@ -5,7 +5,7 @@ class FileSaver {
     constructor(blob, name = 'download') {
         // auto BOM
         if (/^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type)) {
-            blob = new Blob(['\ufeff', blob], { type: blob.type });
+            blob = new Blob(['\uFEFF', blob], { type: blob.type });
         }
         setTimeout(() => {
             const object_url = URL.createObjectURL(blob);

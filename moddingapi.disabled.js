@@ -1,4 +1,6 @@
 //! The modding API is low priority and will be restored later, this file is not currently loaded.
+// @ts-nocheck ^
+
 (function () {
     /* =====================================================================================
     MODDING API
@@ -88,24 +90,24 @@
     };
     Game.registerHook = function (hook, func) {
         if (func instanceof Array) {
-            for (let i = 0; i < func.length; i++) {
-                Game.registerHook(hook, func[i]);
+            for (const element of func) {
+                Game.registerHook(hook, element);
             }
             return;
         }
         if (typeof func !== 'function') return;
-        if (typeof Game.modHooks[hook] !== 'undefined') Game.modHooks[hook].push(func);
+        if (Game.modHooks[hook] !== undefined) Game.modHooks[hook].push(func);
         else console.log('Error: a mod tried to register a non-existent hook named "' + hook + '".');
     };
     Game.removeHook = function (hook, func) {
         if (func instanceof Array) {
-            for (let i = 0; i < func.length; i++) {
-                Game.removeHook(hook, func[i]);
+            for (const element of func) {
+                Game.removeHook(hook, element);
             }
             return;
         }
         if (typeof func !== 'function') return;
-        if (typeof Game.modHooks[hook] !== 'undefined' && Game.modHooks[hook].indexOf(func) !== -1)
+        if (Game.modHooks[hook] !== undefined && Game.modHooks[hook].includes(func))
             Game.modHooks[hook].splice(Game.modHooks[hook].indexOf(func), 1);
         else console.log('Error: a mod tried to remove a non-existent hook named "' + hook + '".');
     };
@@ -136,7 +138,7 @@
         for (let i = 0; i < Game.sortedMods.length; i++) {
             if (Game.sortedMods[i]['save']) {
                 let data = Game.sortedMods[i]['save']();
-                if (typeof data !== 'undefined') Game.modSaveData[Game.sortedMods[i].id] = data;
+                if (data !== undefined) Game.modSaveData[Game.sortedMods[i].id] = data;
             }
         }
         for (let i in Game.modSaveData) {
@@ -175,14 +177,12 @@
             str += '</div>';
             modsN++;
         }
-        if (modsN == 0) str += loc('No mod data present.');
-        else
-            str +=
-                '<div><a class="option warning" style="font-size:11px;margin-top:4px;" ' +
+        str += modsN == 0
+            ? loc('No mod data present.')
+            : '<div><a class="option warning" style="font-size:11px;margin-top:4px;" ' +
                 Game.clickStr +
                 '="Game.deleteAllModData();PlaySound(\'snd/tick.mp3\');Game.ClosePrompt();Game.CheckModData();">' +
-                loc('Delete all') +
-                '</a></div>';
+                loc('Delete all') + '</a></div>';
         Game.Prompt(
             '<id ModData><h3>' +
             loc('Mod data') +

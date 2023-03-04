@@ -16730,7 +16730,6 @@ class Game {
                 // we call this function on building level up and on load
                 console.log('Loading script '+me.minigameUrl+'...');
                 setTimeout(
-                    // eslint-disable-next-line @typescript-eslint/no-implied-eval
                     () => {
                         const script = document.createElement('script');
                         script.id = 'minigameScript-' + me.id;

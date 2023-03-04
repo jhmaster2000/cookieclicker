@@ -85,7 +85,7 @@ class Shimmer {
             type.maxTime = type.getMaxTime(this);
         }
         Game.shimmersL.removeChild(this.l);
-        if (Game.shimmers.indexOf(this) != -1) Game.shimmers.splice(Game.shimmers.indexOf(this), 1);
+        if (Game.shimmers.includes(this)) Game.shimmers.splice(Game.shimmers.indexOf(this), 1);
         if (!this.noCount) {
             Game.shimmerTypes[this.type].n = Math.max(0, Game.shimmerTypes[this.type].n - 1);
             Game.recalculateGains = 1;
