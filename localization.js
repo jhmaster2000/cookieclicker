@@ -219,8 +219,9 @@ const parseLoc = (
         if (inPercent) {
             inPercent = false;
             // how did this work in the original???
-            if (it !== ' ' && !isNaN(Number(it)) && params.length >= Number(it) - 1) out += params[Number(it) - 1];
-            else out += '%' + it;
+            out += it !== ' ' && !Number.isNaN(Number(it)) && params.length >= Number(it) - 1
+                ? params[Number(it) - 1]
+                : '%' + it;
         } else if (it === '%') inPercent = true;
         else out += it;
     }
@@ -249,12 +250,10 @@ const AddLanguage = (
     const locName = Langs[id].nameEN;
 
     if (mod) {
-        for (let i in json) {
-            locStrings[i] = json[i];
-        }
+        for (let i in json) locStrings[i] = json[i];
         for (let i in locStrings) {
-            let bit = i.split(']');
-            if (bit[1] && bit[0].indexOf('[COMMENT:') != 0 && !locStringsByPart[bit[0].substring(1)]) locStringsByPart[bit[0].substring(1)] = i;
+            const bit = i.split(']');
+            if (bit[1] && bit[0].indexOf('[COMMENT:') != 0 && !locStringsByPart[bit[0].slice(1)]) locStringsByPart[bit[0].slice(1)] = i;
         }
         console.log('Augmented language "' + locName + '".');
     } else {
@@ -266,7 +265,7 @@ const AddLanguage = (
         }
 
         // lifted and modified from gettext.js
-        const pf_re = new RegExp('^\\s*nplurals\\s*=\\s*[0-9]+\\s*;\\s*plural\\s*=\\s*(?:\\s|[-\\?\\|&=!<>+*/%:;n0-9_()])+');
+        const pf_re = new RegExp('^\\s*nplurals\\s*=\\s*\\d+\\s*;\\s*plural\\s*=\\s*(?:\\s|[-\\?\\|&=!<>+*/%:;n0-9_()])+');
         if (!pf_re.test(locPlurStr)) throw new Error('The plural form "' + locPlurStr + '" is not valid');
         locPlurFn = (n) => { let plural = false, nplurals; eval(locPlurStr); nplurals; n; return plural; };
 
@@ -276,22 +275,21 @@ const AddLanguage = (
                 const patch = i.split('|');
                 const patchTranslated = String(locStrings[i]).split('|');
                 locPatches.push({
-                    id: parseInt(patch[1]),
+                    id: Number.parseInt(patch[1]),
                     type: 1,
                     title: patchTranslated[2],
                     points: patchTranslated.slice(3)
                 });
             }
         }
-        let sortMap = function (/** @type {{ id: number; }} */ a, /** @type {{ id: number; }} */ b) {
-            if (a.id < b.id) return 1;
-            else return -1;
+        const sortMap = function (/** @type {{ id: number; }} */ a, /** @type {{ id: number; }} */ b) {
+            return a.id < b.id ? 1 : -1;
         };
         locPatches.sort(sortMap);
 
         for (let i in locStrings) {
-            let bit = i.split(']');
-            if (bit[1] && bit[0].indexOf('[COMMENT:') != 0 && !locStringsByPart[bit[0].substring(1)]) locStringsByPart[bit[0].substring(1)] = i;
+            const bit = i.split(']');
+            if (bit[1] && bit[0].indexOf('[COMMENT:') != 0 && !locStringsByPart[bit[0].slice(1)]) locStringsByPart[bit[0].slice(1)] = i;
         }
 
         console.log('Loaded language "' + locName + '".');
@@ -303,26 +301,21 @@ const LocalizeUpgradesAndAchievs = function () {
     if (!Game.UpgradesById) return false;
 
     let allThings = [];
-    for (let i in Game.UpgradesById) {
-        allThings.push(Game.UpgradesById[i]);
-    }
-    for (let i in Game.AchievementsById) {
-        allThings.push(Game.AchievementsById[i]);
-    }
-    for (let i = 0; i < allThings.length; i++) {
-        let it = allThings[i];
-        let type = it.getType();
+    for (let i in Game.UpgradesById) allThings.push(Game.UpgradesById[i]);
+    for (let i in Game.AchievementsById) allThings.push(Game.AchievementsById[i]);
+    for (const it of allThings) {
+        const type = it.getType();
         let found;
-        found = locStringsByPart[type + ' name ' + it.id] || undefined;
+        found = locStringsByPart[`${type} name ${it.id}`] || undefined;
         if (found) it.dname = String(loc(found));
 
         if (!EN) it.baseDesc = it.baseDesc.replace(/<q>.*/, ''); // strip quote section
         it.ddesc = BeautifyInText(it.baseDesc);
 
-        found = locStringsByPart[type + ' desc ' + it.id] || undefined;
+        found = locStringsByPart[`${type} desc ${it.id}`] || undefined;
         if (found) it.ddesc = loc(found);
-        found = locStringsByPart[type + ' quote ' + it.id] || undefined;
-        if (found) it.ddesc += '<q>' + loc(found) + '</q>';
+        found = locStringsByPart[`${type} quote ${it.id}`] || undefined;
+        if (found) it.ddesc += `<q>${String(loc(found))}</q>`;
     }
     BeautifyAll();
     return true;

@@ -46,8 +46,7 @@ cap; //!export
  * @param {number} x
  */
 function randomRound(x) {
-    if (x % 1 < Math.random()) return Math.floor(x);
-    else return Math.ceil(x);
+    return x % 1 < Math.random() ? Math.floor(x) : Math.ceil(x);
 }
 randomRound; //!export
 
@@ -63,7 +62,7 @@ function shuffle(array) {
     // While there are elements in the array
     while (counter--) {
         // Pick a random index
-        index = (Math.random() * counter) | 0;
+        index = Math.trunc(Math.random() * counter);
 
         // And swap the last element with it
         temp = array[counter];
@@ -81,8 +80,8 @@ const LoadScript = function (
 ) {
     const js = document.createElement('script');
     js.setAttribute('type', 'text/javascript');
-    if (callback) js.onload = callback;
-    if (error) js.onerror = error;
+    if (callback) js.addEventListener('load', callback);
+    if (error) js.addEventListener('error', error);
 
     js.setAttribute('src', url);
     document.head.appendChild(js);
@@ -106,23 +105,22 @@ const localStorageSet = function (/** @type {string} */ key, /** @type {string} 
  * @param {number} x
  */
 function toFixed(x) {
-    if (Math.abs(x) < 1.0) {
-        const e = parseInt(x.toString().split('e-')[1]);
+    let fixed = '';
+    if (Math.abs(x) < 1) {
+        const e = Number.parseInt(x.toString().split('e-')[1]);
         if (e) {
             x *= Math.pow(10, e - 1);
-            // @ts-expect-error misery
-            x = '0.' + new Array(e).join('0') + x.toString().substring(2);
+            fixed = '0.' + Array.from({length: e}).join('0') + x.toString().slice(2);
         }
     } else {
-        let e = parseInt(x.toString().split('+')[1]);
+        let e = Number.parseInt(x.toString().split('+')[1]);
         if (e > 20) {
             e -= 20;
             x /= Math.pow(10, e);
-            // @ts-expect-error misery 2.0
-            x += new Array(e + 1).join('0');
+            fixed = String(x) + Array.from({length: e + 1}).join('0');
         }
     }
-    return x;
+    return fixed;
 }
 toFixed; //!export
 
@@ -134,7 +132,7 @@ function formatEveryThirdPower(notations) {
     return function (/** @type {number} */ val) {
         let base = 0;
         let notationValue = '';
-        if (!isFinite(val)) return 'Infinity';
+        if (!Number.isFinite(Number(val))) return 'Infinity';
         if (val >= 1000000) {
             val /= 1000;
             while (Math.round(val) >= 1000) {
@@ -144,6 +142,7 @@ function formatEveryThirdPower(notations) {
             if (base >= notations.length) return 'Infinity';
             else notationValue = notations[base];
         }
+        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
         return Math.round(val * 1000) / 1000 + notationValue;
     };
 }
@@ -170,18 +169,18 @@ const suffixes = [
     'octogintillion',
     'nonagintillion'
 ];
-for (const i in suffixes) {
-    for (const ii in prefixes) {
-        formatLong.push(' ' + prefixes[ii] + suffixes[i]);
+for (const suffix of suffixes) {
+    for (const prefix of prefixes) {
+        formatLong.push(' ' + prefix + suffix);
     }
 }
 
 const formatShort = ['k', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No'];
 const short_prefixes = ['', 'Un', 'Do', 'Tr', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No'];
 const short_suffixes = ['D', 'V', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'O', 'N'];
-for (const i in short_suffixes) {
-    for (const ii in short_prefixes) {
-        formatShort.push(' ' + short_prefixes[ii] + short_suffixes[i]);
+for (const short_suffix of short_suffixes) {
+    for (const short_prefix of short_prefixes) {
+        formatShort.push(' ' + short_prefix + short_suffix);
     }
 }
 formatShort[10] = 'Dc';
@@ -197,7 +196,7 @@ const Beautify = (/** @type {number} */ val, /** @type {number=} */ floats = 0) 
     if (floats > 0 && fixed === val + 1) val++;
     const format = Game.prefs.format ? 2 : 1;
     const formatter = numberFormatters[format];
-    const output = val.toString().indexOf('e+') !== -1 && format == 2
+    const output = val.toString().includes('e+') && format === 2
         ? val.toPrecision(3).toString()
         : formatter(val)
             .toString()
@@ -209,10 +208,10 @@ const shortenNumber = (/** @type {number} */ val) => {
     // if no scientific notation, return as is, else :
     // keep only the 5 first digits (plus dot), round the rest
     // may or may not work properly
-    if (val >= 1000000 && isFinite(val)) {
+    if (val >= 1000000 && Number.isFinite(Number(val))) {
         let num = val.toString();
         let ind = num.indexOf('e+');
-        if (ind == -1)
+        if (ind === -1)
             return val;
         let str = '';
         for (let i = 0; i < ind; i++) {
@@ -220,29 +219,31 @@ const shortenNumber = (/** @type {number} */ val) => {
         }
         str += 'e+';
         str += num.split('e+')[1];
-        return parseFloat(str);
+        return Number.parseFloat(str);
     }
     return val;
 }; shortenNumber; //? externally used
 
 const SimpleBeautify = function (/** @type {number} */ val) {
-    let str = val.toString();
+    const str = val.toString();
     let str2 = '';
-    // @ts-expect-error technically valid but sigh...
-    for (let i in str) {
+    let i = 0;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    for (const _ of str) {
         // add commas
-        if ((str.length - Number(i)) % 3 == 0 && Number(i) > 0) str2 += ',';
+        if ((str.length - Number(i)) % 3 === 0 && Number(i) > 0) str2 += ',';
         str2 += str[i];
+        i++;
     }
     return str2;
 }; SimpleBeautify; //? externally used
 
-const beautifyInTextFilter = /(([\d]+[,]*)+)/g; // new regex
+const beautifyInTextFilter = /((\d+,*)+)/g; // new regex
 /**
  * @param {string} str
  */
 function BeautifyInTextFunction(str) {
-    return Beautify(parseInt(str.replace(/,/g, ''), 10));
+    return Beautify(Number.parseInt(str.replace(/,/g, ''), 10));
 }
 /**
  * @param {string} str
@@ -269,11 +270,11 @@ BeautifyAll; //! export
 function utf8_to_b64(str) {
     try {
         return btoa(
-            encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) {
-                return String.fromCharCode(parseInt(p1, 16));
+            encodeURIComponent(str).replace(/%([\dA-F]{2})/g, function (match, p1) {
+                return String.fromCodePoint(Number.parseInt(p1, 16));
             })
         );
-    } catch (err) {
+    } catch {
         return '';
     }
 }
@@ -287,11 +288,12 @@ function b64_to_utf8(str) {
         return decodeURIComponent(
             Array.prototype.map
                 .call(atob(str), function (c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                    return '%' + (`00${c.codePointAt(0).toString(16)}`).slice(-2);
                 })
                 .join('')
         );
-    } catch (err) {
+    } catch {
         return '';
     }
 }
@@ -299,9 +301,8 @@ b64_to_utf8; //! export
 
 const getUpgradeName = (/** @type {string} */ name) => {
     const it = Game.Upgrades[name];
-    const found = locStringsByPart['Upgrade name ' + it.id] || undefined;
-    if (found) return String(loc(found));
-    else return name;
+    const found = locStringsByPart[`Upgrade name ${it.id}`] || undefined;
+    return found ? String(loc(found)) : name;
 }; getUpgradeName; //! export
 
 /**
@@ -330,7 +331,7 @@ function tinyIcon(icon, css) {
     return (
         `<div class="icon tinyIcon" style="vertical-align:middle;display:inline-block;${
             writeIcon(icon)
-        }transform:scale(0.5);margin:-16px;${css ? css : ''}"></div>`
+        }transform:scale(0.5);margin:-16px;${css || ''}"></div>`
     );
 }
 tinyIcon; //! export
@@ -375,16 +376,16 @@ const decode = (/** @type string */ encodedURIComponent) => {
             if (nextTwo.trim().length !== 2 || Number.isNaN(nextTwoNum)) return '%25';
             if (nextTwoNum > 0x7F) {
                 arr[i + 1] = ''; arr[i + 2] = '';
-                return String.fromCharCode(nextTwoNum);
+                return String.fromCodePoint(nextTwoNum);
             }
         }
         return curr;
     }).join('');
     try {
         return decodeURIComponent(input);
-    } catch (e) {
+    } catch (error) {
         console.log('decode() error with input: ' + input);
-        throw e;
+        throw error;
     }
 }; decode; //! export
 

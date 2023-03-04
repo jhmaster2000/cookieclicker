@@ -1,4 +1,6 @@
-﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+﻿/* eslint-disable @typescript-eslint/no-for-in-array */
+/* eslint-disable unicorn/no-static-only-class */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-loss-of-precision */
 /// <reference types="./main" />
 /*
@@ -129,9 +131,9 @@ class Game {
             'img/frostedReindeer.png'
         ];
         const preloadImagesL = $('preloadImages', true);
-        for (let i = 0; i < preloadImages.length; i++) {
+        for (const preloadImage of preloadImages) {
             const img = document.createElement('img');
-            img.src = preloadImages[i];
+            img.src = preloadImage;
             preloadImagesL.appendChild(img);
         }
 
@@ -162,7 +164,7 @@ class Game {
         // automatic season detection (might not be 100% accurate)
         const year = new Date().getFullYear();
         const leap = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0 ? 1 : 0;
-        const day = Math.floor((+new Date() - +new Date(year, 0, 0)) / (1000 * 60 * 60 * 24));
+        const day = Math.floor((Date.now() - +new Date(year, 0, 0)) / (1000 * 60 * 60 * 24));
         if (day >= 41 && day <= 46) Game.baseSeason = 'valentines';
         else if (day + leap >= 90 && day <= 92 + leap) Game.baseSeason = 'fools';
         else if (day >= 304 - 7 + leap && day <= 304 + leap) Game.baseSeason = 'halloween';
@@ -174,12 +176,11 @@ class Game {
 
         Game.updateLog = UPDATE_LOG_START;
 
-        for (let i = 0; i < locPatches.length; i++) {
-            const patch = locPatches[i];
+        for (const patch of locPatches) {
             let patchText =
                 `</div><div class="subsection update${patch.type == 2 ? ' small' : ''}"><div class="title">${patch.title}</div>`;
-            for (let ii = 0; ii < patch.points.length; ii++) {
-                patchText += `<div class="listing">&bull; ${patch.points[ii]}</div>`;
+            for (const point of patch.points) {
+                patchText += `<div class="listing">&bull; ${point}</div>`;
             }
             Game.updateLog += patchText;
         }
@@ -559,9 +560,9 @@ class Game {
                 ])
             );
         } else {
-            if (locStrings['bakery random name, 1st half'] && locStrings['bakery random name, 2nd half'])
-                str += choose(loc('bakery random name, 1st half')) + ' ' + choose(loc('bakery random name, 2nd half'));
-            else str += choose(loc('bakery random name'));
+            str += locStrings['bakery random name, 1st half'] && locStrings['bakery random name, 2nd half']
+                ? choose(loc('bakery random name, 1st half')) + ' ' + choose(loc('bakery random name, 2nd half'))
+                : choose(loc('bakery random name'));
         }
         return str;
     }
@@ -574,18 +575,17 @@ class Game {
     static bakeryNameSet(what) {
         try {
             Game.bakeryName = what.replace(/[^'\-_0-9 \p{L}]/gu, ' ');
-            Game.bakeryName = Game.bakeryName.trim().substring(0, 28);
-        } catch (e) {
+            Game.bakeryName = Game.bakeryName.trim().slice(0, 28);
+        } catch {
             Game.bakeryName = what.replace(/W+/g, ' ');
-            Game.bakeryName = Game.bakeryName.substring(0, 28);
+            Game.bakeryName = Game.bakeryName.slice(0, 28);
         }
         Game.bakeryNameRefresh();
     }
     static bakeryNameRefresh() {
         let name = Game.bakeryName;
         if (EN) {
-            if (name.slice(-1).toLowerCase() === 's') name += '\' bakery';
-            else name += '\'s bakery';
+            name += name.slice(-1).toLowerCase() === 's' ? '\' bakery' : '\'s bakery';
         } else name = String(loc('%1\'s bakery', name));
         Game.bakeryNameL.innerHTML = name;
         name = Game.bakeryName.toLowerCase();
@@ -693,6 +693,7 @@ class Game {
                         if (Y < 0) Y = rect.bottom - 32;
                     }
                 }
+                // eslint-disable-next-line unicorn/prefer-switch
                 else if (this.origin === 'bottom-right') {
                     X = Game.mouseX + 8;
                     Y = Game.mouseY - 32;
@@ -761,13 +762,12 @@ class Game {
      */
     static getTooltip(text, origin, isCrate) {
         origin ||= 'middle';
-        if (isCrate) return (
+        return isCrate ? (
             'onMouseOut="Game.setOnCrate(0);Game.tooltip.shouldHide=1;" onMouseOver="if (!Game.mouseDown) {' +
             `Game.setOnCrate(this);Game.tooltip.dynamic=0;Game.tooltip.draw(this,'${
                 encodeURIComponent(text)
             }','${origin}');}"`
-        );
-        else return (
+        ) : (
             'onMouseOut="Game.tooltip.shouldHide=1;" onMouseOver="Game.tooltip.dynamic=0;Game.tooltip.draw(this,\'' +
             encodeURIComponent(text) +
             '\',\'' +
@@ -782,7 +782,7 @@ class Game {
      */
     static getDynamicTooltip(func, origin, isCrate) {
         origin ||= 'middle';
-        if (isCrate) return (
+        return isCrate ? (
             'onMouseOut="Game.setOnCrate(0);Game.tooltip.shouldHide=1;" onMouseOver="if (!Game.mouseDown) {' +
             'Game.setOnCrate(this);Game.tooltip.dynamic=1;Game.tooltip.draw(this,' +
             'function(){return ' +
@@ -791,8 +791,7 @@ class Game {
             ',\'' +
             origin +
             '\');}"'
-        );
-        else return (
+        ) : (
             'onMouseOut="Game.tooltip.shouldHide=1;" onMouseOver="Game.tooltip.dynamic=1;Game.tooltip.draw(this,' +
             'function(){return ' +
             func +
@@ -954,13 +953,13 @@ class Game {
         window.addEventListener('resize', Game.resize);
         Game.resize();
 
-        window.onbeforeunload = (event) => {
+        window.addEventListener('beforeunload', (event) => {
             if (Game.prefs && Game.prefs.warn) {
                 event.preventDefault();
                 return event.returnValue = loc('Are you sure you want to close Cookie Clicker?');
             }
             return;
-        };
+        });
 
         Game.bakeryNameL.addEventListener('click', Game.bakeryNamePrompt, false);
         Game.bakeryNameSet(Game.GetBakeryName());
@@ -979,8 +978,8 @@ class Game {
         );
         $('httpsSwitch', true).addEventListener('click', function () {
             PlaySound('snd/pop' + Math.floor(Math.random() * 3 + 1) + '.mp3', 0.75);
-            if (location.protocol === 'https:') location.href = 'http:' + location.href.substring(location.protocol.length);
-            else if (location.protocol === 'http:') location.href = 'https:' + location.href.substring(location.protocol.length);
+            if (location.protocol === 'https:') location.href = 'http:' + location.href.slice(location.protocol.length);
+            else if (location.protocol === 'http:') location.href = 'https:' + location.href.slice(location.protocol.length);
         });
 
         $('changeLanguage', true).addEventListener('click', function () {
@@ -1254,19 +1253,15 @@ class Game {
                 }
                 if (Game.AscendTimer > 0) Game.AscendTimer = Game.AscendDuration;
             } // esc closes prompt
-            if (Game.promptOn) {
-                if (e.key === 'Enter') Game.ConfirmPrompt(); // enter confirms prompt
-            }
+            if (Game.promptOn && e.key === 'Enter') Game.ConfirmPrompt(); // enter confirms prompt
             Game.keys[e.code] = false;
         });
         window.addEventListener('keydown', function (e) {
-            if (Game.promptOn) {
-                if (e.key === 'Tab') {
-                    // tab to shift through prompt buttons
-                    if (e.shiftKey) Game.FocusPromptOption(-1);
-                    else Game.FocusPromptOption(1);
-                    e.preventDefault();
-                }
+            if (Game.promptOn && e.key === 'Tab') {
+                // tab to shift through prompt buttons
+                if (e.shiftKey) Game.FocusPromptOption(-1);
+                else Game.FocusPromptOption(1);
+                e.preventDefault();
             }
             if (!Game.OnAscend && Game.AscendTimer == 0) {
                 if (e.ctrlKey && e.code === 'KeyS') {
@@ -1477,8 +1472,8 @@ class Game {
                 100,
                 function (me) {
                     let mult = 1;
-                    for (let i in Game.GrandmaSynergies) {
-                        if (Game.Has(Game.GrandmaSynergies[i])) mult *= 2;
+                    for (const grandmaSynergy of Game.GrandmaSynergies) {
+                        if (Game.Has(grandmaSynergy)) mult *= 2;
                     }
                     if (Game.Has('Bingo center/Research facility')) mult *= 4;
                     if (Game.Has('Ritual rolling pins')) mult *= 2;
@@ -1489,8 +1484,8 @@ class Game {
                     mult *= Game.eff('grandmaCps');
 
                     if (Game.Has('Cat ladies')) {
-                        for (let i = 0; i < Game.UpgradesByPool['kitten'].length; i++) {
-                            if (Game.Has(Game.UpgradesByPool['kitten'][i].name)) mult *= 1.29;
+                        for (const kitten of Game.UpgradesByPool['kitten']) {
+                            if (Game.Has(kitten.name)) mult *= 1.29;
                         }
                     }
 
@@ -2420,8 +2415,7 @@ class Game {
             );
         };
         Game.last.timerDisplay = function () {
-            if (!Game.Upgrades['Elder Pledge'].bought) return -1;
-            else return 1 - Game.pledgeT / Game.getPledgeDuration();
+            return !Game.Upgrades['Elder Pledge'].bought ? -1 : 1 - Game.pledgeT / Game.getPledgeDuration();
         };
         Game.last.priceFunc = function () {
             return Math.pow(8, Math.min(Game.pledges + 2, 14));
@@ -3626,15 +3620,15 @@ class Game {
         };
         new Game.Upgrade('"egg"', '<b>' + loc('+%1 CpS', 9) + '</b><q>hey it\'s "egg"</q>', eggPrice2, [20, 12]);
 
-        for (let i in Game.eggDrops) {
+        for (const eggDrop of Game.eggDrops) {
             // scale egg prices to how many eggs you have
-            Game.Upgrades[Game.eggDrops[i]].priceFunc = function () {
+            Game.Upgrades[eggDrop].priceFunc = function () {
                 return Math.pow(2, Game.GetHowManyEggs()) * 999;
             };
         }
 
-        for (let i in Game.rareEggDrops) {
-            Game.Upgrades[Game.rareEggDrops[i]].priceFunc = function () {
+        for (const rareEggDrop of Game.rareEggDrops) {
+            Game.Upgrades[rareEggDrop].priceFunc = function () {
                 return Math.pow(3, Game.GetHowManyEggs()) * 999;
             };
         }
@@ -3870,8 +3864,8 @@ class Game {
             'Permanent upgrade slot IV',
             'Permanent upgrade slot V'
         ];
-        for (let i = 0; i < slots.length; i++) {
-            Game.Upgrades[slots[i]].descFunc = (function (i) {
+        for (const [i, slot] of slots.entries()) {
+            Game.Upgrades[slot].descFunc = (function (i) {
                 return function (/** @type {string} */ context) {
                     if (Game.permanentUpgrades[i] == -1)
                         // @ts-expect-error what is this
@@ -4353,8 +4347,8 @@ class Game {
      if (Game.Has('Residual luck')) {
          let bonus = 0;
          let upgrades = Game.goldenCookieUpgrades;
-         for (let i in upgrades) {
-             if (Game.Has(upgrades[i])) bonus++;
+         for (const upgrade of upgrades) {
+             if (Game.Has(upgrade)) bonus++;
          }
          return (
              '<div style="text-align:center;">' +
@@ -4693,9 +4687,7 @@ class Game {
             choices[2] = { name: 'Fortune', icon: [27, 6] };
             choices[3] = { name: 'Cymbal', icon: [9, 10] };
             choices[4] = { name: 'Squeak', icon: [8, 10] };
-            for (let i = 0; i < choices.length; i++) {
-                choices[i].name = locStr(choices[i].name);
-            }
+            for (const choice of choices) choice.name = locStr(choice.name);
 
             choices[Game.chimeType].selected = 1;
             return choices;
@@ -5128,28 +5120,30 @@ class Game {
         Game.last.pool = 'toggle';
         Game.last.choicesFunction = function () {
             /** 
-             * @type {{name: string, icon: string, order: number,div: boolean | undefined, selected: number | undefined }[]}
+             * @type {({ name: string, icon: number[], order: number, div?: boolean, selected?: number; } | 0)[]}
              */
             const choices = [];
-            for (let i in Game.BGsByChoice) {
+            let i = 0;
+            for (const bg of Game.BGsByChoice) {
                 choices[Number(i)] = {
-                    name: Game.BGsByChoice[i].name,
-                    // @ts-expect-error i have no idea
-                    icon: Game.BGsByChoice[i].icon,
-                    order: Game.BGsByChoice[i].order || parseInt(i),
+                    name: bg.name,
+                    icon: bg.icon,
+                    order: bg.order || i,
                     div: undefined,
                     selected: undefined
                 };
+                i++;
             }
 
-            choices[13].div = true;
+            const choice13 = choices[13];
+            if (choice13) choice13.div = true;
 
             for (let i = 0; i < choices.length; i++) {
-                let it = choices[i];
-                // @ts-expect-error pain, just pain
-                if (it.order >= 4.9 && !Game.Has('Distinguished wallpaper assortment')) choices[i] = 0;
+                const it = choices[i];
+                if (it && it.order >= 4.9 && !Game.Has('Distinguished wallpaper assortment')) choices[i] = 0;
             }
-            choices[Game.bgType].selected = 1;
+            const choiceSelected = choices[Game.bgType];
+            if (choiceSelected) choiceSelected.selected = 1;
             return choices;
         };
         Game.last.choicesPick = function (/** @type {number} */ id) {
@@ -5687,10 +5681,12 @@ class Game {
             loc('Dropped by %1 plants.', locStr('Baker\'s wheat').toLowerCase()) +
             '<q>The only reason you\'d consider these to be cookies is because you feel slightly sorry for them.</q>';
 
-        let gardenDrops = ['Elderwort biscuits', 'Bakeberry cookies', 'Duketater cookies', 'Green yeast digestives', 'Fern tea', 'Ichor syrup', 'Wheat slims'];
-        for (let i in gardenDrops) {
+        const gardenDrops = [
+            'Elderwort biscuits', 'Bakeberry cookies', 'Duketater cookies', 'Green yeast digestives', 'Fern tea', 'Ichor syrup', 'Wheat slims'
+        ];
+        for (const gardenDrop of gardenDrops) {
             // scale by CpS
-            let it = Game.Upgrades[gardenDrops[i]];
+            let it = Game.Upgrades[gardenDrop];
             it.priceFunc = (function (cost) {
                 return function () {
                     return cost * Game.cookiesPs * 60;
@@ -6075,7 +6071,7 @@ class Game {
                 return (
                     this.desc +
                     '<q style="font-family:Courier;">' +
-                    (str.substring(i % str.length, (i % str.length) + n) + (i % str.length > str.length - n ? str.substring(0, (i % str.length) - (str.length - n)) : '')) +
+                    (str.slice(i % str.length, (i % str.length) + n) + (i % str.length > str.length - n ? str.slice(0, Math.max(0, (i % str.length) - (str.length - n))) : '')) +
                     '</q>'
                 );
             };
@@ -10014,7 +10010,7 @@ class Game {
         }
         for (let i in Game.dragonAuras) {
             const tmp_i_n = /** @type {keyof typeof Game.dragonAuras} */ (Number(i));
-            Game.dragonAuras[tmp_i_n].id = parseInt(i);
+            Game.dragonAuras[tmp_i_n].id = Number.parseInt(i);
             Game.dragonAuras[tmp_i_n].dname = String(loc(Game.dragonAuras[tmp_i_n].name));
         }
 
@@ -10094,7 +10090,7 @@ class Game {
                     el.style.padding = '6px 0px';
                 }
                 if (width > 1) {
-                    el.style.fontSize = (parseInt(window.getComputedStyle(el).fontSize) * 1) / width + 'px';
+                    el.style.fontSize = (Number.parseInt(window.getComputedStyle(el).fontSize) * 1) / width + 'px';
                     el.style.transform = 'scale(1,' + width + ')';
                 }
             };
@@ -10163,19 +10159,19 @@ class Game {
 
     static FileSave() {
         Game.prefs.showBackupWarning = 0;
-        const filename = Game.bakeryName.replace(/[^a-zA-Z0-9]+/g, '') + 'Bakery';
+        const filename = Game.bakeryName.replace(/[^\dA-Za-z]+/g, '') + 'Bakery';
         const text = Game.WriteSave(1);
         const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
         saveAs(blob, `${filename}.txt`);
     }
     /** @param {{ target: { files: string | any[]; }; }} e */
     static FileLoad(e) {
-        if (e.target.files.length == 0) return false;
+        if (e.target.files.length === 0) return false;
         let file = e.target.files[0];
         let reader = new FileReader();
-        reader.onload = (e) => {
+        reader.addEventListener('load', (e) => {
             Game.ImportSaveCode(/** @type {string} */(ASSERT_NOT_NULL(ASSERT_NOT_NULL(e.target).result)));
-        };
+        });
         reader.readAsText(file);
         return true;
     }
@@ -10238,121 +10234,121 @@ class Game {
         str +=
             (type === 3 ? '\n\tcookies : ' : '') +
             // @ts-expect-error likely useless parse but cant be sure yet
-            parseFloat(Game.cookies).toString() + ';' +
+            Number.parseFloat(Game.cookies).toString() + ';' +
             (type === 3 ? '\n\ttotal cookies earned : ' : '') +
             // @ts-expect-error likely useless parse but cant be sure yet
-            parseFloat(Game.cookiesEarned).toString() + ';' +
+            Number.parseFloat(Game.cookiesEarned).toString() + ';' +
             (type === 3 ? '\n\tcookie clicks : ' : '') +
-            parseInt(Math.floor(Game.cookieClicks).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.cookieClicks).toString()) + ';' +
             (type === 3 ? '\n\tgolden cookie clicks : ' : '') +
-            parseInt(Math.floor(Game.goldenClicks).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.goldenClicks).toString()) + ';' +
             (type === 3 ? '\n\tcookies made by clicking : ' : '') +
             // @ts-expect-error likely useless parse but cant be sure yet
-            parseFloat(Game.handmadeCookies).toString() + ';' +
+            Number.parseFloat(Game.handmadeCookies).toString() + ';' +
             (type === 3 ? '\n\tgolden cookies missed : ' : '') +
-            parseInt(Math.floor(Game.missedGoldenClicks).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.missedGoldenClicks).toString()) + ';' +
             (type === 3 ? '\n\tbackground type : ' : '') +
-            parseInt(Math.floor(Game.bgType).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.bgType).toString()) + ';' +
             (type === 3 ? '\n\tmilk type : ' : '') +
-            parseInt(Math.floor(Game.milkType).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.milkType).toString()) + ';' +
             (type === 3 ? '\n\tcookies from past runs : ' : '') +
             // @ts-expect-error likely useless parse but cant be sure yet
-            parseFloat(Game.cookiesReset).toString() + ';' +
+            Number.parseFloat(Game.cookiesReset).toString() + ';' +
             (type === 3 ? '\n\telder wrath : ' : '') +
-            parseInt(Math.floor(Game.elderWrath).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.elderWrath).toString()) + ';' +
             (type === 3 ? '\n\tpledges : ' : '') +
-            parseInt(Math.floor(Game.pledges).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.pledges).toString()) + ';' +
             (type === 3 ? '\n\tpledge time left : ' : '') +
-            parseInt(Math.floor(Game.pledgeT).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.pledgeT).toString()) + ';' +
             (type === 3 ? '\n\tcurrently researching : ' : '') +
-            parseInt(Math.floor(Game.nextResearch).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.nextResearch).toString()) + ';' +
             (type === 3 ? '\n\tresearch time left : ' : '') +
-            parseInt(Math.floor(Game.researchT).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.researchT).toString()) + ';' +
             (type === 3 ? '\n\tascensions : ' : '') +
-            parseInt(Math.floor(Game.resets).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.resets).toString()) + ';' +
             (type === 3 ? '\n\tgolden cookie clicks (this run) : ' : '') +
-            parseInt(Math.floor(Game.goldenClicksLocal).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.goldenClicksLocal).toString()) + ';' +
             (type === 3 ? '\n\tcookies sucked by wrinklers : ' : '') +
             // @ts-expect-error likely useless parse but cant be sure yet
-            parseFloat(Game.cookiesSucked).toString() + ';' +
+            Number.parseFloat(Game.cookiesSucked).toString() + ';' +
             (type === 3 ? '\n\twrinkles popped : ' : '') +
-            parseInt(Math.floor(Game.wrinklersPopped).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.wrinklersPopped).toString()) + ';' +
             (type === 3 ? '\n\tsanta level : ' : '') +
-            parseInt(Math.floor(Game.santaLevel).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.santaLevel).toString()) + ';' +
             (type === 3 ? '\n\treindeer clicked : ' : '') +
-            parseInt(Math.floor(Game.reindeerClicked).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.reindeerClicked).toString()) + ';' +
             (type === 3 ? '\n\tseason time left : ' : '') +
-            parseInt(Math.floor(Game.seasonT).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.seasonT).toString()) + ';' +
             (type === 3 ? '\n\tseason switcher uses : ' : '') +
-            parseInt(Math.floor(Game.seasonUses).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.seasonUses).toString()) + ';' +
             (type === 3 ? '\n\tcurrent season : ' : '') +
-            (Game.season ? Game.season : '') + ';';
+            (Game.season || '') + ';';
         let wrinklers = Game.SaveWrinklers();
         str +=
             (type === 3 ? '\n\tamount of cookies contained in wrinklers : ' : '') +
-            parseFloat(Math.floor(wrinklers.amount).toString()) + ';' +
+            Number.parseFloat(Math.floor(wrinklers.amount).toString()) + ';' +
             (type === 3 ? '\n\tnumber of wrinklers : ' : '') +
-            parseInt(Math.floor(wrinklers.number).toString()) + ';' +
+            Number.parseInt(Math.floor(wrinklers.number).toString()) + ';' +
             (type === 3 ? '\n\tprestige level : ' : '') +
             // @ts-expect-error likely useless parse but cant be sure yet
-            parseFloat(Game.prestige).toString() + ';' +
+            Number.parseFloat(Game.prestige).toString() + ';' +
             (type === 3 ? '\n\theavenly chips : ' : '') +
             // @ts-expect-error likely useless parse but cant be sure yet
-            parseFloat(Game.heavenlyChips).toString() + ';' +
+            Number.parseFloat(Game.heavenlyChips).toString() + ';' +
             (type === 3 ? '\n\theavenly chips spent : ' : '') +
             // @ts-expect-error likely useless parse but cant be sure yet
-            parseFloat(Game.heavenlyChipsSpent).toString() + ';' +
+            Number.parseFloat(Game.heavenlyChipsSpent).toString() + ';' +
             (type === 3 ? '\n\theavenly cookies : ' : '') +
             // @ts-expect-error likely useless parse but cant be sure yet
-            parseFloat(Game.heavenlyCookies).toString() + ';' +
+            Number.parseFloat(Game.heavenlyCookies).toString() + ';' +
             (type === 3 ? '\n\tascension mode : ' : '') +
-            parseInt(Math.floor(Game.ascensionMode).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.ascensionMode).toString()) + ';' +
             (type === 3 ? '\n\tpermanent upgrades : ' : '') +
-            parseInt(Math.floor(Game.permanentUpgrades[0]).toString()) + ';' +
-            parseInt(Math.floor(Game.permanentUpgrades[1]).toString()) + ';' +
-            parseInt(Math.floor(Game.permanentUpgrades[2]).toString()) + ';' +
-            parseInt(Math.floor(Game.permanentUpgrades[3]).toString()) + ';' +
-            parseInt(Math.floor(Game.permanentUpgrades[4]).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.permanentUpgrades[0]).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.permanentUpgrades[1]).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.permanentUpgrades[2]).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.permanentUpgrades[3]).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.permanentUpgrades[4]).toString()) + ';' +
             (type === 3 ? '\n\tdragon level : ' : '') +
-            parseInt(Math.floor(Game.dragonLevel).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.dragonLevel).toString()) + ';' +
             (type === 3 ? '\n\tdragon aura : ' : '') +
-            parseInt(Math.floor(Game.dragonAura).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.dragonAura).toString()) + ';' +
             (type === 3 ? '\n\tdragon aura 2 : ' : '') +
-            parseInt(Math.floor(Game.dragonAura2).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.dragonAura2).toString()) + ';' +
             (type === 3 ? '\n\tchime type : ' : '') +
-            parseInt(Math.floor(Game.chimeType).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.chimeType).toString()) + ';' +
             (type === 3 ? '\n\tvolume : ' : '') +
-            parseInt(Math.floor(Game.volume).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.volume).toString()) + ';' +
             (type === 3 ? '\n\tnumber of shiny wrinklers : ' : '') +
-            parseInt(Math.floor(wrinklers.shinies).toString()) + ';' +
+            Number.parseInt(Math.floor(wrinklers.shinies).toString()) + ';' +
             (type === 3 ? '\n\tamount of cookies contained in shiny wrinklers : ' : '') +
-            parseFloat(Math.floor(wrinklers.amountShinies).toString()) + ';' +
+            Number.parseFloat(Math.floor(wrinklers.amountShinies).toString()) + ';' +
             (type === 3 ? '\n\tcurrent amount of sugar lumps : ' : '') +
-            parseFloat(Math.floor(Game.lumps).toString()) + ';' +
+            Number.parseFloat(Math.floor(Game.lumps).toString()) + ';' +
             (type === 3 ? '\n\ttotal amount of sugar lumps made : ' : '') +
-            parseFloat(Math.floor(Game.lumpsTotal).toString()) + ';' +
+            Number.parseFloat(Math.floor(Game.lumpsTotal).toString()) + ';' +
             (type === 3 ? '\n\ttime when current sugar lump started : ' : '') +
-            parseFloat(Math.floor(Game.lumpT).toString()) + ';' +
+            Number.parseFloat(Math.floor(Game.lumpT).toString()) + ';' +
             (type === 3 ? '\n\ttime when last refilled a minigame with a sugar lump : ' : '') +
-            parseFloat(Math.floor(Game.lumpRefill).toString()) + ';' +
+            Number.parseFloat(Math.floor(Game.lumpRefill).toString()) + ';' +
             (type === 3 ? '\n\tsugar lump type : ' : '') +
-            parseInt(Math.floor(Game.lumpCurrentType).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.lumpCurrentType).toString()) + ';' +
             (type === 3 ? '\n\tvault : ' : '') +
             Game.vault.join(',') + ';' +
             (type === 3 ? '\n\theralds : ' : '') +
             // @ts-expect-error likely useless parse but cant be sure yet
-            parseInt(Game.heralds) + ';' +
+            Number.parseInt(Game.heralds) + ';' +
             (type === 3 ? '\n\tgolden cookie fortune : ' : '') +
             // @ts-expect-error likely useless parse but cant be sure yet
-            parseInt(Game.fortuneGC) + ';' +
+            Number.parseInt(Game.fortuneGC) + ';' +
             (type === 3 ? '\n\tCpS fortune : ' : '') +
             // @ts-expect-error likely useless parse but cant be sure yet
-            parseInt(Game.fortuneCPS) + ';' +
+            Number.parseInt(Game.fortuneCPS) + ';' +
             (type === 3 ? '\n\thighest raw CpS : ' : '') +
             // @ts-expect-error likely useless parse but cant be sure yet
-            parseFloat(Game.cookiesPsRawHighest) + ';' +
+            Number.parseFloat(Game.cookiesPsRawHighest) + ';' +
             (type === 3 ? '\n\tmusic volume : ' : '') +
-            parseInt(Math.floor(Game.volumeMusic).toString()) + ';' +
+            Number.parseInt(Math.floor(Game.volumeMusic).toString()) + ';' +
             '|'; // cookies and lots of other stuff
 
         if (type === 3) str += '\n\nBuildings : amount, bought, cookies produced, level, minigame data';
@@ -10361,9 +10357,8 @@ class Game {
             const me = Game.Objects[i];
             if (type == 3) str += '\n\t' + me.name + ' : ';
             if (me.vanilla) {
-                str += me.amount + ',' + me.bought + ',' + Math.floor(me.totalCookies) + ',' + parseInt(String(me.level));
-                if (Game.isMinigameReady(me)) str += ',' + ASSERT_NOT_NULL(me.minigame).save();
-                else str += ',' + (me.minigameSave || '');
+                str += me.amount + ',' + me.bought + ',' + Math.floor(me.totalCookies) + ',' + Number.parseInt(String(me.level));
+                str += Game.isMinigameReady(me) ? ',' + ASSERT_NOT_NULL(me.minigame).save() : ',' + (me.minigameSave || '');
                 str += ',' + (me.muted ? '1' : '0');
                 str += ',' + me.highest;
                 str += ';';
@@ -10402,9 +10397,9 @@ class Game {
                 if (type === 3) str += '\n\t' + me.type.name + ' : ';
                 if (me.type.vanilla) {
                     str += me.type.id + ',' + me.maxTime + ',' + me.time;
-                    if (typeof me.arg1 !== 'undefined') str += ',' + parseFloat(me.arg1);
-                    if (typeof me.arg2 !== 'undefined') str += ',' + parseFloat(me.arg2);
-                    if (typeof me.arg3 !== 'undefined') str += ',' + parseFloat(me.arg3);
+                    if (me.arg1 !== undefined) str += ',' + Number.parseFloat(me.arg1);
+                    if (me.arg2 !== undefined) str += ',' + Number.parseFloat(me.arg2);
+                    if (me.arg3 !== undefined) str += ',' + Number.parseFloat(me.arg3);
                     str += ';';
                 }
             }
@@ -10454,8 +10449,9 @@ class Game {
                 str = utf8_to_b64(str) + '!END!';
                 Game.saveData = encodeURIComponent(str);
                 str = Game.SaveTo + '=' + encodeURIComponent(str) + '; expires=' + now.toUTCString() + ';';
+                // eslint-disable-next-line unicorn/no-document-cookie
                 document.cookie = str; // aaand save
-                if (document.cookie.indexOf(Game.SaveTo) < 0) {
+                if (!document.cookie.includes(Game.SaveTo)) {
                     Game.Notify(loc('Error while saving'), loc('Export your save instead!'), '', 0, 1);
                 } else if (document.hasFocus()) {
                     Game.Notify(loc('Game saved'), '', '', 1, 1);
@@ -10482,14 +10478,15 @@ class Game {
      */
     static LoadSave(data, ignoreVersionIssues) {
         let str = '';
-        if (typeof data !== 'undefined') str = decode(data);
+        if (data !== undefined) str = decode(data);
         else {
             if (Game.useLocalStorage) {
                 let local = localStorageGet(Game.SaveTo);
                 if (!local) {
                     // no localstorage save found? let's get the cookie one last time
-                    if (document.cookie.indexOf(Game.SaveTo) >= 0) {
+                    if (document.cookie.includes(Game.SaveTo)) {
                         str = decode(document.cookie.split(Game.SaveTo + '=')[1]);
+                        // eslint-disable-next-line unicorn/no-document-cookie
                         document.cookie = Game.SaveTo + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                     } else return false;
                 } else {
@@ -10497,7 +10494,7 @@ class Game {
                 }
             } // legacy system
             else {
-                if (document.cookie.indexOf(Game.SaveTo) >= 0) str = decode(document.cookie.split(Game.SaveTo + '=')[1]);
+                if (document.cookie.includes(Game.SaveTo)) str = decode(document.cookie.split(Game.SaveTo + '=')[1]);
                 // get cookie here
                 else return false;
             }
@@ -10505,7 +10502,7 @@ class Game {
         if (str != '') {
             let version = 0;
             let oldstr = str.split('|');
-            if (oldstr[0].length < 1) return false;
+            if (oldstr[0].length === 0) return false;
             else {
                 str = str.split('!END!')[0];
                 str = b64_to_utf8(str);
@@ -10515,10 +10512,10 @@ class Game {
                 let spl = '';
                 // @ts-expect-error //! Need to refactor this variable
                 str = str.split('|');
-                version = parseFloat(str[0]);
+                version = Number.parseFloat(str[0]);
                 Game.loadedFromVersion = version;
 
-                if (isNaN(version) || str.length < 5) {
+                if (Number.isNaN(version) || str.length < 5) {
                     Game.Notify(loc('Error importing save'), loc('Oops, looks like the import string is all wrong!'), '', 6, 1);
                     return false;
                 }
@@ -10541,138 +10538,138 @@ class Game {
 
                     // @ts-expect-error //! refactor needed
                     spl = str[2].split(';'); // save stats
-                    Game.startDate = parseInt(spl[0]);
-                    Game.fullDate = parseInt(spl[1]);
-                    Game.lastDate = parseInt(spl[2]);
-                    let bakeryName = spl[3] ? spl[3] : Game.GetBakeryName();
-                    Game.seed = spl[4] ? spl[4] : Game.makeSeed();
+                    Game.startDate = Number.parseInt(spl[0]);
+                    Game.fullDate = Number.parseInt(spl[1]);
+                    Game.lastDate = Number.parseInt(spl[2]);
+                    let bakeryName = spl[3] || Game.GetBakeryName();
+                    Game.seed = spl[4] || Game.makeSeed();
                     // prefs
                     // @ts-expect-error //! refactor needed
-                    spl = str[3].split('');
-                    Game.prefs.particles = parseInt(spl[0]);
-                    Game.prefs.numbers = parseInt(spl[1]);
-                    Game.prefs.autosave = parseInt(spl[2]);
-                    Game.prefs.autoupdate = spl[3] ? parseInt(spl[3]) : 1;
-                    Game.prefs.milk = spl[4] ? parseInt(spl[4]) : 1;
-                    Game.prefs.fancy = parseInt(spl[5]);
+                    spl = [...str[3]];
+                    Game.prefs.particles = Number.parseInt(spl[0]);
+                    Game.prefs.numbers = Number.parseInt(spl[1]);
+                    Game.prefs.autosave = Number.parseInt(spl[2]);
+                    Game.prefs.autoupdate = spl[3] ? Number.parseInt(spl[3]) : 1;
+                    Game.prefs.milk = spl[4] ? Number.parseInt(spl[4]) : 1;
+                    Game.prefs.fancy = Number.parseInt(spl[5]);
                     if (Game.prefs.fancy) Game.removeClass('noFancy');
                     else if (!Game.prefs.fancy) Game.addClass('noFancy');
-                    Game.prefs.warn = spl[6] ? parseInt(spl[6]) : 0;
-                    Game.prefs.cursors = spl[7] ? parseInt(spl[7]) : 0;
-                    Game.prefs.focus = spl[8] ? parseInt(spl[8]) : 0;
-                    Game.prefs.format = spl[9] ? parseInt(spl[9]) : 0;
-                    Game.prefs.notifs = spl[10] ? parseInt(spl[10]) : 0;
-                    Game.prefs.wobbly = spl[11] ? parseInt(spl[11]) : 0;
-                    Game.prefs.monospace = spl[12] ? parseInt(spl[12]) : 0;
-                    Game.prefs.filters = spl[13] ? parseInt(spl[13]) : 1;
+                    Game.prefs.warn = spl[6] ? Number.parseInt(spl[6]) : 0;
+                    Game.prefs.cursors = spl[7] ? Number.parseInt(spl[7]) : 0;
+                    Game.prefs.focus = spl[8] ? Number.parseInt(spl[8]) : 0;
+                    Game.prefs.format = spl[9] ? Number.parseInt(spl[9]) : 0;
+                    Game.prefs.notifs = spl[10] ? Number.parseInt(spl[10]) : 0;
+                    Game.prefs.wobbly = spl[11] ? Number.parseInt(spl[11]) : 0;
+                    Game.prefs.monospace = spl[12] ? Number.parseInt(spl[12]) : 0;
+                    Game.prefs.filters = spl[13] ? Number.parseInt(spl[13]) : 1;
                     if (Game.prefs.filters) Game.removeClass('noFilters');
                     else if (!Game.prefs.filters) Game.addClass('noFilters');
-                    Game.prefs.cookiesound = spl[14] ? parseInt(spl[14]) : 1;
-                    Game.prefs.crates = spl[15] ? parseInt(spl[15]) : 0;
-                    Game.prefs.showBackupWarning = spl[16] ? parseInt(spl[16]) : 1;
-                    Game.prefs.extraButtons = spl[17] ? parseInt(spl[17]) : 1;
+                    Game.prefs.cookiesound = spl[14] ? Number.parseInt(spl[14]) : 1;
+                    Game.prefs.crates = spl[15] ? Number.parseInt(spl[15]) : 0;
+                    Game.prefs.showBackupWarning = spl[16] ? Number.parseInt(spl[16]) : 1;
+                    Game.prefs.extraButtons = spl[17] ? Number.parseInt(spl[17]) : 1;
                     if (!Game.prefs.extraButtons) Game.removeClass('extraButtons');
                     else if (Game.prefs.extraButtons) Game.addClass('extraButtons');
-                    Game.prefs.askLumps = spl[18] ? parseInt(spl[18]) : 0;
-                    Game.prefs.customGrandmas = spl[19] ? parseInt(spl[19]) : 1;
-                    Game.prefs.timeout = spl[20] ? parseInt(spl[20]) : 0;
-                    Game.prefs.cloudSave = spl[21] ? parseInt(spl[21]) : 1;
-                    Game.prefs.bgMusic = spl[22] ? parseInt(spl[22]) : 1;
-                    Game.prefs.notScary = spl[23] ? parseInt(spl[23]) : 0;
-                    Game.prefs.fullscreen = spl[24] ? parseInt(spl[24]) : 0;
-                    Game.prefs.screenreader = spl[25] ? parseInt(spl[25]) : 0;
-                    Game.prefs.discordPresence = spl[26] ? parseInt(spl[26]) : 1;
+                    Game.prefs.askLumps = spl[18] ? Number.parseInt(spl[18]) : 0;
+                    Game.prefs.customGrandmas = spl[19] ? Number.parseInt(spl[19]) : 1;
+                    Game.prefs.timeout = spl[20] ? Number.parseInt(spl[20]) : 0;
+                    Game.prefs.cloudSave = spl[21] ? Number.parseInt(spl[21]) : 1;
+                    Game.prefs.bgMusic = spl[22] ? Number.parseInt(spl[22]) : 1;
+                    Game.prefs.notScary = spl[23] ? Number.parseInt(spl[23]) : 0;
+                    Game.prefs.fullscreen = spl[24] ? Number.parseInt(spl[24]) : 0;
+                    Game.prefs.screenreader = spl[25] ? Number.parseInt(spl[25]) : 0;
+                    Game.prefs.discordPresence = spl[26] ? Number.parseInt(spl[26]) : 1;
                     BeautifyAll();
                     // @ts-expect-error //! refactor needed
                     spl = str[4].split(';'); // cookies and lots of other stuff
-                    Game.cookies = parseFloat(spl[0]);
-                    Game.cookiesEarned = parseFloat(spl[1]);
-                    Game.cookieClicks = spl[2] ? parseInt(spl[2]) : 0;
-                    Game.goldenClicks = spl[3] ? parseInt(spl[3]) : 0;
-                    Game.handmadeCookies = spl[4] ? parseFloat(spl[4]) : 0;
-                    Game.missedGoldenClicks = spl[5] ? parseInt(spl[5]) : 0;
-                    Game.bgType = spl[6] ? parseInt(spl[6]) : 0;
-                    Game.milkType = spl[7] ? parseInt(spl[7]) : 0;
-                    Game.cookiesReset = spl[8] ? parseFloat(spl[8]) : 0;
-                    Game.elderWrath = spl[9] ? parseInt(spl[9]) : 0;
-                    Game.pledges = spl[10] ? parseInt(spl[10]) : 0;
-                    Game.pledgeT = spl[11] ? parseInt(spl[11]) : 0;
-                    Game.nextResearch = spl[12] ? parseInt(spl[12]) : 0;
-                    Game.researchT = spl[13] ? parseInt(spl[13]) : 0;
-                    Game.resets = spl[14] ? parseInt(spl[14]) : 0;
-                    Game.goldenClicksLocal = spl[15] ? parseInt(spl[15]) : 0;
-                    Game.cookiesSucked = spl[16] ? parseFloat(spl[16]) : 0;
-                    Game.wrinklersPopped = spl[17] ? parseInt(spl[17]) : 0;
-                    Game.santaLevel = spl[18] ? parseInt(spl[18]) : 0;
-                    Game.reindeerClicked = spl[19] ? parseInt(spl[19]) : 0;
-                    Game.seasonT = spl[20] ? parseInt(spl[20]) : 0;
-                    Game.seasonUses = spl[21] ? parseInt(spl[21]) : 0;
+                    Game.cookies = Number.parseFloat(spl[0]);
+                    Game.cookiesEarned = Number.parseFloat(spl[1]);
+                    Game.cookieClicks = spl[2] ? Number.parseInt(spl[2]) : 0;
+                    Game.goldenClicks = spl[3] ? Number.parseInt(spl[3]) : 0;
+                    Game.handmadeCookies = spl[4] ? Number.parseFloat(spl[4]) : 0;
+                    Game.missedGoldenClicks = spl[5] ? Number.parseInt(spl[5]) : 0;
+                    Game.bgType = spl[6] ? Number.parseInt(spl[6]) : 0;
+                    Game.milkType = spl[7] ? Number.parseInt(spl[7]) : 0;
+                    Game.cookiesReset = spl[8] ? Number.parseFloat(spl[8]) : 0;
+                    Game.elderWrath = spl[9] ? Number.parseInt(spl[9]) : 0;
+                    Game.pledges = spl[10] ? Number.parseInt(spl[10]) : 0;
+                    Game.pledgeT = spl[11] ? Number.parseInt(spl[11]) : 0;
+                    Game.nextResearch = spl[12] ? Number.parseInt(spl[12]) : 0;
+                    Game.researchT = spl[13] ? Number.parseInt(spl[13]) : 0;
+                    Game.resets = spl[14] ? Number.parseInt(spl[14]) : 0;
+                    Game.goldenClicksLocal = spl[15] ? Number.parseInt(spl[15]) : 0;
+                    Game.cookiesSucked = spl[16] ? Number.parseFloat(spl[16]) : 0;
+                    Game.wrinklersPopped = spl[17] ? Number.parseInt(spl[17]) : 0;
+                    Game.santaLevel = spl[18] ? Number.parseInt(spl[18]) : 0;
+                    Game.reindeerClicked = spl[19] ? Number.parseInt(spl[19]) : 0;
+                    Game.seasonT = spl[20] ? Number.parseInt(spl[20]) : 0;
+                    Game.seasonUses = spl[21] ? Number.parseInt(spl[21]) : 0;
                     // @ts-expect-error just... no
-                    Game.season = spl[22] ? spl[22] : Game.baseSeason;
+                    Game.season = spl[22] || Game.baseSeason;
                     let wrinklers = {
-                        amount: spl[23] ? parseFloat(spl[23]) : 0,
-                        number: spl[24] ? parseInt(spl[24]) : 0,
+                        amount: spl[23] ? Number.parseFloat(spl[23]) : 0,
+                        number: spl[24] ? Number.parseInt(spl[24]) : 0,
                         shinies: 0, amountShinies: 0
                     };
-                    Game.prestige = spl[25] ? parseFloat(spl[25]) : 0;
-                    Game.heavenlyChips = spl[26] ? parseFloat(spl[26]) : 0;
-                    Game.heavenlyChipsSpent = spl[27] ? parseFloat(spl[27]) : 0;
-                    Game.heavenlyCookies = spl[28] ? parseFloat(spl[28]) : 0;
+                    Game.prestige = spl[25] ? Number.parseFloat(spl[25]) : 0;
+                    Game.heavenlyChips = spl[26] ? Number.parseFloat(spl[26]) : 0;
+                    Game.heavenlyChipsSpent = spl[27] ? Number.parseFloat(spl[27]) : 0;
+                    Game.heavenlyCookies = spl[28] ? Number.parseFloat(spl[28]) : 0;
                     // @ts-expect-error gah
-                    Game.ascensionMode = spl[29] ? parseInt(spl[29]) : 0;
-                    Game.permanentUpgrades[0] = spl[30] ? parseInt(spl[30]) : -1;
-                    Game.permanentUpgrades[1] = spl[31] ? parseInt(spl[31]) : -1;
-                    Game.permanentUpgrades[2] = spl[32] ? parseInt(spl[32]) : -1;
-                    Game.permanentUpgrades[3] = spl[33] ? parseInt(spl[33]) : -1;
-                    Game.permanentUpgrades[4] = spl[34] ? parseInt(spl[34]) : -1;
-                    Game.dragonLevel = spl[35] ? parseInt(spl[35]) : 0;
+                    Game.ascensionMode = spl[29] ? Number.parseInt(spl[29]) : 0;
+                    Game.permanentUpgrades[0] = spl[30] ? Number.parseInt(spl[30]) : -1;
+                    Game.permanentUpgrades[1] = spl[31] ? Number.parseInt(spl[31]) : -1;
+                    Game.permanentUpgrades[2] = spl[32] ? Number.parseInt(spl[32]) : -1;
+                    Game.permanentUpgrades[3] = spl[33] ? Number.parseInt(spl[33]) : -1;
+                    Game.permanentUpgrades[4] = spl[34] ? Number.parseInt(spl[34]) : -1;
+                    Game.dragonLevel = spl[35] ? Number.parseInt(spl[35]) : 0;
                     // @ts-expect-error oh my pain
-                    Game.dragonAura = spl[36] ? parseInt(spl[36]) : 0;
+                    Game.dragonAura = spl[36] ? Number.parseInt(spl[36]) : 0;
                     // @ts-expect-error again
-                    Game.dragonAura2 = spl[37] ? parseInt(spl[37]) : 0;
-                    Game.chimeType = spl[38] ? parseInt(spl[38]) : 0;
-                    Game.volume = spl[39] ? parseInt(spl[39]) : 75;
-                    wrinklers.shinies = spl[40] ? parseInt(spl[40]) : 0;
-                    wrinklers.amountShinies = spl[41] ? parseFloat(spl[41]) : 0;
-                    Game.lumps = spl[42] ? parseFloat(spl[42]) : -1;
-                    Game.lumpsTotal = spl[43] ? parseFloat(spl[43]) : -1;
-                    Game.lumpT = spl[44] ? parseInt(spl[44]) : Date.now();
-                    Game.lumpRefill = spl[45] ? parseInt(spl[45]) : 0;
-                    Game.lumpCurrentType = spl[46] ? parseInt(spl[46]) : 0;
+                    Game.dragonAura2 = spl[37] ? Number.parseInt(spl[37]) : 0;
+                    Game.chimeType = spl[38] ? Number.parseInt(spl[38]) : 0;
+                    Game.volume = spl[39] ? Number.parseInt(spl[39]) : 75;
+                    wrinklers.shinies = spl[40] ? Number.parseInt(spl[40]) : 0;
+                    wrinklers.amountShinies = spl[41] ? Number.parseFloat(spl[41]) : 0;
+                    Game.lumps = spl[42] ? Number.parseFloat(spl[42]) : -1;
+                    Game.lumpsTotal = spl[43] ? Number.parseFloat(spl[43]) : -1;
+                    Game.lumpT = spl[44] ? Number.parseInt(spl[44]) : Date.now();
+                    Game.lumpRefill = spl[45] ? Number.parseInt(spl[45]) : 0;
+                    Game.lumpCurrentType = spl[46] ? Number.parseInt(spl[46]) : 0;
                     // @ts-expect-error dont know dont care
                     Game.vault = spl[47] ? spl[47].split(',') : [];
                     for (let i in Game.vault) {
                         // @ts-expect-error this hurts
-                        Game.vault[i] = parseInt(Game.vault[i]);
+                        Game.vault[i] = Number.parseInt(Game.vault[i]);
                     }
                     // we store the actual amount of heralds to restore it later
                     // here we used the amount present in the save to compute offline CpS
                     actualHeralds = Game.heralds;
-                    Game.heralds = spl[48] ? parseFloat(spl[48]) : Game.heralds;
-                    Game.fortuneGC = spl[49] ? parseInt(spl[49]) : 0;
-                    Game.fortuneCPS = spl[50] ? parseInt(spl[50]) : 0;
-                    Game.cookiesPsRawHighest = spl[51] ? parseFloat(spl[51]) : 0;
-                    Game.volumeMusic = spl[52] ? parseInt(spl[52]) : 50;
+                    Game.heralds = spl[48] ? Number.parseFloat(spl[48]) : Game.heralds;
+                    Game.fortuneGC = spl[49] ? Number.parseInt(spl[49]) : 0;
+                    Game.fortuneCPS = spl[50] ? Number.parseInt(spl[50]) : 0;
+                    Game.cookiesPsRawHighest = spl[51] ? Number.parseFloat(spl[51]) : 0;
+                    Game.volumeMusic = spl[52] ? Number.parseInt(spl[52]) : 50;
 
                     // @ts-expect-error //! refactor needed
                     spl = str[5].split(';'); // buildings
                     Game.BuildingsOwned = 0;
-                    for (let i in Game.ObjectsById) {
-                        let me = Game.ObjectsById[i];
+                    let me_i = 0;
+                    for (const me of Game.ObjectsById) {
                         me.switchMinigame(false);
                         me.pics = [];
-                        if (spl[i]) {
-                            let mestr = spl[i].toString().split(',');
-                            me.amount = parseInt(mestr[0]);
-                            me.bought = parseInt(mestr[1]);
-                            me.totalCookies = parseFloat(mestr[2]);
-                            me.level = parseInt(mestr[3] || '0');
-                            me.highest = version >= 2.024 ? parseInt(mestr[6]) : me.amount;
+                        if (spl[me_i]) {
+                            let mestr = spl[me_i].toString().split(',');
+                            me.amount = Number.parseInt(mestr[0]);
+                            me.bought = Number.parseInt(mestr[1]);
+                            me.totalCookies = Number.parseFloat(mestr[2]);
+                            me.level = Number.parseInt(mestr[3] || '0');
+                            me.highest = version >= 2.024 ? Number.parseInt(mestr[6]) : me.amount;
                             if (me.minigame && me.minigameLoaded && me.minigame.reset) {
                                 me.minigame.reset(true);
                                 me.minigame.load(mestr[4] || '');
                             } else me.minigameSave = mestr[4] || 0;
-                            me.muted = Boolean(parseInt(mestr[5]) || 0);
+                            me.muted = Boolean(Number.parseInt(mestr[5]) || 0);
                             Game.BuildingsOwned += me.amount;
                         } else {
                             me.amount = 0;
@@ -10682,17 +10679,17 @@ class Game {
                             me.totalCookies = 0;
                             me.level = 0;
                         }
+                        me_i++;
                     }
 
                     Game.setVolumeMusic(Game.volumeMusic);
 
                     Game.LoadMinigames();
 
-                    if (str[6]) spl = str[6];
                     // @ts-expect-error //! refactor needed
-                    else spl = []; // upgrades
+                    spl = str[6] || []; // upgrades
                     // @ts-expect-error //! sigh...
-                    spl = spl.split('');
+                    spl = [...spl];
                     Game.UpgradesOwned = 0;
                     for (let i in Game.UpgradesById) {
                         const me = Game.UpgradesById[i];
@@ -10700,25 +10697,24 @@ class Game {
                         if (spl[i * 2]) {
                             // @ts-expect-error //! i dont even know anymore
                             let mestr = [spl[i * 2], spl[i * 2 + 1]];
-                            me.unlocked = parseInt(mestr[0]);
-                            me.bought = parseInt(mestr[1]);
+                            me.unlocked = Number.parseInt(mestr[0]);
+                            me.bought = Number.parseInt(mestr[1]);
                             if (me.bought && Game.CountsAsUpgradeOwned(me.pool)) Game.UpgradesOwned++;
                         } else {
                             me.unlocked = 0;
                             me.bought = 0;
                         }
                     }
-                    if (str[7]) spl = str[7];
                     // @ts-expect-error //! refactor...
-                    else spl = []; // achievements
+                    spl = str[7] || []; // achievements
                     // @ts-expect-error //! ...
-                    spl = spl.split('');
+                    spl = [...spl];
                     Game.AchievementsOwned = 0;
                     for (let i in Game.AchievementsById) {
-                        let me = Game.AchievementsById[i];
+                        const me = Game.AchievementsById[i];
                         if (spl[Number(i)]) {
                             const mestr = [spl[Number(i)]];
-                            me.won = parseInt(mestr[0]);
+                            me.won = Number.parseInt(mestr[0]);
                         } else {
                             me.won = 0;
                         }
@@ -10750,13 +10746,10 @@ class Game {
                     //!     }
                     //! }
 
-                    for (let i in Game.ObjectsById) {
-                        let me = Game.ObjectsById[i];
+                    for (const me of Game.ObjectsById) {
                         if (me.buyFunction) me.buyFunction(me);
                         me.refresh();
-                        if (me.id > 0) {
-                            if (me.muted) me.mute(1);
-                        }
+                        if (me.id > 0 && me.muted) me.mute(1);
                     }
 
                     if (Game.bgType == -1) Game.bgType = 0;
@@ -10862,14 +10855,14 @@ class Game {
                     // we load buffs after everything as we do not want them to interfer with offline CpS
                     for (let i in buffsToLoad) {
                         let mestr = buffsToLoad[i];
-                        let type = Game.buffTypes[parseInt(mestr[0])];
+                        let type = Game.buffTypes[Number.parseInt(mestr[0])];
                         Game.gainBuff(
                             type.name,
-                            parseFloat(mestr[1]) / Game.fps,
-                            parseFloat(mestr[3] || '0'),
-                            parseFloat(mestr[4] || '0'),
-                            parseFloat(mestr[5] || '0')
-                        ).time = parseFloat(mestr[2]);
+                            Number.parseFloat(mestr[1]) / Game.fps,
+                            Number.parseFloat(mestr[3] || '0'),
+                            Number.parseFloat(mestr[4] || '0'),
+                            Number.parseFloat(mestr[5] || '0')
+                        ).time = Number.parseFloat(mestr[2]);
                     }
 
                     Game.loadLumps();
@@ -11052,8 +11045,7 @@ class Game {
         else Game.removeClass('lumpsOn');
         Game.gainedPrestige = 0;
 
-        for (let i in Game.ObjectsById) {
-            const me = Game.ObjectsById[i];
+        for (const me of Game.ObjectsById) {
             me.amount = 0;
             me.bought = 0;
             me.highest = 0;
@@ -11069,7 +11061,7 @@ class Game {
             if (hard || me.pool !== 'prestige') me.bought = 0;
             if (hard) me.unlocked = 0;
             if (me.pool != 'prestige' && !me.lasting) {
-                if (Game.Has('Keepsakes') && Game.seasonDrops.indexOf(me.name) != -1 && Math.random() < 1 / 5) {
+                if (Game.Has('Keepsakes') && Game.seasonDrops.includes(me.name) && Math.random() < 1 / 5) {
                     /* empty */
                 } else if (Game.ascensionMode == 1 && Game.HasAchiev('O Fortuna') && me.tier == 'fortune') {
                     /* empty */
@@ -11085,23 +11077,21 @@ class Game {
         Game.cookiesPsByType = {};
         Game.cookiesMultByType = {};
 
-        if (!hard) {
-            if (Game.ascensionMode != 1) {
-                for (let i in Game.permanentUpgrades) {
-                    if (Game.permanentUpgrades[i] != -1) {
-                        Game.UpgradesById[Game.permanentUpgrades[i]].earn();
-                    }
+        if (!hard && Game.ascensionMode != 1) {
+            for (const upgrade of Game.permanentUpgrades) {
+                if (upgrade != -1) {
+                    Game.UpgradesById[upgrade].earn();
                 }
-                if (Game.Has('Season switcher')) {
-                    for (let i in Game.seasons) {
-                        if (i === '') continue;
-                        Game.Unlock(Game.seasons[/** @type {keyof typeof Game.seasons} */(i)].trigger);
-                    }
-                }
-
-                if (Game.Has('Starter kit')) Game.Objects['Cursor'].getFree(10);
-                if (Game.Has('Starter kitchen')) Game.Objects['Grandma'].getFree(5);
             }
+            if (Game.Has('Season switcher')) {
+                for (let i in Game.seasons) {
+                    if (i === '') continue;
+                    Game.Unlock(Game.seasons[/** @type {keyof typeof Game.seasons} */(i)].trigger);
+                }
+            }
+
+            if (Game.Has('Starter kit')) Game.Objects['Cursor'].getFree(10);
+            if (Game.Has('Starter kitchen')) Game.Objects['Grandma'].getFree(5);
         }
 
         BeautifyAll();
@@ -11296,31 +11286,33 @@ class Game {
         if (noFrame) classes += ' noFrame';
 
         let text = [];
-        if (Game.sesame) {
-            if (Game.debuggedUpgradeCpS[me.name] || Game.debuggedUpgradeCpClick[me.name]) {
-                text.push('x' + Beautify(1 + Game.debuggedUpgradeCpS[me.name], 2));
-                text.push(
-                    Game.debugColors[
-                        Math.floor(
-                            Math.max(
-                                0,
-                                Math.min(Game.debugColors.length - 1, Math.pow(Game.debuggedUpgradeCpS[me.name] / 2, 0.5) * Game.debugColors.length)
+        if (Game.sesame && (Game.debuggedUpgradeCpS[me.name] || Game.debuggedUpgradeCpClick[me.name])) {
+            text.push(
+                'x' + Beautify(1 + Game.debuggedUpgradeCpS[me.name], 2), 
+                Game.debugColors[
+                    Math.floor(
+                        Math.max(
+                            0,
+                            Math.min(
+                                Game.debugColors.length - 1,
+                                Math.pow(Game.debuggedUpgradeCpS[me.name] / 2, 0.5) * Game.debugColors.length
                             )
                         )
-                    ]
-                );
-                text.push('x' + Beautify(1 + Game.debuggedUpgradeCpClick[me.name], 2));
-                text.push(
-                    Game.debugColors[
-                        Math.floor(
-                            Math.max(
-                                0,
-                                Math.min(Game.debugColors.length - 1, Math.pow(Game.debuggedUpgradeCpClick[me.name] / 2, 0.5) * Game.debugColors.length)
+                    )
+                ],
+                'x' + Beautify(1 + Game.debuggedUpgradeCpClick[me.name], 2), 
+                Game.debugColors[
+                    Math.floor(
+                        Math.max(
+                            0,
+                            Math.min(
+                                Game.debugColors.length - 1,
+                                Math.pow(Game.debuggedUpgradeCpClick[me.name] / 2, 0.5) * Game.debugColors.length
                             )
                         )
-                    ]
-                );
-            }
+                    )
+                ]
+            );
         }
         let textStr = '';
         for (let i = 0; i < text.length; i += 2) {
@@ -11381,12 +11373,14 @@ class Game {
             const me = /** @type {Upgrade} */ (meArg);
             ariaText += 'Upgrade. ';
 
-            if (me.pool === 'prestige') tags.push(loc('[Tag]Heavenly', 0, 'Heavenly'), '#efa438');
-            else if (me.pool === 'tech') tags.push(loc('[Tag]Tech', 0, 'Tech'), '#36a4ff');
-            else if (me.pool === 'cookie') tags.push(loc('[Tag]Cookie', 0, 'Cookie'), 0);
-            else if (me.pool === 'debug') tags.push(loc('[Tag]Debug', 0, 'Debug'), '#00c462');
-            else if (me.pool === 'toggle') tags.push(loc('[Tag]Switch', 0, 'Switch'), 0);
-            else tags.push(loc('[Tag]Upgrade', 0, 'Upgrade'), 0);
+            switch (me.pool) {
+                case 'prestige': tags.push(loc('[Tag]Heavenly', 0, 'Heavenly'), '#efa438'); break;
+                case 'tech':     tags.push(loc('[Tag]Tech', 0, 'Tech'), '#36a4ff'); break;
+                case 'cookie':   tags.push(loc('[Tag]Cookie', 0, 'Cookie'), 0); break;
+                case 'debug':    tags.push(loc('[Tag]Debug', 0, 'Debug'), '#00c462'); break;
+                case 'toggle':   tags.push(loc('[Tag]Switch', 0, 'Switch'), 0); break;
+                default:         tags.push(loc('[Tag]Upgrade', 0, 'Upgrade'), 0);
+            }
 
             if (Game.Has('Label printer')) {
                 const metier = me.tier;
@@ -11429,11 +11423,11 @@ class Game {
                         '</div>';
 
                 ariaText +=
-                        (me.bought ? 'Bought for' : canBuy ? 'Can buy for' : 'Cannot afford the') +
+                        (me.bought ? 'Bought for' : (canBuy ? 'Can buy for' : 'Cannot afford the')) +
                         ' ' +
                         Beautify(Math.round(cost)) +
                         ' ' +
-                        (me.priceLumps > 0 ? 'sugar lumps' : me.pool == 'prestige' ? 'heavenly chips' : 'cookies') +
+                        (me.priceLumps > 0 ? 'sugar lumps' : (me.pool == 'prestige' ? 'heavenly chips' : 'cookies')) +
                         '. ';
             }
         } else if (meArg.type === 'achievement') {
@@ -11489,8 +11483,7 @@ class Game {
                             ? 'Click to ' + purchase + '. Shift-click to vault.'
                             : loc('Click to purchase.') + ' ' + loc('%1 to vault.', loc('Shift-click'));
                     if (EN) {
-                        if (Game.keys['ShiftRight'] || Game.keys['ShiftLeft']) tip += '<br>(You are holding Shift.)';
-                        else tip += '<br>(You are not holding Shift.)';
+                        tip += Game.keys['ShiftRight'] || Game.keys['ShiftLeft'] ? '<br>(You are holding Shift.)' : '<br>(You are not holding Shift.)';
                     }
                 } else tip = EN ? 'Click to ' + purchase + '.' : locStr('Click to purchase.');
                 // @ts-expect-error choices choices...
@@ -11902,35 +11895,35 @@ class Game {
             }
             Game.AscendDragging = 1;
 
-            if (Game.DebuggingPrestige) {
-                if (Game.SelectedHeavenlyUpgrade) {
-                    Game.tooltip.hide();
-                    // drag upgrades around
-                    const me = Game.SelectedHeavenlyUpgrade;
-                    // @ts-expect-error me when jsdoc cant assert assignment
-                    me.posX += (Game.mouseX - Game.AscendDragX) * (1 / Game.AscendZoomT);
-                    // @ts-expect-error me when jsdoc cant assert assignment
-                    me.posY += (Game.mouseY - Game.AscendDragY) * (1 / Game.AscendZoomT);
-                    let posX = ASSERT_NOT_NULL(me.posX);
-                    let posY = ASSERT_NOT_NULL(me.posY);
-                    $('heavenlyUpgrade' + me.id, true).style.left = Math.floor(posX) + 'px';
-                    $('heavenlyUpgrade' + me.id, true).style.top = Math.floor(posY) + 'px';
-                    for (let ii in me.parents) {
-                        let origX = 0;
-                        let origY = 0;
-                        let targX = ASSERT_NOT_NULL(me.posX) + 28;
-                        let targY = ASSERT_NOT_NULL(me.posY) + 28;
-                        if (me.parents[ii] != -1) {
-                            origX = me.parents[ii].posX + 28;
-                            origY = me.parents[ii].posY + 28;
-                        }
-                        let rot = -(Math.atan((targY - origY) / (origX - targX)) / Math.PI) * 180;
-                        if (targX <= origX) rot += 180;
-                        let dist = Math.floor(Math.sqrt((targX - origX) * (targX - origX) + (targY - origY) * (targY - origY)));
-
-                        $('heavenlyLink' + me.id + '-' + ii, true).style.cssText =
-                                'width:' + dist + 'px;transform:rotate(' + rot + 'deg);left:' + origX + 'px;top:' + origY + 'px;';
+            if (Game.DebuggingPrestige && Game.SelectedHeavenlyUpgrade) {
+                Game.tooltip.hide();
+                // drag upgrades around
+                const me = Game.SelectedHeavenlyUpgrade;
+                // @ts-expect-error me when jsdoc cant assert assignment
+                me.posX += (Game.mouseX - Game.AscendDragX) * (1 / Game.AscendZoomT);
+                // @ts-expect-error me when jsdoc cant assert assignment
+                me.posY += (Game.mouseY - Game.AscendDragY) * (1 / Game.AscendZoomT);
+                let posX = ASSERT_NOT_NULL(me.posX);
+                let posY = ASSERT_NOT_NULL(me.posY);
+                $('heavenlyUpgrade' + me.id, true).style.left = Math.floor(posX) + 'px';
+                $('heavenlyUpgrade' + me.id, true).style.top = Math.floor(posY) + 'px';
+                let ii = 0;
+                for (const parent of me.parents) {
+                    let origX = 0;
+                    let origY = 0;
+                    const targX = ASSERT_NOT_NULL(me.posX) + 28;
+                    const targY = ASSERT_NOT_NULL(me.posY) + 28;
+                    if (parent != -1) {
+                        origX = parent.posX + 28;
+                        origY = parent.posY + 28;
                     }
+                    let rot = -(Math.atan((targY - origY) / (origX - targX)) / Math.PI) * 180;
+                    if (targX <= origX) rot += 180;
+                    const dist = Math.floor(Math.sqrt((targX - origX) * (targX - origX) + (targY - origY) * (targY - origY)));
+
+                    $('heavenlyLink' + me.id + '-' + ii, true).style.cssText =
+                        'width:' + dist + 'px;transform:rotate(' + rot + 'deg);left:' + origX + 'px;top:' + origY + 'px;';
+                    ii++;
                 }
             }
             if (!Game.SelectedHeavenlyUpgrade) {
@@ -11983,15 +11976,12 @@ class Game {
     /** @type {Upgrade | 0} */
     static SelectedHeavenlyUpgrade = 0;
     /**
-     * @param {string} what
+     * @param {number} what
      */
     static PurchaseHeavenlyUpgrade(what) {
-        // @ts-expect-error go away
-        if (Game.UpgradesById[what].buy()) {
-            if ($('heavenlyUpgrade' + what)) {
-                const rect = $('heavenlyUpgrade' + what, true).getBounds();
-                Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24);
-            }
+        if (Game.UpgradesById[what].buy() && $('heavenlyUpgrade' + what)) {
+            const rect = $('heavenlyUpgrade' + what, true).getBounds();
+            Game.SparkleAt((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2 - 24);
         }
     }
     /**
@@ -12005,9 +11995,8 @@ class Game {
         else $('upgradePositions', true).style.display = 'none';
 
         let toPop = [];
-        for (let i in Game.PrestigeUpgrades) {
-            let me = Game.PrestigeUpgrades[i];
-            let prevCanBePurchased = me.canBePurchased;
+        for (const me of Game.PrestigeUpgrades) {
+            const prevCanBePurchased = me.canBePurchased;
             me.canBePurchased = 1;
             if (!me.bought && !Game.DebuggingPrestige) {
                 if (me.showIf && !me.showIf()) me.canBePurchased = 0;
@@ -12017,7 +12006,7 @@ class Game {
                     }
                 }
             }
-            if (justBought && me.parents.indexOf(justBought) != -1 && !prevCanBePurchased && me.canBePurchased && !me.bought) toPop.push(me);
+            if (justBought && me.parents.includes(justBought) && !prevCanBePurchased && me.canBePurchased && !me.bought) toPop.push(me);
         }
         toPop.sort(
             (function (parent) {
@@ -12036,9 +12025,7 @@ class Game {
         str +=
                 '<div class="crate upgrade heavenly enabled" style="position:absolute;left:-30px;top:-30px;opacity:0.8;pointer-events:none;transform:scale(1.3);background:transparent;"></div>';
         str += '<div class="crateBox" style="filter:none;-webkit-filter:none;">'; // chrome is still bad at these
-        for (let i in Game.PrestigeUpgrades) {
-            let me = Game.PrestigeUpgrades[i];
-
+        for (const me of Game.PrestigeUpgrades) {
             let ghosted = 0;
             if (me.canBePurchased || Game.Has('Neuromancy')) {
                 str += Game.crate(
@@ -12046,7 +12033,7 @@ class Game {
                     'ascend',
                     'Game.PurchaseHeavenlyUpgrade(' + me.id + ');',
                     'heavenlyUpgrade' + me.id,
-                    toPop.indexOf(me) != -1 ? 'animation:pucker 0.2s ease-out;animation-delay:' + (toPop.indexOf(me) * 0.1 + 0.2) + 's;' : ''
+                    toPop.includes(me) ? 'animation:pucker 0.2s ease-out;animation-delay:' + (toPop.indexOf(me) * 0.1 + 0.2) + 's;' : ''
                 );
             } else {
                 for (let ii in me.parents) {
@@ -12122,20 +12109,20 @@ class Game {
         Game.ascendUpgradesl.innerHTML = str;
 
         if (Game.DebuggingPrestige) {
-            for (let i in Game.PrestigeUpgrades) {
-                let me = Game.PrestigeUpgrades[i];
+            for (const me of Game.PrestigeUpgrades) {
                 $('heavenlyUpgrade' + me.id, true).addEventListener(
                     'mousedown',
                     (function (me) {
                         return function () {
                             let LASTHEAVENLYSELECTED;
                             if (!Game.DebuggingPrestige) return;
-                            if ((Game.keys['ShiftRight'] || Game.keys['ShiftLeft']) && typeof LASTHEAVENLYSELECTED !== 'undefined' && me != LASTHEAVENLYSELECTED) {
-                                // when clicking an upgrade with ctrl, set it as reference point; clicking any sibling upgrade with shift will align it in a nice arc around their shared parent
+                            if ((Game.keys['ShiftRight'] || Game.keys['ShiftLeft']) && LASTHEAVENLYSELECTED !== undefined && me != LASTHEAVENLYSELECTED) {
+                                // when clicking an upgrade with ctrl, set it as reference point;
+                                // clicking any sibling upgrade with shift will align it in a nice arc around their shared parent
                                 let parent = 0;
                                 for (let i = 0; i < me.parents.length; i++) {
                                     // @ts-expect-error
-                                    if (LASTHEAVENLYSELECTED.parents.indexOf(me.parents[i]) != -1) parent = me.parents[i];
+                                    if (LASTHEAVENLYSELECTED.parents.includes(me.parents[i])) parent = me.parents[i];
                                 }
                                 if (parent) {
                                     // @ts-expect-error
@@ -12598,7 +12585,7 @@ class Game {
         }
 
         for (let i in Game.buffs) {
-            if (typeof Game.buffs[i].multClick != 'undefined') mult *= Game.buffs[i].multClick;
+            if (Game.buffs[i].multClick !== undefined) mult *= Game.buffs[i].multClick;
         }
 
         mult *= 1 + Game.auraMult('Dragon Cursor') * 0.05;
@@ -12733,7 +12720,7 @@ class Game {
      * @param {undefined} [def]
      */
     static eff(name, def) {
-        if (typeof Game.effs[name] === 'undefined') return typeof def === 'undefined' ? 1 : def;
+        if (Game.effs[name] === undefined) return def === undefined ? 1 : def;
         else return Game.effs[name];
     }
 
@@ -12758,7 +12745,7 @@ class Game {
         Game.effs = effs;
 
         // @ts-expect-error is this needed? i dont know...
-        if (Game.ascensionMode != 1) mult += parseFloat(Game.prestige) * 0.01 * Game.heavenlyPower * Game.GetHeavenlyMultiplier();
+        if (Game.ascensionMode != 1) mult += Number.parseFloat(Game.prestige) * 0.01 * Game.heavenlyPower * Game.GetHeavenlyMultiplier();
 
         mult *= Game.eff('cps');
 
@@ -12947,7 +12934,7 @@ class Game {
         Game.unbuffedCps = Game.cookiesPs * mult;
 
         for (let i in Game.buffs) {
-            if (typeof Game.buffs[i].multCpS !== 'undefined') mult *= Game.buffs[i].multCpS;
+            if (Game.buffs[i].multCpS !== undefined) mult *= Game.buffs[i].multCpS;
         }
 
         Game.globalCpsMult = mult;
@@ -12994,18 +12981,16 @@ class Game {
         // spawn shimmers
         for (let i in Game.shimmerTypes) {
             const me = Game.shimmerTypes[/** @type {keyof typeof Game.shimmerTypes} */ (i)];
-            if (me.spawnsOnTimer && me.spawnConditions()) {
+            if (me.spawnsOnTimer && me.spawnConditions() && !me.spawned) {
                 // only run on shimmer types that work on a timer
-                if (!me.spawned) {
-                    // no shimmer spawned for this type? check the timer and try to spawn one
-                    me.time++;
-                    if (Math.random() < Math.pow(Math.max(0, (me.time - me.minTime) / (me.maxTime - me.minTime)), 5)) {
-                        let newShimmer = new Game.shimmer(/** @type {keyof typeof Game.shimmerTypes} */ (i));
-                        newShimmer.spawnLead = true;
-                        if (Game.Has('Distilled essence of redoubled luck') && Math.random() < 0.01)
-                            newShimmer = new Game.shimmer(/** @type {keyof typeof Game.shimmerTypes} */ (i));
-                        me.spawned = 1;
-                    }
+                // no shimmer spawned for this type? check the timer and try to spawn one
+                me.time++;
+                if (Math.random() < Math.pow(Math.max(0, (me.time - me.minTime) / (me.maxTime - me.minTime)), 5)) {
+                    let newShimmer = new Game.shimmer(/** @type {keyof typeof Game.shimmerTypes} */ (i));
+                    newShimmer.spawnLead = true;
+                    if (Game.Has('Distilled essence of redoubled luck') && Math.random() < 0.01)
+                        newShimmer = new Game.shimmer(/** @type {keyof typeof Game.shimmerTypes} */ (i));
+                    me.spawned = 1;
                 }
             }
         }
@@ -13060,8 +13045,7 @@ class Game {
                             (Game.hasGod && Game.hasGod('scorn')))
                 ) {
                     me.wrath = 1;
-                    if (Game.season == 'halloween') bgPic = 'img/spookyCookie.png';
-                    else bgPic = 'img/wrathCookie.png';
+                    bgPic = Game.season == 'halloween' ? 'img/spookyCookie.png' : 'img/wrathCookie.png';
                 } else {
                     me.wrath = 0;
                 }
@@ -13102,8 +13086,7 @@ class Game {
                 if (Game.Has('Lucky digit')) dur *= 1.01;
                 if (Game.Has('Lucky number')) dur *= 1.01;
                 if (Game.Has('Lucky payout')) dur *= 1.01;
-                if (!me.wrath) dur *= Game.eff('goldenCookieDur');
-                else dur *= Game.eff('wrathCookieDur');
+                dur *= !me.wrath ? Game.eff('goldenCookieDur') : Game.eff('wrathCookieDur');
                 dur *= Math.pow(0.95, Game.shimmerTypes['golden'].n - 1); // 5% shorter for every other golden cookie on the screen
                 if (this.chain > 0) dur = Math.max(2, 10 / this.chain); // this is hilarious
                 me.dur = dur;
@@ -13160,9 +13143,7 @@ class Game {
                     if (me.life < Game.fps) Game.Win('Fading luck');
                 }
 
-                if (Game.forceUnslotGod) {
-                    if (Game.forceUnslotGod('asceticism')) ASSERT_NOT_NULL(Game.useSwap)(1000000);
-                }
+                if (Game.forceUnslotGod && Game.forceUnslotGod('asceticism')) ASSERT_NOT_NULL(Game.useSwap)(1000000);
 
                 // select an effect
                 let list = [];
@@ -13184,7 +13165,7 @@ class Game {
                     if (Math.random() < Game.auraMult('Dragonflight')) list.push('dragonflight');
                 }
 
-                if (this.last != '' && Math.random() < 0.8 && list.indexOf(this.last) != -1) list.splice(list.indexOf(this.last), 1); // 80% chance to force a different one
+                if (this.last != '' && Math.random() < 0.8 && list.includes(this.last)) list.splice(list.indexOf(this.last), 1); // 80% chance to force a different one
                 if (Math.random() < 0.0001) list.push('blab');
                 let choice = choose(list);
 
@@ -13208,8 +13189,7 @@ class Game {
                 if (Game.Has('Green yeast digestives')) effectDurMod *= 1.01;
                 if (Game.Has('Lucky payout')) effectDurMod *= 1.01;
                 effectDurMod *= 1 + Game.auraMult('Epoch Manipulator') * 0.05;
-                if (!me.wrath) effectDurMod *= Game.eff('goldenCookieEffDur');
-                else effectDurMod *= Game.eff('wrathCookieEffDur');
+                effectDurMod *= !me.wrath ? Game.eff('goldenCookieEffDur') : Game.eff('wrathCookieEffDur');
 
                 if (Game.hasGod) {
                     let godLvl = Game.hasGod('decadence');
@@ -13224,8 +13204,7 @@ class Game {
                 else if (me.wrath == 0) mult *= 1 + Game.auraMult('Ancestral Metamorphosis') * 0.1;
                 if (Game.Has('Green yeast digestives')) mult *= 1.01;
                 if (Game.Has('Dragon fang')) mult *= 1.03;
-                if (!me.wrath) mult *= Game.eff('goldenCookieGain');
-                else mult *= Game.eff('wrathCookieGain');
+                mult *= !me.wrath ? Game.eff('goldenCookieGain') : Game.eff('wrathCookieGain');
 
                 let popup = '';
                 let buff;
@@ -13236,17 +13215,13 @@ class Game {
                     for (let i in Game.Objects) {
                         if (Game.Objects[i].amount >= 10) list.push(Game.Objects[i].id);
                     }
-                    if (list.length == 0) {
+                    if (list.length === 0) {
                         choice = 'frenzy';
                     } // default to frenzy if no proper building
                     else {
                         let obj = choose(list);
                         let pow = Game.ObjectsById[obj].amount / 10 + 1;
-                        if (me.wrath && Math.random() < 0.3) {
-                            buff = Game.gainBuff('building debuff', time, pow, obj);
-                        } else {
-                            buff = Game.gainBuff('building buff', time, pow, obj);
-                        }
+                        buff = me.wrath && Math.random() < 0.3 ? Game.gainBuff('building debuff', time, pow, obj) : Game.gainBuff('building buff', time, pow, obj);
                     }
                 }
 
@@ -13284,7 +13259,7 @@ class Game {
                     if (this.chain == 0) this.totalFromChain = 0;
                     this.chain++;
                     let digit = me.wrath ? 6 : 7;
-                    if (this.chain == 1) this.chain += Math.max(0, Math.ceil(Math.log(Game.cookies) / Math.LN10) - 10);
+                    if (this.chain == 1) this.chain += Math.max(0, Math.ceil(Math.log10(Game.cookies)) - 10);
 
                     let maxPayout = Math.min(Game.cookiesPs * 60 * 60 * 6, Game.cookies * 0.5) * mult;
                     let moni = Math.max(digit, Math.min(Math.floor((1 / 9) * Math.pow(10, this.chain) * digit * mult), maxPayout));
@@ -13389,8 +13364,7 @@ class Game {
             },
             spawnsOnTimer: true,
             spawnConditions() {
-                if (!Game.Has('Golden switch [off]')) return true;
-                else return false;
+                return !Game.Has('Golden switch [off]') ? true : false;
             },
             spawned: 0,
             time: 0,
@@ -13412,8 +13386,7 @@ class Game {
                 else if (Game.season == 'halloween' && Game.Has('Starterror')) m *= 0.98;
                 else if (Game.season == 'valentines' && Game.Has('Starlove')) m *= 0.98;
                 else if (Game.season == 'fools' && Game.Has('Startrade')) m *= 0.95;
-                if (!me.wrath) m *= 1 / Game.eff('goldenCookieFreq');
-                else m *= 1 / Game.eff('wrathCookieFreq');
+                m *= !me.wrath ? 1 / Game.eff('goldenCookieFreq') : 1 / Game.eff('wrathCookieFreq');
                 if (Game.hasGod) {
                     let godLvl = Game.hasGod('industry');
                     if (godLvl == 1) m *= 1.1;
@@ -13577,8 +13550,7 @@ class Game {
             missFunc: STUB,
             spawnsOnTimer: true,
             spawnConditions() {
-                if (Game.season == 'christmas') return true;
-                else return false;
+                return Game.season == 'christmas' ? true : false;
             },
             spawned: 0,
             time: 0,
@@ -13758,41 +13730,39 @@ class Game {
 
         for (let i = 0; i < Game.particlesN; i++) {
             let me = Game.particles[i];
-            if (me.z == z) {
-                if (me.life != -1) {
-                    let opacity = 1 - me.life / (Game.fps * me.dur);
-                    ctx.globalAlpha = opacity;
-                    if (me.text) {
-                        ctx.fillText(me.text, me.x, me.y);
+            if (me.z == z && me.life != -1) {
+                let opacity = 1 - me.life / (Game.fps * me.dur);
+                ctx.globalAlpha = opacity;
+                if (me.text) {
+                    ctx.fillText(me.text, me.x, me.y);
+                } else {
+                    ctx.save();
+                    ctx.translate(me.x, me.y);
+                    ctx.rotate((me.r / 360) * Math.PI * 2);
+                    let w = 64;
+                    let h = 64;
+                    if (me.pic == 'icons.png') {
+                        w = 48;
+                        h = 48;
+                        ctx.drawImage(
+                            Pic(me.pic),
+                            me.picPos[0] * w,
+                            me.picPos[1] * h,
+                            w,
+                            h,
+                            (-w / 2) * me.size,
+                            (-h / 2) * me.size,
+                            w * me.size,
+                            h * me.size
+                        );
                     } else {
-                        ctx.save();
-                        ctx.translate(me.x, me.y);
-                        ctx.rotate((me.r / 360) * Math.PI * 2);
-                        let w = 64;
-                        let h = 64;
-                        if (me.pic == 'icons.png') {
-                            w = 48;
-                            h = 48;
-                            ctx.drawImage(
-                                Pic(me.pic),
-                                me.picPos[0] * w,
-                                me.picPos[1] * h,
-                                w,
-                                h,
-                                (-w / 2) * me.size,
-                                (-h / 2) * me.size,
-                                w * me.size,
-                                h * me.size
-                            );
-                        } else {
-                            if (me.pic == 'wrinklerBits.png' || me.pic == 'shinyWrinklerBits.png') {
-                                w = 100;
-                                h = 200;
-                            }
-                            ctx.drawImage(Pic(me.pic), (me.picId % 8) * w, 0, w, h, (-w / 2) * me.size, (-h / 2) * me.size, w * me.size, h * me.size);
+                        if (me.pic == 'wrinklerBits.png' || me.pic == 'shinyWrinklerBits.png') {
+                            w = 100;
+                            h = 200;
                         }
-                        ctx.restore();
+                        ctx.drawImage(Pic(me.pic), (me.picId % 8) * w, 0, w, h, (-w / 2) * me.size, (-h / 2) * me.size, w * me.size, h * me.size);
                     }
+                    ctx.restore();
                 }
             }
         }
@@ -13842,7 +13812,7 @@ class Game {
         let i = highestI;
         let noStack = 0;
         let x, y;
-        if (typeof posX !== 'undefined' && typeof posY !== 'undefined') {
+        if (posX !== undefined && posY !== undefined) {
             x = posX;
             y = posY;
             noStack = 1;
@@ -14041,14 +14011,9 @@ class Game {
         }
     }
     static NotesDraw() {
-        for (let i in Game.Notes) {
-            if (ASSERT_NOT_NULL(Game.Notes[i].quick) > 0) {
-                let me = Game.Notes[i];
-                if (me.l) {
-                    if (ASSERT_NOT_NULL(me.life) < 10) {
-                        me.l.style.opacity = String(ASSERT_NOT_NULL(me.life) / 10);
-                    }
-                }
+        for (const note of Game.Notes) {
+            if (note.quick > 0 && note.l && note.life < 10) {
+                note.l.style.opacity = String(note.life / 10);
             }
         }
     }
@@ -14108,16 +14073,15 @@ class Game {
     static Prompt(content, options, updateFunc, style) {
         Game.promptNoClose = false;
         if (updateFunc) Game.promptUpdateFunc = updateFunc;
-        if (style) Game.promptWrapL.className = 'framed ' + style;
-        else Game.promptWrapL.className = 'framed';
+        Game.promptWrapL.className = style ? 'framed ' + style : 'framed';
         let str = '';
         str += content;
         if (str.indexOf('<id ') == 0) {
-            let id = str.substring(4, str.indexOf('>'));
-            str = str.substring(str.indexOf('>') + 1);
+            const id = str.slice(4, str.indexOf('>'));
+            str = str.slice(Math.max(0, str.indexOf('>') + 1));
             str = '<div id="promptContent' + id + '">' + str + '</div>';
         }
-        if (str.indexOf('<noClose>') != -1) {
+        if (str.includes('<noClose>')) {
             str = str.replace('<noClose>', '');
             Game.promptNoClose = true;
         }
@@ -14212,7 +14176,7 @@ class Game {
      * @param {string} what
      */
     static addClass(what) {
-        if (Game.cssClasses.indexOf(what) == -1) Game.cssClasses.push(what);
+        if (!Game.cssClasses.includes(what)) Game.cssClasses.push(what);
         Game.updateClasses();
     }
     /**
@@ -14408,8 +14372,7 @@ class Game {
             if (hours > 0) bits.push(loc('%1 hour', LBeautify(hours)));
             if (minutes > 0) bits.push(loc('%1 minute', LBeautify(minutes)));
             if (seconds > 0) bits.push(loc('%1 second', LBeautify(seconds)));
-            if (bits.length == 0) str = locStr('less than 1 second');
-            else str = bits.join(', ');
+            str = bits.length === 0 ? locStr('less than 1 second') : bits.join(', ');
         } else {
             if (time >= Game.fps * 60 * 60 * 24 && detail < 2) str = locStr('%1 day', LBeautify(Math.floor(time / (Game.fps * 60 * 60 * 24))));
             else if (time >= Game.fps * 60 * 60 && detail < 3) str = locStr('%1 hour', LBeautify(Math.floor(time / (Game.fps * 60 * 60))));
@@ -14892,7 +14855,7 @@ class Game {
             let startDate = Game.sayTime(timeInSeconds * Game.fps, -1);
             date.setTime(Date.now() - Game.fullDate);
             let fullDate = Game.sayTime((date.getTime() / 1000) * Game.fps, -1);
-            if (!Game.fullDate || !fullDate || fullDate.length < 1) fullDate = String(loc('a long while'));
+            if (!Game.fullDate || !fullDate || fullDate.length === 0) fullDate = String(loc('a long while'));
 
             let heavenlyMult = Game.GetHeavenlyMultiplier();
 
@@ -15081,7 +15044,7 @@ class Game {
                         loc('at %1% of its potential <b>(+%2% CpS)</b>', [
                             Beautify(heavenlyMult * 100, 1),
                             // @ts-expect-error dunno if needed
-                            Beautify(parseFloat(Game.prestige) * Game.heavenlyPower * heavenlyMult, 1)
+                            Beautify(Number.parseFloat(Game.prestige) * Game.heavenlyPower * heavenlyMult, 1)
                         ]) +
                         '<br>' +
                         loc('Heavenly chips:') +
@@ -15191,7 +15154,7 @@ class Game {
 
         let NEWS = locStr('News :').replace(' ', '&nbsp;') + ' ';
 
-        let loreProgress = Math.round((Math.log(Game.cookiesEarned / 10) * Math.LOG10E + 1) | 0);
+        let loreProgress = Math.round(Math.trunc(Math.log10(Game.cookiesEarned / 10) + 1));
 
         if (Game.TickerN % 2 == 0 || loreProgress > 14) {
             let animals = [
@@ -15676,9 +15639,11 @@ class Game {
             }
             if (!EN) {
                 if (Game.cookiesEarned >= 10000) {
-                    list.push(NEWS + choose(loc('Ticker (misc)')));
-                    list.push(NEWS + choose(loc('Ticker (misc)')));
-                    list.push(NEWS + choose(loc('Ticker (misc)')));
+                    list.push(
+                        NEWS + choose(loc('Ticker (misc)')),
+                        NEWS + choose(loc('Ticker (misc)')),
+                        NEWS + choose(loc('Ticker (misc)'))
+                    );
                 }
             } else {
                 if (Math.random() < 0.05) {
@@ -16048,7 +16013,7 @@ class Game {
             }
         }
 
-        if (list.length == 0) {
+        if (list.length === 0) {
             if (loreProgress <= 0) list.push(loc('You feel like making cookies. But nobody wants to eat your cookies.'));
             else if (loreProgress <= 1) list.push(loc('Your first batch goes to the trash. The neighborhood raccoon barely touches it.'));
             else if (loreProgress <= 2) list.push(loc('Your family accepts to try some of your cookies.'));
@@ -16429,9 +16394,9 @@ class Game {
                     // this is so bad..........
                     const meAsUp = /** @type {Upgrade} */ (me);
                     if (EN) {
-                        me = meAsUp.dname.substring(meAsUp.name.indexOf('#')) + ' : '
-                            + meAsUp.baseDesc.substring(meAsUp.baseDesc.indexOf('<q>') + 3);
-                        me = me.substring(0, me.length - 4);
+                        me = meAsUp.dname.slice(Math.max(0, meAsUp.name.indexOf('#'))) + ' : '
+                            + meAsUp.baseDesc.slice(Math.max(0, meAsUp.baseDesc.indexOf('<q>') + 3));
+                        me = me.slice(0, Math.max(0, me.length - 4));
                     } else if (meAsUp.buildingTie)
                         me = meAsUp.dname +
                                 ' : ' +
@@ -16758,36 +16723,31 @@ class Game {
     static LoadMinigames() // load scripts for each minigame
     {
         for (let i in Game.Objects) {
-            let me = Game.Objects[i];
+            const me = Game.Objects[i];
             if (me.minigameUrl && me.level > 0 && !me.minigameLoaded && !me.minigameLoading && !$('minigameScript-' + me.id)) {
                 me.minigameLoading = true;
                 // we're only loading the minigame scripts that aren't loaded yet and which have enough building level
                 // we call this function on building level up and on load
                 console.log('Loading script '+me.minigameUrl+'...');
                 setTimeout(
-                    (function (me) {
-                        return function () {
-                            let script = document.createElement('script');
-                            script.id = 'minigameScript-' + me.id;
-                            Game.scriptBindings['minigameScript-' + me.id] = me;
-                            script.setAttribute('src', me.minigameUrl + '?r=' + Game.version);
-                            script.onload = (function (me, script) {
-                                return function () {
-                                    if (!me.minigameLoaded) Game.scriptLoaded(me, script);
-                                };
-                            })(me, 'minigameScript-' + me.id);
-                            script.onerror = (function (me, script) {
-                                return function () {
-                                    me.minigameLoading = false;
-                                    if (!me.minigameLoaded && !Game.showedScriptLoadError) {
-                                        Game.showedScriptLoadError = true;
-                                        Game.Notify(loc('Error!'), 'Couldn\'t load minigames. Try reloading.');
-                                    }
-                                };
-                            })(me, 'minigameScript-' + me.id);
-                            document.head.appendChild(script);
-                        };
-                    })(me),
+                    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+                    () => {
+                        const script = document.createElement('script');
+                        script.id = 'minigameScript-' + me.id;
+                        Game.scriptBindings['minigameScript-' + me.id] = me;
+                        script.setAttribute('src', me.minigameUrl + '?r=' + Game.version);
+                        script.addEventListener('load', () => {
+                            if (!me.minigameLoaded) Game.scriptLoaded(me, `minigameScript-${me.id}`);
+                        });
+                        script.addEventListener('error', () => {
+                            me.minigameLoading = false;
+                            if (!me.minigameLoaded && !Game.showedScriptLoadError) {
+                                Game.showedScriptLoadError = true;
+                                Game.Notify(loc('Error!'), 'Couldn\'t load minigames. Try reloading.');
+                            }
+                        });
+                        document.head.appendChild(script);
+                    },
                     10
                 );
             }
@@ -16974,8 +16934,7 @@ class Game {
      * @param {string} pool
      */
     static CountsAsUpgradeOwned(pool) {
-        if (pool == '' || pool == 'cookie' || pool == 'tech') return true;
-        else return false;
+        return pool == '' || pool == 'cookie' || pool == 'tech' ? true : false;
     }
 
     /**
@@ -16997,17 +16956,13 @@ class Game {
      */
     static Unlock(what) {
         if (typeof what === 'string') {
-            if (Game.Upgrades[what]) {
-                if (Game.Upgrades[what].unlocked == 0) {
-                    Game.Upgrades[what].unlocked = 1;
-                    Game.upgradesToRebuild = 1;
-                    Game.recalculateGains = 1;
-                }
+            if (Game.Upgrades[what]?.unlocked == 0) {
+                Game.Upgrades[what].unlocked = 1;
+                Game.upgradesToRebuild = 1;
+                Game.recalculateGains = 1;
             }
         } else {
-            for (let i in what) {
-                Game.Unlock(what[i]);
-            }
+            for (let i in what) Game.Unlock(what[i]);
         }
     }
     /**
@@ -17307,8 +17262,7 @@ class Game {
      */
     static GetIcon(type, tier) {
         let col = 0;
-        if (type == 'Kitten') col = 18;
-        else col = Game.Objects[type].iconColumn;
+        col = type == 'Kitten' ? 18 : Game.Objects[type].iconColumn;
         return [col, Game.Tiers[/** @type {keyof typeof Game.Tiers} */ (tier)].iconRow];
     }
     /**
@@ -17329,7 +17283,7 @@ class Game {
      */
     static MakeTiered(upgrade, tier, col) {
         upgrade.tier = tier;
-        if (typeof col !== 'undefined') upgrade.icon = [col, Game.Tiers[tier].iconRow];
+        if (col !== undefined) upgrade.icon = [col, Game.Tiers[tier].iconRow];
     }
     /**
      * @param {string} name
@@ -17338,12 +17292,10 @@ class Game {
      * @param {string | number} tier
      */
     static TieredUpgrade(name, desc, building, tier) {
-        if (tier == 'fortune' && building)
-            desc = loc(
-                '%1 are <b>%2%</b> more efficient and <b>%3%</b> cheaper.',
-                [cap(Game.Objects[building].plural), 7, 7]
-            ) + desc;
-        else desc = loc('%1 are <b>twice</b> as efficient.', cap(Game.Objects[building].plural)) + desc;
+        desc = tier == 'fortune' && building ? loc(
+            '%1 are <b>%2%</b> more efficient and <b>%3%</b> cheaper.',
+            [cap(Game.Objects[building].plural), 7, 7]
+        ) + desc : loc('%1 are <b>twice</b> as efficient.', cap(Game.Objects[building].plural)) + desc;
         let upgrade = new Game.Upgrade(
             name, desc,
             Game.Objects[building].basePrice * Game.Tiers[/** @type {keyof typeof Game.Tiers} */ (tier)].price,
@@ -17630,12 +17582,10 @@ class Game {
         }
         if (Math.random() >= failRate) {
             let drop = '';
-            if (Math.random() < 0.1) drop = choose(Game.rareEggDrops);
-            else drop = choose(Game.eggDrops);
+            drop = Math.random() < 0.1 ? choose(Game.rareEggDrops) : choose(Game.eggDrops);
             if (Game.Has(drop) || Game.HasUnlocked(drop)) {
                 // reroll if we have it
-                if (Math.random() < 0.1) drop = choose(Game.rareEggDrops);
-                else drop = choose(Game.eggDrops);
+                drop = Math.random() < 0.1 ? choose(Game.rareEggDrops) : choose(Game.eggDrops);
             }
             if (Game.Has(drop) || Game.HasUnlocked(drop)) return;
             Game.Unlock(drop);
@@ -18025,9 +17975,9 @@ class Game {
      */
     static listTinyOwnedUpgrades(arr) {
         let str = '';
-        for (let i = 0; i < arr.length; i++) {
-            if (Game.Has(arr[i])) {
-                let it = Game.Upgrades[arr[i]];
+        for (const element of arr) {
+            if (Game.Has(element)) {
+                let it = Game.Upgrades[element];
                 str += tinyIcon(it.icon);
             }
         }
@@ -18076,21 +18026,19 @@ class Game {
         return num;
     }
 
-    static seasonDrops = Game.heartDrops
-        .concat(Game.halloweenDrops)
-        .concat(Game.easterEggs)
-        .concat(Game.santaDrops)
-        .concat(Game.reindeerDrops);
+    static seasonDrops = [
+        ...Game.heartDrops, ...Game.halloweenDrops, ...Game.easterEggs, ...Game.santaDrops, ...Game.reindeerDrops
+    ];
 
     static saySeasonSwitchUses() {
         if (Game.seasonUses == 0) return loc('You haven\'t switched seasons this ascension yet.');
         return EN
             ? 'You\'ve switched seasons <b>' +
-                (Game.seasonUses == 1 ? 'once' : Game.seasonUses == 2 ? 'twice' : Game.seasonUses + ' times') +
+                (Game.seasonUses == 1 ? 'once' : (Game.seasonUses == 2 ? 'twice' : Game.seasonUses + ' times')) +
                 '</b> this ascension.'
-            : Game.seasonUses == 1
+            : (Game.seasonUses == 1
                 ? loc('You\'ve switched seasons <b>once</b> this ascension.')
-                : loc('You\'ve switched seasons <b>%1 times</b> this ascension.', Game.seasonUses);
+                : loc('You\'ve switched seasons <b>%1 times</b> this ascension.', Game.seasonUses));
     }
 
     static computeSeasonPrices() {
@@ -18179,8 +18127,7 @@ class Game {
             };
             me.timerDisplay = (function (upgrade) {
                 return function () {
-                    if (!Game.Upgrades[upgrade.name].bought || Game.Has('Eternal seasons')) return -1;
-                    else return 1 - Game.seasonT / Game.getSeasonDuration();
+                    return !Game.Upgrades[upgrade.name].bought || Game.Has('Eternal seasons') ? -1 : 1 - Game.seasonT / Game.getSeasonDuration();
                 };
             })(me);
         }
@@ -18345,12 +18292,10 @@ class Game {
      * @param {string} what
      */
     static RemoveAchiev(what) {
-        if (Game.Achievements[what]) {
-            if (Game.Achievements[what].won == 1) {
-                Game.Achievements[what].won = 0;
-                if (Game.CountsAsAchievementOwned(Game.Achievements[what].pool)) Game.AchievementsOwned--;
-                Game.recalculateGains = 1;
-            }
+        if (Game.Achievements[what]?.won == 1) {
+            Game.Achievements[what].won = 0;
+            if (Game.CountsAsAchievementOwned(Game.Achievements[what].pool)) Game.AchievementsOwned--;
+            Game.recalculateGains = 1;
         }
     }
 
@@ -18358,8 +18303,7 @@ class Game {
      * @param {string} pool
      */
     static CountsAsAchievementOwned(pool) {
-        if (pool == '' || pool == 'normal') return true;
-        else return false;
+        return pool == '' || pool == 'normal' ? true : false;
     }
 
     /**
@@ -18429,13 +18373,14 @@ class Game {
      */
     static BankAchievement(name, q) {
         let threshold = Math.pow(10, Math.floor(Game.BankAchievements.length * 1.5 + 2));
-        if (Game.BankAchievements.length == 0) threshold = 1;
+        if (Game.BankAchievements.length === 0) threshold = 1;
         let achiev = new Game.Achievement(
             name,
             loc('Bake <b>%1</b> in one ascension.', loc('%1 cookie', { n: threshold, b: toFixed(threshold) })) + (q ? '<q>' + q + '</q>' : ''),
             [
                 Game.thresholdIcons[Game.BankAchievements.length],
-                Game.BankAchievements.length > 43 ? 2 : Game.BankAchievements.length > 32 ? 1 : Game.BankAchievements.length > 23 ? 2 : 5
+                // eslint-disable-next-line unicorn/no-nested-ternary
+                Game.BankAchievements.length > 43 ? 2 : (Game.BankAchievements.length > 32 ? 1 : Game.BankAchievements.length > 23 ? 2 : 5)
             ]
         );
         achiev.threshold = threshold;
@@ -18458,7 +18403,8 @@ class Game {
             loc('Bake <b>%1</b> per second.', loc('%1 cookie', { n: threshold, b: toFixed(threshold) })) + (q ? '<q>' + q + '</q>' : ''),
             [
                 Game.thresholdIcons[Game.CpsAchievements.length],
-                Game.CpsAchievements.length > 43 ? 2 : Game.CpsAchievements.length > 32 ? 1 : Game.CpsAchievements.length > 23 ? 2 : 5
+                // eslint-disable-next-line unicorn/no-nested-ternary
+                Game.CpsAchievements.length > 43 ? 2 : (Game.CpsAchievements.length > 32 ? 1 : Game.CpsAchievements.length > 23 ? 2 : 5)
             ]
         );
         achiev.threshold = threshold;
@@ -18556,8 +18502,7 @@ class Game {
     static hasBuff(
         what // returns 0 if there is no buff in effect with this name; else, returns it
     ) {
-        if (!Game.buffs[what]) return 0;
-        else return Game.buffs[what];
+        return Game.buffs[what] || 0;
     }
     static updateBuffs() // executed every logic frame
     {
@@ -18696,7 +18641,7 @@ class Game {
     static ResetWrinklers() {
         for (let i in Game.wrinklers) {
             Game.wrinklers[i] = {
-                id: parseInt(i),
+                id: Number.parseInt(i),
                 close: 0,
                 sucked: 0,
                 phase: 0,
@@ -18829,12 +18774,12 @@ class Game {
                     me.hp = Math.min(Game.wrinklerHP * 3, me.hp);
                 }
                 let d = 128 * (2 - me.close);
-                if (Game.prefs.fancy) d += Math.cos(Game.T * 0.05 + parseInt(String(me.id))) * 4;
+                if (Game.prefs.fancy) d += Math.cos(Game.T * 0.05 + Number.parseInt(String(me.id))) * 4;
                 me.r = (me.id / max) * 360;
-                if (Game.prefs.fancy) me.r += Math.sin(Game.T * 0.05 + parseInt(String(me.id))) * 4;
+                if (Game.prefs.fancy) me.r += Math.sin(Game.T * 0.05 + Number.parseInt(String(me.id))) * 4;
                 me.x = xBase + Math.sin((me.r * Math.PI) / 180) * d;
                 me.y = yBase + Math.cos((me.r * Math.PI) / 180) * d;
-                if (Game.prefs.fancy) me.r += Math.sin(Game.T * 0.09 + parseInt(String(me.id))) * 4;
+                if (Game.prefs.fancy) me.r += Math.sin(Game.T * 0.09 + Number.parseInt(String(me.id))) * 4;
                 let rect = {
                     w: 100,
                     h: 200,
@@ -18843,9 +18788,7 @@ class Game {
                 };
                 if (Math.random() < 0.01 && !Game.prefs.notScary) me.hurt = Math.max(me.hurt, Math.random());
                 if (Game.T % 5 == 0 && Game.CanClick) {
-                    if (Game.LeftBackground && Game.mouseX < Game.LeftBackground.canvas.width && inRect(Game.mouseX - me.x, Game.mouseY - me.y, rect))
-                        me.selected = 1;
-                    else me.selected = 0;
+                    me.selected = Game.LeftBackground && Game.mouseX < Game.LeftBackground.canvas.width && inRect(Game.mouseX - me.x, Game.mouseY - me.y, rect) ? 1 : 0;
                 }
                 if (me.selected && onWrinkler == 0 && Game.CanClick) {
                     me.hurt = Math.max(me.hurt, 0.25);
@@ -19140,7 +19083,7 @@ class Game {
         Game.specialTabs = [];
         if (Game.Has('A festive hat')) Game.specialTabs.push('santa');
         if (Game.Has('A crumbly egg')) Game.specialTabs.push('dragon');
-        if (Game.specialTabs.length == 0) {
+        if (Game.specialTabs.length === 0) {
             Game.ToggleSpecialMenu(0);
             return;
         }
@@ -19576,8 +19519,7 @@ class Game {
      * @param {string} what
      */
     static hasAura(what) {
-        if (Game.dragonAuras[Game.dragonAura].name == what || Game.dragonAuras[Game.dragonAura2].name == what) return true;
-        else return false;
+        return Game.dragonAuras[Game.dragonAura].name == what || Game.dragonAuras[Game.dragonAura2].name == what ? true : false;
     }
     /**
      * @param {string} what
@@ -19600,15 +19542,13 @@ class Game {
     static SelectDragonAura(slot, update) {
         let currentAura;
         let otherAura;
-        if (slot == 0) currentAura = Game.dragonAura;
-        else currentAura = Game.dragonAura2;
-        if (slot == 0) otherAura = Game.dragonAura2;
-        else otherAura = Game.dragonAura;
+        currentAura = slot == 0 ? Game.dragonAura : Game.dragonAura2;
+        otherAura = slot == 0 ? Game.dragonAura2 : Game.dragonAura;
         if (!update) Game.SelectingDragonAura = currentAura;
 
         let str = '';
         for (let i in Game.dragonAuras) {
-            if (Game.dragonLevel >= parseInt(i) + 4) {
+            if (Game.dragonLevel >= Number.parseInt(i) + 4) {
                 const icon = Game.dragonAuras[/** @type {keyof typeof Game.dragonAuras} */ (Number(i))].pic;
                 if (Number(i) === 0 || Number(i) !== otherAura)
                     str +=
@@ -19841,9 +19781,7 @@ class Game {
                             '></div>';
                 }
 
-                if (Game.dragonLevel < Game.dragonLevels.length - 1) {
-                    str +=
-                            '<div class="line"></div>' +
+                str += Game.dragonLevel < Game.dragonLevels.length - 1 ? '<div class="line"></div>' +
                             '<div class="optionBox" style="margin-bottom:0px;"><a class="option framed large title" ' +
                             Game.clickStr +
                             '="Game.UpgradeDragon();">' +
@@ -19858,10 +19796,7 @@ class Game {
                                 ASSERT_NOT_NULL(level.costStr)() + '</div>'
                             ) +
                             '</div>' +
-                            '</a></div>';
-                } else {
-                    str += '<div class="line"></div>' + '<div style="text-align:center;margin-bottom:4px;">' + level.action + '</div>';
-                }
+                            '</a></div>' : '<div class="line"></div>' + '<div style="text-align:center;margin-bottom:4px;">' + level.action + '</div>';
             }
 
             $('specialPopup', true).innerHTML = str;
@@ -20516,8 +20451,7 @@ class Game {
                             let v = Math.random();
                             let a = 0.5;
                             let b = 0.5;
-                            if (v <= a) v = b - b * Math.pow(1 - v / a, 3);
-                            else v = b + (1 - b) * Math.pow((v - a) / (1 - a), 3);
+                            v = v <= a ? b - b * Math.pow(1 - v / a, 3) : b + (1 - b) * Math.pow((v - a) / (1 - a), 3);
                             this.s = (Game.toysType == 1 ? 64 : 48) * (0.1 + v * 1.9);
                             if (Game.toysType == 2) this.s = this.id % 10 == 1 ? 96 : 48;
                             this.st = this.s;
@@ -20726,9 +20660,9 @@ class Game {
      */
     static SetAllUpgrades(on) {
         Game.popups = 0;
-        let leftout = ['Magic shenanigans', 'Occult obstruction', 'Glucose-charged air'];
+        const leftout = new Set(['Magic shenanigans', 'Occult obstruction', 'Glucose-charged air']);
         for (let i in Game.Upgrades) {
-            if (on && (Game.Upgrades[i].pool == 'toggle' || leftout.indexOf(Game.Upgrades[i].name) != -1)) { /* empty */ }
+            if (on && (Game.Upgrades[i].pool == 'toggle' || leftout.has(Game.Upgrades[i].name))) { /* empty */ }
             else if (on) Game.Upgrades[i].earn();
             else if (!on) Game.Upgrades[i].lose();
         }
@@ -21054,7 +20988,7 @@ class Game {
             if (Game.T % Game.fps == 0 && Math.random() < 1 / 1000000) Game.Win('Just plain lucky'); // 1 chance in 1,000,000 every second achievement
             if (Game.T % (Game.fps * 5) == 0 && Game.ObjectsById.length > 0) {
                 // check some achievements and upgrades
-                if (isNaN(Game.cookies)) {
+                if (Number.isNaN(Number(Game.cookies))) {
                     Game.cookies = 0;
                     Game.cookiesEarned = 0;
                     Game.recalculateGains = 1;
@@ -21142,21 +21076,15 @@ class Game {
                 for (let i in Game.Objects) {
                     buildingsOwned += Game.Objects[i].amount;
                     minAmount = Math.min(Game.Objects[i].amount, minAmount);
-                    if (!Game.HasAchiev('Mathematician')) {
-                        if (
-                            Game.Objects[i].amount < Math.min(
-                                128,
-                                Math.pow(2, Game.ObjectsById.length - Game.Objects[i].id - 1)
-                            )
-                        ) mathematician = 0;
+                    const tmpAmount = Math.min(128, Math.pow(2, Game.ObjectsById.length - Game.Objects[i].id - 1));
+                    if (!Game.HasAchiev('Mathematician') && Game.Objects[i].amount < tmpAmount) {
+                        mathematician = 0;
                     }
-                    if (!Game.HasAchiev('Base 10')) {
-                        if (Game.Objects[i].amount < (Game.ObjectsById.length - Game.Objects[i].id) * 10) base10 = 0;
-                    }
+                    if (!Game.HasAchiev('Base 10') && Game.Objects[i].amount < (Game.ObjectsById.length - Game.Objects[i].id) * 10) base10 = 0;
                 }
                 if (minAmount >= 1) Game.Win('One with everything');
-                if (mathematician == 1) Game.Win('Mathematician');
-                if (base10 == 1) Game.Win('Base 10');
+                if (mathematician === 1) Game.Win('Mathematician');
+                if (base10 === 1) Game.Win('Base 10');
                 if (minAmount >= 100) {
                     Game.Win('Centennial');
                     Game.Unlock('Milk chocolate butter biscuit');
@@ -21394,8 +21322,7 @@ class Game {
             let startDate = Game.sayTime(timeInSeconds * Game.fps, -1);
 
             let str = '';
-            if (EN) str += 'You\'ve been on this run for <b>' + (startDate == '' ? 'not very long' : startDate) + '</b>.<br>';
-            else str += loc('You\'ve been on this run for <b>%1</b>.', startDate) + '<br>';
+            str += EN ? 'You\'ve been on this run for <b>' + (startDate == '' ? 'not very long' : startDate) + '</b>.<br>' : loc('You\'ve been on this run for <b>%1</b>.', startDate) + '<br>';
             str += '<div class="line"></div>';
             if (Game.prestige > 0) {
                 str += loc('Your prestige level is currently <b>%1</b>.<br>(CpS +%2%)', [Beautify(Game.prestige), Beautify(Game.prestige)]);
@@ -21549,20 +21476,19 @@ class Game {
                         lastLocked++;
                         me.locked = 1;
                     }
-                    if ((Game.buyMode == 1 && Game.cookies >= price) || (Game.buyMode == -1 && me.amount > 0)) classes += ' enabled';
-                    else classes += ' disabled';
+                    classes += (Game.buyMode == 1 && Game.cookies >= price) || (Game.buyMode == -1 && me.amount > 0) ? ' enabled' : ' disabled';
                     if (lastLocked > 2) classes += ' toggledOff';
                     ASSERT_NOT_NULL(me.l).className = classes;
                 }
 
                 // make upgrades full-opacity if we can buy them
                 let lastPrice = 0;
-                for (let i in Game.UpgradesInStore) {
-                    let me = Game.UpgradesInStore[i];
+                let i = 0;
+                for (const me of Game.UpgradesInStore) {
                     if (!me.bought) {
                         let price = me.getPrice();
                         let canBuy = me.canBuy();
-                        let enabled = $('upgrade' + i, true).className.indexOf('enabled') > -1;
+                        let enabled = $('upgrade' + i, true).className.includes('enabled');
                         if ((canBuy && !enabled) || (!canBuy && enabled)) Game.upgradesToRebuild = 1;
                         if (price < lastPrice) Game.storeToRefresh = 1; // is this upgrade less expensive than the previous one? trigger a refresh to sort it again
                         lastPrice = price;
@@ -21580,6 +21506,7 @@ class Game {
                                 .style.backgroundPosition = `${-Math.floor(T % 18) * 48}px ${-Math.floor(T / 18) * 48}px`;
                         }
                     }
+                    i++;
                 }
             }
             Timer.track('store');
