@@ -25,6 +25,7 @@
         "unicorn"
     ],
     "rules": {
+        "unicorn/filename-case": ["error", { "case": "camelCase" }],
         "unicorn/switch-case-braces": ["error", "avoid"],
         "unicorn/prevent-abbreviations": "off",
         "unicorn/prefer-query-selector": "off",
