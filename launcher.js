@@ -14,7 +14,7 @@ window.addEventListener('load', () => {
                     return function () {
                         locStringsFallback = locStrings;
                         LoadScript('loc/' + lang + '.js?v=' + Game.version, function () {
-                            let launch = function () {
+                            const launch = function () {
                                 Game.Launch();
                                 if (top !== self) Game.ErrorFrame();
                                 else {
