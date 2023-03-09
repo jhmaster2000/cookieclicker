@@ -1,8 +1,8 @@
 ﻿/* eslint-disable @typescript-eslint/no-this-alias */
-let M = {};
-M.parent = Game.Objects['Wizard tower'];
-M.parent.minigame = M;
-M.launch = function () {
+let this = {};
+this.parent = Game.Objects['Wizard tower'];
+this.parent.minigame = this;
+this.launch = function () {
     let M = this;
     M.name = M.parent.minigameName;
     M.init = function (div) {
@@ -557,4 +557,4 @@ M.launch = function () {
     };
     M.init($('rowSpecial' + M.parent.id));
 };
-let M = 0;
+let this = 0;
